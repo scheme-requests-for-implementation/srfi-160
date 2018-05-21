@@ -255,7 +255,7 @@ to insert an invalid value into a homogeneous vector.
         <tt>positive?</tt>.  This indicates the index directly before
         which traversal will stop &mdash; processing will occur until
         the the index of the vector is <tt><i>end</i></tt>.  It is the
-        closed right side of a range.
+        open right side of a range.
         <br />
         <br />
       </dd>
@@ -483,14 +483,14 @@ the external representation of instances of the datatype
 
 	<p></p>
 
-For example, <code>#u8(0 #e1e2 #xff)</code> is an
+For example, <code>#u8(0 #e1e2 #xff)</code> is a
 <code>u8vector</code> of length 3 containing 0, 100 and 255;
 <code>#f64(-1.5)</code> is an <code>f64vector</code> of length 1
 containing -1.5.
 
 	<p></p>
 
-Note that the syntax for float vectors conflicts with R5RS
+Note that the syntax for float vectors conflicts with R5RS,
 which parses <code>#f32()</code> as 3 objects: <code>#f</code>,
 <code>32</code> and <code>()</code>.  For this reason, conformance to
 this SRFI implies this minor nonconformance to R5RS.
@@ -500,7 +500,7 @@ this SRFI implies this minor nonconformance to R5RS.
 This external representation is also available in program source code.
 For example, <code>(set! x '#u8(1 2 3))</code> will set <code>x</code>
 to the object <code>#u8(1 2 3)</code>.  Literal homogeneous vectors,
-like heterogeneous vectors, are self-evaluating: they do not need to be quoted.
+like heterogeneous vectors, are self-evaluating; they do not need to be quoted.
 Homogeneous vectors can appear in quasiquotations but must not contain
 <code>unquote</code> or <code>unquote-splicing</code> forms
 (i.e. <code>`(,x #u8(1 2))</code> is legal but <code>`#u8(1 ,x
@@ -567,7 +567,7 @@ types of homogeneous vectors:
 all <code>@vector?</code> procedures return <code>#t</code> on every homogeneous vector type.
 
 <H1>Copyright</H1>
-Copyright &copy; John Cowan 2018.
+Copyright &copy; John Cowan 2018.  All Rights Reserved.
 <p>
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
