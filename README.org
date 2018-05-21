@@ -1,0 +1,18 @@
+* SRFI 160: Homogeneous numeric vector libraries
+
+** by John Cowan (based on SRFI 4 by Marc Feeley)
+
+This repository hosts [[https://srfi.schemers.org/srfi-160/][SRFI 160]]: Homogeneous numeric vector libraries, a [[https://srfi.schemers.org/][Scheme Request for Implementation]].
+
+This SRFI is in /draft/ status.
+
+See also [[https://srfi.schemers.org/srfi-4/][SRFI 4: Homogeneous numeric vector datatypes]].
+
+The full documentation for this SRFI can be found in the [[https://srfi.schemers.org/srfi-160/srfi-160.html][SRFI Document]].
+
+If you'd like to participate in the discussion of this SRFI, or report issues with it, please [[https://srfi.schemers.org/srfi-160/][join the SRFI-160 mailing list]] and send your message there.
+
+Thank you.
+
+
+[[mailto:srfi-editors@srfi.schemers.org][The SRFI Editors]]
