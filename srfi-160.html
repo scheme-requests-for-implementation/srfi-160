@@ -504,7 +504,7 @@ like heterogeneous vectors, are self-evaluating; they do not need to be quoted.
 Homogeneous vectors can appear in quasiquotations but must not contain
 <code>unquote</code> or <code>unquote-splicing</code> forms
 (i.e. <code>`(,x #u8(1 2))</code> is legal but <code>`#u8(1 ,x
-2)</code> is not).  This restriction is to accomodate the many Scheme
+2)</code> is not).  This restriction is to accommodate the many Scheme
 systems that use the <code>read</code> procedure to parse programs.
 
 <H2>Packaging</H2>
@@ -523,7 +523,7 @@ implementation as a sequence of 8, 16, 32 or 64 bit elements, using
 two's complement representation for the signed exact integers, and
 single and double precision IEEE-754 floating point representation for
 the inexact reals.  Although this is a practical implementation on
-many modern byte adressed machines, a different implementation is
+many modern byte-addressed machines, a different implementation is
 possible for machines which don't support these concrete numeric types
 (the CRAY-T90 for example does not have a 32 bit floating point
 representation and the 64 bit floating point representation does not
@@ -594,7 +594,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 <hr>
 <address>Editor: <a href="mailto:srfi minus editors at srfi dot schemers dot org">
-  Art Gleckler</a></address>
+  Arthur A. Gleckler</a></address>
 
   </body>
 </html>
