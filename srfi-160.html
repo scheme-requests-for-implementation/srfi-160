@@ -1,0 +1,587 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>SRFI 160: Homogeneous numeric vector libraries</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/srfi.css" type="text/css" />
+  </head>
+
+  <body>
+
+<H1>Title</H1>
+
+Homogeneous numeric vector libraries
+
+<H1>Author</H1>
+
+John Cowan (based on SRFI 4 by Marc Feeley)
+
+<H1>Status</H1>
+<H1>Abstract</H1>
+
+This SRFI describes a set of datatypes for vectors whose elements are
+of the same numeric type (signed or unsigned exact integer or inexact
+number of a given precision).  These datatypes support operations
+analogous to the Scheme vector type, but they are distinct datatypes.
+An external representation is specified which may be supported by the
+<code>read</code> and <code>write</code> procedures and by the program
+parser (i.e. programs can contain references to literal homogeneous
+vectors).
+
+<H1>Rationale</H1>
+
+Like lists, Scheme vectors are a heterogeneous datatype which impose
+no restriction on the type of the elements.  This generality is not
+needed for applications where all the elements are of the same type.
+The use of Scheme vectors is not ideal for such applications because,
+in the absence of a compiler with a fancy static analysis, the
+representation will typically use some form of boxing of the elements
+which means low space efficiency and slower access to the elements.
+Moreover, homogeneous vectors are convenient for interfacing with
+low-level libraries (e.g. binary block I/O) and to interface with
+foreign languages which support homogeneous vectors.  Finally, the use
+of homogeneous vectors allows certain errors to be caught earlier.
+
+	<p></p>
+
+This SRFI specifies a set of homogeneous vector datatypes which cover
+the most practical case, that is where the type of the elements is
+numeric (exact integer or inexact real or complex) and the precision and
+representation is efficiently implemented on the hardware of most
+current computer architectures (8, 16, 32 and 64 bit integers, either
+signed or unsigned, and 32 and 64 bit floating point numbers).
+          <p></p>
+
+Scheme systems which conform to this SRFI and also conform to either R6RS or R7RS
+must use the same datatype for bytevectors and for u8vectors.  All other homogeneous vector
+types are disjoint from each other and from all other Scheme types.
+
+         <p></p>
+
+This SRFI extends SRFI 4 by providing the <code>u1vector</code>,
+<code>c64vector</code>, and <code>c128vector</code> types, and
+by providing analogues for most of the general-vector procedures
+of <a href="https://srfi.schemers.org/srfi-133/srfi-133.html">
+SRFI 133</a>.
+
+<H1>Specification</H1>
+
+There are 9 datatypes of exact integer homogeneous vectors (which will
+be called integer vectors):
+
+<TABLE>
+<TR>
+<TD><TD><STRONG>datatype</STRONG> <TD><STRONG>type of elements</STRONG>
+</TR>
+<TR>
+<TD><TD><code>u1vector</code> <TD>unsigned exact integer in the range 0 to 1
+</TR>
+<TR>
+<TD><TD><code>s8vector</code> <TD>signed exact integer in the range -(2<sup>7</sup>) to (2<sup>7</sup>)-1
+</TR>
+<TR>
+<TD><TD><code>u8vector</code> <TD>unsigned exact integer in the range 0 to (2<sup>8</sup>)-1
+</TR>
+<TR>
+<TD><TD><code>s16vector</code><TD>signed exact integer in the range -(2<sup>15</sup>) to (2<sup>15</sup>)-1
+</TR>
+<TR>
+<TD><TD><code>u16vector</code><TD>unsigned exact integer in the range 0 to (2<sup>16</sup>)-1
+</TR>
+<TR>
+<TD><TD><code>s32vector</code><TD>signed exact integer in the range -(2<sup>31</sup>) to (2<sup>31</sup>)-1
+</TR>
+<TR>
+<TD><TD><code>u32vector</code><TD>unsigned exact integer in the range 0 to (2<sup>32</sup>)-1
+</TR>
+<TR>
+<TD><TD><code>s64vector</code><TD>signed exact integer in the range -(2<sup>63</sup>) to (2<sup>63</sup>)-1
+</TR>
+<TR>
+<TD><TD><code>u64vector</code><TD>unsigned exact integer in the range 0 to (2<sup>64</sup>)-1
+</TR>
+</TABLE>
+
+	<p></p>
+
+There are 2 datatypes of inexact real homogeneous vectors (which will
+be called float vectors):
+
+<TABLE>
+<TR>
+<TD><TD><STRONG>datatype</STRONG> <TD><STRONG>type of elements</STRONG>
+</TR>
+<TR>
+<TD><TD><code>f32vector</code> <TD>inexact real
+</TR>
+<TR>
+<TD><TD><code>f64vector</code> <TD>inexact real
+</TR>
+</TABLE>
+
+	<p></p>
+
+The only difference between the two float vector types is that
+<code>f64vector</code>s preserve at least as much precision as
+<code>f32vector</code>s (see the implementation section for details).
+
+	<p></p>
+
+And there are 2 datatypes of inexact complex homogeneous vectors (which will
+be called complex vectors):
+
+<TABLE>
+<TR>
+<TD><TD><STRONG>datatype</STRONG> <TD><STRONG>type of elements</STRONG>
+</TR>
+<TR>
+<TD><TD><code>c64vector</code> <TD>inexact complex
+</TR>
+<TR>
+<TD><TD><code>c128vector</code> <TD>inexact complex
+</TR>
+</TABLE>
+
+	<p></p>
+
+The only difference between the two complex vector types is that
+<code>c128vector</code>s preserve at least as much precision as
+<code>c64vector</code>s (see the implementation section for details).
+
+	<p></p>
+
+A Scheme system that conforms to this SRFI does not have to support
+all of these homogeneous vector datatypes.  However, a Scheme system
+must support float vectors if it
+supports Scheme inexact reals (of any precision).  A Scheme system
+must support complex vectors if it supports Scheme inexact complex numbers
+(of any precision).  Finally, a Scheme system
+must support a particular integer vector datatype if the system's
+exact integer datatype contains all the values that can be stored in
+such an integer vector.  Thus a Scheme system with bignum support must
+implement all the integer vector datatypes, but a Scheme system may
+only support <code>s8vector</code>s, <code>u8vector</code>s,
+<code>s16vector</code>s and <code>u16vector</code>s if it only
+supports small integers in the range -(2<sup>29</sup>) to (2<sup>29</sup>)-1 (which would
+be the case if they are represented as 32 bit fixnums with two bits
+for tag).  
+
+	<p></p>
+
+Each value of a homogeneous vector must be <i>valid</i>.  That is, for an
+integer vector it must be within the range specified above; for a float
+vector, it must be an inexact real number; and for a complex vector, it
+must be an inexact complex number.
+
+<H2>Notation</H2>
+
+So as not to multiply the number of procedures described in this SRFI beyond necessity, a
+special notational convention is used.  The description of the procedure
+<code>make-@vector</code> is really shorthand for the descriptions of the thirteen
+procedures <code>make-u1vector</code>, <code>make-s8vector</code>, ...
+<code>make-c128vector</code>, all of which are exactly the same except that
+they construct different homogeneous vector types.  Furthermore, except as
+otherwise noted, the semantics of each procedure are those of the corresponding
+SRFI 133 procedure, except that it is an error to attempt
+to insert an invalid value into a homogeneous vector.
+
+    <p>
+      In the section containing specifications of procedures, the
+      following notation is used to specify parameters and return
+      values:
+    </p>
+    <dl>
+      <dt><i>
+        (f arg<sub>1</sub> arg<sub>2</sub> ...)
+        -&gt; something</i></dt>
+      <dd>
+        Indicates a function <tt><i>f</i></tt> takes the parameters
+        <tt><i>arg<sub>1</sub> arg<sub>2</sub>
+        ...</i></tt> and returns a value of the
+        type <tt><i>something</i></tt>.  If <tt><i>something</i></tt>
+        is <tt>unspecified</tt>, then <tt><i>f</i></tt> returns a single
+        implementation-dependent value; this SRFI does not specify what it
+        returns, and in order to write portable code, the return value
+        should be ignored.
+        <br />
+        <br />
+      </dd>
+
+      <dt><i>vec</i></dt>
+      <dd>
+        The argument in this place must be a heterogeneous vector, i.e. it must
+        satisfy the predicate <tt>vector?</tt>.
+        <br />
+        <br />
+      </dd>
+
+      <dt><i>@vec</i></dt>
+      <dd>
+        The argument in this place must be a homogeneous vector, i.e. it must
+        satisfy the predicate <tt>@vector?</tt>.
+        <br />
+        <br />
+      </dd>
+
+      <dt><i>i, j, start, size</i></dt>
+      <dd>
+        The argument in this place must be a exact nonnegative integer, i.e.
+        it must satisfy the predicates <tt>exact?</tt>, <tt>integer?</tt> and either
+        <tt>zero?</tt> or <tt>positive?</tt>.  The third case of it
+        indicates the index at which traversal begins; the fourth case
+        of it indicates the size of a vector.
+        <br />
+        <br />
+      </dd>
+
+      <dt><i>end</i></dt>
+      <dd>
+        The argument in this place must be a exact positive integer, i.e. it
+        must satisfy the predicates <tt>exact?</tt>, <tt>integer?</tt> and
+        <tt>positive?</tt>.  This indicates the index directly before
+        which traversal will stop &mdash; processing will occur until
+        the the index of the vector is <tt><i>end</i></tt>.  It is the
+        closed right side of a range.
+        <br />
+        <br />
+      </dd>
+
+      <dt><i>f</i></dt>
+      <dd>
+        The argument in this place must be a function of one or more
+        arguments, which returns (except as noted otherwise) exactly one value.
+        <br />
+        <br />
+      </dd>
+
+      <dt><i>pred?</i></dt>
+      <dd>
+        The argument in this place must be a function of one or more
+        arguments that returns one value, which is treated as a
+        boolean.
+        <br />
+        <br />
+      </dd>
+
+      <dt><i>
+        x, y, z, seed, knil, fill, key, value
+      </i></dt>
+      <dd>
+        The argument in this place may be any Scheme value,
+        provided that if the value is to be used as an element
+        of a homogeneous vector, it is a valid value.
+        <br />
+        <br />
+      </dd>
+
+      <dt><i>[something]</i></dt>
+      <dd>
+        Indicates that <tt><i>something</i></tt> is an optional
+        argument; it needn't necessarily be applied.
+        <tt><i>Something</i></tt> needn't necessarily be one thing; for
+        example, this usage of it is perfectly valid:
+        <br />
+        <br />
+        <code>
+          &nbsp;&nbsp;&nbsp;[start [end]]
+        </code>
+        <br />
+        <br />
+        and is indeed used quite often.
+        <br />
+        <br />
+      </dd>
+
+      <dt><i>something ...</i></dt>
+      <dd>
+        Indicates that zero or more <tt><i>something</i></tt>s are
+        allowed to be arguments.
+        <br />
+        <br />
+      </dd>
+
+      <dt><i>
+        something<sub>1</sub> something<sub>2</sub>
+        ...
+      </i></dt>
+      <dd>
+        Indicates that at least one <tt><i>something</i></tt> must be
+        arguments.
+        <br />
+        <br />
+      </dd>
+
+      <dt><i>
+        something<sub>1</sub> something<sub>2</sub>
+        ...
+        something<sub>n</sub>
+      </i></dt>
+      <dd>
+        Exactly equivalent to the previous argument notation, but this
+        also indicates that <tt><i>n</i></tt> will be used later in the
+        procedure description.
+        <br />
+        <br />
+      </dd>
+    </dl>
+
+    <p>
+      It should be noted that all of the procedures that iterate across
+      multiple vectors in parallel stop iterating and produce the final
+      result when the end of the shortest vector is reached.  The sole
+      exception is <tt>vector=</tt>, which
+      automatically returns <tt>#f</tt> if the vectors' lengths vary.
+    </p>
+
+
+<H2>Procedures</H2>
+
+<p>The procedures shared with SRFI 4 are marked with [SRFI 4].</p>
+
+<H3>Constructors</H3>
+
+<p><code>(make-@vector <i>size</i> [<i>fill</i>]) -> @vector </code> [SRFI 4]</p>
+
+<p><code>(@vector <i>x ...</i>) -> @vector </code> [SRFI 4]</p>
+
+<p><code>(@vector-unfold <i>f length initial-seed ...</i>) -> @vector</code></p>
+
+<p><code>(@vector-unfold-right <i>f length initial-seed ...</i>) -> @vector</code></p>
+
+<p><code>(@vector-copy <i>@vec</i> [<i>start</i> [<i>end</i>]]) -> @vector</code></p>
+
+<p><code>(@vector-reverse-copy <i>@vec</i> [<i>start</i> [<i>end</i>]]) -> @vector</code></p>
+
+<p><code>(@vector-append <i>@vec ...</i>) -> @vector</code></p>
+
+<p><code> (@vector-concatenate <i>list-of-vectors</i>) -> @vector</code></p>
+
+<p><code>(@vector-append-subvectors [<i>@vec start end] ...</i>) -> @vector</code></p>
+
+<H3>Predicates</H3>
+
+<p><code>(@vector? <i>x</i>) -> boolean</code> [SRFI 4]</p>
+
+<p><code>(@vector-empty? <i>@vec</i>) -> boolean</code></p>
+
+<p><code> (@vector= <i>elt=? @vec ...</i>) -> boolean</code></p>
+
+<H3>Selectors</H3>
+
+<p><code>(@vector-ref <i>@vec i</i>) -> value</code> [SRFI 4]</p>
+
+<p><code>(@vector-length <i>@vec</i>) -> exact nonnegative integer</code> [SRFI 4]</p>
+
+<H3>Iteration</H3>
+
+<p><code>(@vector-fold <i>kons knil @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> value</code></p>
+
+<p><code>(@vector-fold-right <i>kons knil @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> value</code></p>
+
+<p><code>(@vector-map <i>f @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> @vector</code></p>
+
+<p><code>(@vector-map! <i>f @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> unspecified</code></p>
+
+<p><code>(@vector-for-each <i>f @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> unspecified</code></p>
+
+<p><code>(@vector-count <i>pred? @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> exact nonnegative integer</code></p>
+
+<p><code>(@vector-cumulate <i>f knil @vec</i>) -> @vector</code></p>
+
+<H3>Searching</H3>
+
+<p><code>(@vector-index <i>pred? @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> exact nonnegative integer or #f</code></p>
+
+<p><code>(@vector-index-right <i>pred? @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> exact nonnegative integer or #f</code></p>
+
+<p><code>(@vector-skip <i>pred? @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> exact nonnegative integer or #f</code></p>
+
+<p><code>(@vector-skip-right <i>pred? @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> exact nonnegative integer or #f</code></p>
+
+<p><code>(@vector-binary-search <i>@vec value cmp</i>) -> exact nonnegative integer or #f</code></p>
+
+<p><code>(@vector-any <i>pred? @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> value or #f</code></p>
+
+<p><code>(@vector-every <i>pred? @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> value or #f</code></p>
+
+<p><code>(@vector-partition <i>pred? @vec</i>) -> @vector and integer</code></p>
+
+<H3>Mutators</H3>
+
+<p><code>(@vector-set! <i>@vec i value</i>) -> unspecified</code> [SRFI 4]</p>
+
+<p><code>(@vector-swap! <i>@vec i j</i>) -> unspecified</code></p>
+
+<p><code>(@vector-fill! <i>@vec fill</i> [<i>start</i> [<i>end</i>]]) -> unspecified</code></p>
+
+<p><code>(@vector-reverse! <i>@vec</i> [<i>start</i> [<i>end</i>]]) -> unspecified</code></p>
+
+<p><code>(@vector-copy! <i>to at from</i> [<i>start</i> [<i>end</i>]]) -> unspecified</code></p>
+
+<p><code>(@vector-reverse-copy! <i>to at from</i> [<i>start</i> [<i>end</i>]]) -> unspecified</code></p>
+
+<p><code>(@vector-unfold! <i>f @vec start end initial-seed ...</i>) -> unspecified</code></p>
+
+<p><code>(@vector-unfold-right! <i>f @vec start end initial-seed ...</i>) -> unspecified</code></p>
+
+<H3>Conversion</H3>
+
+<p>Note that there are no conversions between homogeneous vectors and strings in this SRFI.</p>
+
+<p><code>(@vector->list <i>@vec</i> [<i>start</i> [<i>end</i>]]) -> proper-list</code> [SRFI 4]</p>
+
+<p><code>(reverse-@vector->list <i>@vec</i> [<i>start</i> [<i>end</i>]]) -> proper-list</code></p>
+
+<p><code>(list->@vector <i>proper-list</i>) -> @vector</code> [SRFI 4]</p>
+
+<p><code>(reverse-list->@vector <i>proper-list</i>) -> @vector</code></p>
+
+<p><code>(@vector->vector <i>@vec</i>) -> vector</code></p>
+
+<p>Returns a heterogeneous vector with the same elements as <code><i>@vec</i></code>.</p>
+
+<p><code>(vector->@vector <i>vec</i>) -> @vector</code></p>
+
+<p>Returns a homogeneous vector with the same elements as <code><i>vec</i></code>.</p>
+
+
+<H2>Optional lexical syntax</H2>
+
+Each homogeneous vector datatype has an external representation which
+may be supported by the <code>read</code> and <code>write</code>
+procedures and by the program parser.  
+Conformance to this SRFI does not in itself require support for these
+external representations.
+
+	<p></p>
+
+For each value of <code>@</code> in {
+<code>u1</code>,
+<code>s8</code>, <code>u8</code>,
+<code>s16</code>, <code>u16</code>,
+<code>s32</code>, <code>u32</code>,
+<code>s64</code>, <code>u64</code>,
+<code>f32</code>, <code>f64</code>,
+<code>c64</code>, <code>c128</code>
+}, if the datatype <code>@vector</code> is supported, then
+the external representation of instances of the datatype
+<code>@vector</code> is <code>#@(</code> ...elements... <code>)</code>.
+
+	<p></p>
+
+For example, <code>#u8(0 #e1e2 #xff)</code> is an
+<code>u8vector</code> of length 3 containing 0, 100 and 255;
+<code>#f64(-1.5)</code> is an <code>f64vector</code> of length 1
+containing -1.5.
+
+	<p></p>
+
+Note that the syntax for float vectors conflicts with R5RS
+which parses <code>#f32()</code> as 3 objects: <code>#f</code>,
+<code>32</code> and <code>()</code>.  For this reason, conformance to
+this SRFI implies this minor nonconformance to R5RS.
+
+	<p></p>
+
+This external representation is also available in program source code.
+For example, <code>(set! x '#u8(1 2 3))</code> will set <code>x</code>
+to the object <code>#u8(1 2 3)</code>.  Literal homogeneous vectors,
+like heterogeneous vectors, are self-evaluating: they do not need to be quoted.
+Homogeneous vectors can appear in quasiquotations but must not contain
+<code>unquote</code> or <code>unquote-splicing</code> forms
+(i.e. <code>`(,x #u8(1 2))</code> is legal but <code>`#u8(1 ,x
+2)</code> is not).  This restriction is to accomodate the many Scheme
+systems that use the <code>read</code> procedure to parse programs.
+
+<H2>Packaging</H2>
+
+This SRFI is packaged as thirteen libraries named <code>(srfi
+160 @)</code>, or <code>(srfi :160 @)</code> in R6RS systems, on the
+assumption that most programs will use only a few homogeneous vector
+types.  There is also an R7RS SRFI 4 library named <code>(srfi 4)</code>
+for systems that do not provide a native SRFI 4 implementation.
+
+
+<H1>Implementation</H1>
+
+The homogeneous vector datatypes described here suggest a concrete
+implementation as a sequence of 8, 16, 32 or 64 bit elements, using
+two's complement representation for the signed exact integers, and
+single and double precision IEEE-754 floating point representation for
+the inexact reals.  Although this is a practical implementation on
+many modern byte adressed machines, a different implementation is
+possible for machines which don't support these concrete numeric types
+(the CRAY-T90 for example does not have a 32 bit floating point
+representation and the 64 bit floating point representation does not
+conform to IEEE-754, so both the <code>f32vector</code> and
+<code>f64vector</code> datatypes could be represented the same way
+with 64 bit floating point numbers).
+
+	<p></p>
+
+The sample implementation is (not yet) in the repository of this SRFI.
+The following files are provided:
+
+<ul>
+<li><code>srfi/160/@.sld</code> - R7RS libraries
+<li><code>srfi/:160/@.scm</code> - Guile libraries on top of <code>(rnrs bytevectors)</code>; adaptable to other R6RS systems
+<li><code>srfi-160-@.scm</code> - Chicken libraries on top of native Chicken SRFI 4
+<li><code>srfi/4.sld</code> - R7RS library for SRFI 4
+<li><code>srfi/4-vec.scm</code> - implementation of SRFI 4 procedures using heterogeneous vectors
+<li><code>srfi/4.scm</code> - implementation of SRFI 4 procedures on top of R6RS bytevectors library
+<li><code>srfi/bytevectors.scm</code> - implementation of R6RS <code>(rnrs bytevectors)</code> library for non-R6RS systems
+<li><code>srfi/bitvectors.scm</code> - SRFI-4-like implementation of u1vectors using u8vectors
+<li><code>srfi/cvectors.scm</code> - SRFI-4-like implementation of complex vectors using float vectors
+<li><code>srfi/vectors.scm</code> - implementation of non-SRFI 4 procedures
+<li><code>srfi/:9.sls</code> - implementation of SRFI 9 <code>define-record-type</code> on top of R6RS
+<li><code>atexpander.scm</code> - a trivial Scheme script to expand <code>vectors.scm</code> into <code>@vectors.scm</code>
+</ul>
+
+in addition to various tests.
+
+<p>The file <code>srfi/4-vec.scm</code> should be used only if bytevectors are unavailable.
+If a native implementation of SRFI 4 is available, it should be used instead of
+<code>srfi/4.scm</code>.
+The file <code>srfi/bytevectors.scm</code> uses little-endian representations of
+all homogeneous vector types (but it is easy to change to big-endian representation
+if desired).  Float vectors use little-endian IEEE 32-bit and 64-bit binary floats;
+complex vectors use two consecutive floats with the real part first and the imaginary part second.
+If a native implementation of <code>(rnrs bytevectors)</code> is available, it should be
+used instead of <code>srfi/bytevectors.scm</code>.
+The Guile SRFI 4 module is not used, because it does not correctly distinguish between different
+types of homogeneous vectors:
+all <code>@vector?</code> procedures return <code>#t</code> on every homogeneous vector type.
+
+<H1>Copyright</H1>
+Copyright &copy; John Cowan 2018.
+<p>
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+</p>
+<p>
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+</p>
+<p>
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+</p>
+
+
+<hr>
+<address>Editor: <a href="mailto:srfi minus editors at srfi dot schemers dot org">
+  Art Gleckler</a></address>
+
+  </body>
+</html>
