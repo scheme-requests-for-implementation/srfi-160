@@ -64,19 +64,15 @@ numeric (exact integer or inexact real or complex) and the precision and
 representation is efficiently implemented on the hardware of most
 current computer architectures (8, 16, 32 and 64 bit integers, either
 signed or unsigned, and 32 and 64 bit floating point numbers).
-          <p></p>
-
-Scheme systems which conform to this SRFI and also conform to either R6RS or R7RS
-must use the same datatype for bytevectors and for u8vectors.  All other homogeneous vector
-types are disjoint from each other and from all other Scheme types.
-
-         <p></p>
+        <p></p>
 
 This SRFI extends SRFI 4 by providing the <code>u1vector</code>,
 <code>c64vector</code>, and <code>c128vector</code> types, and
-by providing analogues for most of the general-vector procedures
+by providing analogues for most of the heterogeneous vector procedures
 of <a href="https://srfi.schemers.org/srfi-133/srfi-133.html">
 SRFI 133</a>.
+
+<p>Note that there are no conversions between homogeneous vectors and strings in this SRFI.</p>
 
 <H1>Specification</H1>
 
@@ -91,28 +87,28 @@ be called integer vectors):
 <TD><TD><code>u1vector</code> <TD>unsigned exact integer in the range 0 to 1
 </TR>
 <TR>
-<TD><TD><code>s8vector</code> <TD>signed exact integer in the range -(2<sup>7</sup>) to (2<sup>7</sup>)-1
+<TD><TD><code>s8vector</code> <TD>signed exact integer in the range -2<sup>7</sup> to 2<sup>7</sup>-1
 </TR>
 <TR>
-<TD><TD><code>u8vector</code> <TD>unsigned exact integer in the range 0 to (2<sup>8</sup>)-1
+<TD><TD><code>u8vector</code> <TD>unsigned exact integer in the range 0 to 2<sup>8</sup>-1
 </TR>
 <TR>
-<TD><TD><code>s16vector</code><TD>signed exact integer in the range -(2<sup>15</sup>) to (2<sup>15</sup>)-1
+<TD><TD><code>s16vector</code><TD>signed exact integer in the range -2<sup>15</sup> to 2<sup>15</sup>-1
 </TR>
 <TR>
-<TD><TD><code>u16vector</code><TD>unsigned exact integer in the range 0 to (2<sup>16</sup>)-1
+<TD><TD><code>u16vector</code><TD>unsigned exact integer in the range 0 to 2<sup>16</sup>-1
 </TR>
 <TR>
-<TD><TD><code>s32vector</code><TD>signed exact integer in the range -(2<sup>31</sup>) to (2<sup>31</sup>)-1
+<TD><TD><code>s32vector</code><TD>signed exact integer in the range -2<sup>31</sup> to 2<sup>31</sup>-1
 </TR>
 <TR>
-<TD><TD><code>u32vector</code><TD>unsigned exact integer in the range 0 to (2<sup>32</sup>)-1
+<TD><TD><code>u32vector</code><TD>unsigned exact integer in the range 0 to 2<sup>32</sup>-1
 </TR>
 <TR>
-<TD><TD><code>s64vector</code><TD>signed exact integer in the range -(2<sup>63</sup>) to (2<sup>63</sup>)-1
+<TD><TD><code>s64vector</code><TD>signed exact integer in the range -2<sup>63</sup> to 2<sup>63</sup>-1
 </TR>
 <TR>
-<TD><TD><code>u64vector</code><TD>unsigned exact integer in the range 0 to (2<sup>64</sup>)-1
+<TD><TD><code>u64vector</code><TD>unsigned exact integer in the range 0 to 2<sup>64</sup>-1
 </TR>
 </TABLE>
 
@@ -173,19 +169,35 @@ must support complex vectors if it supports Scheme inexact complex numbers
 must support a particular integer vector datatype if the system's
 exact integer datatype contains all the values that can be stored in
 such an integer vector.  Thus a Scheme system with bignum support must
-implement all the integer vector datatypes, but a Scheme system may
+implement all the integer vector datatypes, but a Scheme system might
 only support <code>s8vector</code>s, <code>u8vector</code>s,
 <code>s16vector</code>s and <code>u16vector</code>s if it only
-supports small integers in the range -(2<sup>29</sup>) to (2<sup>29</sup>)-1 (which would
-be the case if they are represented as 32 bit fixnums with two bits
-for tag).  
+supports small integers in the range -2<sup>29</sup> to 2<sup>29</sup>-1 which would
+be the case if they are represented as 32 bit fixnums with a 2-bit tag).
+
+        <p></p>
+
+Scheme systems which conform to this SRFI and also conform to either R6RS or R7RS
+must use the same datatype for bytevectors and for u8vectors.  All other homogeneous vector
+types are disjoint from each other and from all other Scheme types.
 
 	<p></p>
 
-Each value of a homogeneous vector must be <i>valid</i>.  That is, for an
-integer vector it must be within the range specified above; for a float
-vector, it must be an inexact real number; and for a complex vector, it
-must be an inexact complex number.
+Each element of a homogeneous vector must be <i>valid</i>.  That is, for an
+integer vector it must be an exact integer within the
+exclusive range specified above; for a float vector, it must be an
+inexact real number; and for a complex vector, it must be an inexact
+complex number.  It is an error to try to use a constructor or mutator
+to set an element to an invalid value.
+
+    <p>
+      It should be noted that all of the procedures that iterate across
+      multiple vectors in parallel stop iterating and produce the final
+      result when the end of the shortest vector is reached.  The sole
+      exception is <tt>vector=</tt>, which
+      automatically returns <tt>#f</tt> if the vectors' lengths vary.
+    </p>
+
 
 <H2>Notation</H2>
 
@@ -205,14 +217,13 @@ to insert an invalid value into a homogeneous vector.
       values:
     </p>
     <dl>
-      <dt><i>
-        (f arg<sub>1</sub> arg<sub>2</sub> ...)
-        -&gt; something</i></dt>
-      <dd>
-        Indicates a function <tt><i>f</i></tt> takes the parameters
+      <dt><i>(f arg<sub>1</sub> arg<sub>2</sub> ...) -> something</i></dt> <dd>
+        A procedure <tt><i>f</i></tt> that takes the parameters
         <tt><i>arg<sub>1</sub> arg<sub>2</sub>
         ...</i></tt> and returns a value of the
-        type <tt><i>something</i></tt>.  If <tt><i>something</i></tt>
+        type <tt><i>something</i></tt>.
+        If two values are returned, two types are specified.
+        If <tt><i>something</i></tt>
         is <tt>unspecified</tt>, then <tt><i>f</i></tt> returns a single
         implementation-dependent value; this SRFI does not specify what it
         returns, and in order to write portable code, the return value
@@ -223,38 +234,37 @@ to insert an invalid value into a homogeneous vector.
 
       <dt><i>vec</i></dt>
       <dd>
-        The argument in this place must be a heterogeneous vector, i.e. it must
+        Must be a heterogeneous vector, i.e. it must
         satisfy the predicate <tt>vector?</tt>.
         <br />
         <br />
       </dd>
 
-      <dt><i>@vec</i></dt>
+      <dt><i>@vec, @to, @from</i></dt>
       <dd>
-        The argument in this place must be a homogeneous vector, i.e. it must
+        Must be a homogeneous vector, i.e. it must
         satisfy the predicate <tt>@vector?</tt>.
+        In <i>@vector-copy!</i> and <i>reverse-@vector-copy!</i>,
+        <i>@to</i> is the destination and <i>@from</i> is the source.
         <br />
         <br />
       </dd>
 
-      <dt><i>i, j, start, size</i></dt>
+      <dt><i>i, j, start, at</i></dt>
       <dd>
-        The argument in this place must be a exact nonnegative integer, i.e.
-        it must satisfy the predicates <tt>exact?</tt>, <tt>integer?</tt> and either
-        <tt>zero?</tt> or <tt>positive?</tt>.  The third case of it
-        indicates the index at which traversal begins; the fourth case
-        of it indicates the size of a vector.
+        Must be a exact nonnegative integer less than the length of the @vector.
+        In <i>@vector-copy!</i> and <i>reverse-@vector-copy!</i>,
+        <i>at</i> refers to the destination and <i>start</i> to the source.
         <br />
         <br />
       </dd>
 
       <dt><i>end</i></dt>
       <dd>
-        The argument in this place must be a exact positive integer, i.e. it
-        must satisfy the predicates <tt>exact?</tt>, <tt>integer?</tt> and
-        <tt>positive?</tt>.  This indicates the index directly before
+        Must be an exact nonnegative integer not less than <i>start</i>.
+        This indicates the index directly before
         which traversal will stop &mdash; processing will occur until
-        the the index of the vector is <tt><i>end</i></tt>.  It is the
+        the index of the vector is one less than <tt><i>end</i></tt>.  It is the
         open right side of a range.
         <br />
         <br />
@@ -262,7 +272,7 @@ to insert an invalid value into a homogeneous vector.
 
       <dt><i>f</i></dt>
       <dd>
-        The argument in this place must be a function of one or more
+        Must be a procedure taking one or more
         arguments, which returns (except as noted otherwise) exactly one value.
         <br />
         <br />
@@ -270,28 +280,41 @@ to insert an invalid value into a homogeneous vector.
 
       <dt><i>pred?</i></dt>
       <dd>
-        The argument in this place must be a function of one or more
+        Must be a procedure taking one or more
         arguments that returns one value, which is treated as a
         boolean.
         <br />
         <br />
       </dd>
 
+      <dt><i>=</i></dt>
+      <dd>
+        Must be an equivalence procedure.
+        <br />
+        <br />
+      </dd>
+
       <dt><i>
-        x, y, z, seed, knil, fill, key, value
+        obj, seed, knil
       </i></dt>
       <dd>
-        The argument in this place may be any Scheme value,
-        provided that if the value is to be used as an element
-        of a homogeneous vector, it is a valid value.
+        Any Scheme object.
+        <br />
+        <br />
+      </dd>
+
+      <dt><i>
+        fill, value
+      </i></dt>
+      <dd>
+        Any number that is valid with respect to the <i>@vec</i>.
         <br />
         <br />
       </dd>
 
       <dt><i>[something]</i></dt>
       <dd>
-        Indicates that <tt><i>something</i></tt> is an optional
-        argument; it needn't necessarily be applied.
+        An optional argument; it needn't necessarily be applied.
         <tt><i>Something</i></tt> needn't necessarily be one thing; for
         example, this usage of it is perfectly valid:
         <br />
@@ -308,7 +331,7 @@ to insert an invalid value into a homogeneous vector.
 
       <dt><i>something ...</i></dt>
       <dd>
-        Indicates that zero or more <tt><i>something</i></tt>s are
+        Zero or more <tt><i>something</i></tt>s are
         allowed to be arguments.
         <br />
         <br />
@@ -319,7 +342,7 @@ to insert an invalid value into a homogeneous vector.
         ...
       </i></dt>
       <dd>
-        Indicates that at least one <tt><i>something</i></tt> must be
+        At least one <tt><i>something</i></tt> must be
         arguments.
         <br />
         <br />
@@ -339,14 +362,6 @@ to insert an invalid value into a homogeneous vector.
       </dd>
     </dl>
 
-    <p>
-      It should be noted that all of the procedures that iterate across
-      multiple vectors in parallel stop iterating and produce the final
-      result when the end of the shortest vector is reached.  The sole
-      exception is <tt>vector=</tt>, which
-      automatically returns <tt>#f</tt> if the vectors' lengths vary.
-    </p>
-
 
 <H2>Procedures</H2>
 
@@ -356,11 +371,11 @@ to insert an invalid value into a homogeneous vector.
 
 <p><code>(make-@vector <i>size</i> [<i>fill</i>]) -> @vector </code> [SRFI 4]</p>
 
-<p><code>(@vector <i>x ...</i>) -> @vector </code> [SRFI 4]</p>
+<p><code>(@vector <i>value ...</i>) -> @vector </code> [SRFI 4]</p>
 
-<p><code>(@vector-unfold <i>f length initial-seed ...</i>) -> @vector</code></p>
+<p><code>(@vector-unfold <i>f length seed ...</i>) -> @vector</code></p>
 
-<p><code>(@vector-unfold-right <i>f length initial-seed ...</i>) -> @vector</code></p>
+<p><code>(@vector-unfold-right <i>f length seed ...</i>) -> @vector</code></p>
 
 <p><code>(@vector-copy <i>@vec</i> [<i>start</i> [<i>end</i>]]) -> @vector</code></p>
 
@@ -368,13 +383,13 @@ to insert an invalid value into a homogeneous vector.
 
 <p><code>(@vector-append <i>@vec ...</i>) -> @vector</code></p>
 
-<p><code> (@vector-concatenate <i>list-of-vectors</i>) -> @vector</code></p>
+<p><code> (@vector-concatenate <i>list-of-@vectors</i>) -> @vector</code></p>
 
 <p><code>(@vector-append-subvectors [<i>@vec start end] ...</i>) -> @vector</code></p>
 
 <H3>Predicates</H3>
 
-<p><code>(@vector? <i>x</i>) -> boolean</code> [SRFI 4]</p>
+<p><code>(@vector? <i>obj</i>) -> boolean</code> [SRFI 4]</p>
 
 <p><code>(@vector-empty? <i>@vec</i>) -> boolean</code></p>
 
@@ -388,9 +403,9 @@ to insert an invalid value into a homogeneous vector.
 
 <H3>Iteration</H3>
 
-<p><code>(@vector-fold <i>kons knil @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> value</code></p>
+<p><code>(@vector-fold <i>kons knil @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> object</code></p>
 
-<p><code>(@vector-fold-right <i>kons knil @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> value</code></p>
+<p><code>(@vector-fold-right <i>kons knil @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> object</code></p>
 
 <p><code>(@vector-map <i>f @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> @vector</code></p>
 
@@ -412,7 +427,7 @@ to insert an invalid value into a homogeneous vector.
 
 <p><code>(@vector-skip-right <i>pred? @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> exact nonnegative integer or #f</code></p>
 
-<p><code>(@vector-binary-search <i>@vec value cmp</i>) -> exact nonnegative integer or #f</code></p>
+<p><code>(@vector-binary-search <i>@vec value =</i>) -> exact nonnegative integer or #f</code></p>
 
 <p><code>(@vector-any <i>pred? @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> value or #f</code></p>
 
@@ -430,17 +445,16 @@ to insert an invalid value into a homogeneous vector.
 
 <p><code>(@vector-reverse! <i>@vec</i> [<i>start</i> [<i>end</i>]]) -> unspecified</code></p>
 
-<p><code>(@vector-copy! <i>to at from</i> [<i>start</i> [<i>end</i>]]) -> unspecified</code></p>
+<p><code>(@vector-copy! <i>@to at @from</i> [<i>start</i> [<i>end</i>]]) -> unspecified</code></p>
 
-<p><code>(@vector-reverse-copy! <i>to at from</i> [<i>start</i> [<i>end</i>]]) -> unspecified</code></p>
+<p><code>(@vector-reverse-copy! <i>@to at @from</i> [<i>start</i> [<i>end</i>]]) -> unspecified</code></p>
 
-<p><code>(@vector-unfold! <i>f @vec start end initial-seed ...</i>) -> unspecified</code></p>
+<p><code>(@vector-unfold! <i>f @vec start end seed ...</i>) -> unspecified</code></p>
 
-<p><code>(@vector-unfold-right! <i>f @vec start end initial-seed ...</i>) -> unspecified</code></p>
+<p><code>(@vector-unfold-right! <i>f @vec start end seed ...</i>) -> unspecified</code></p>
 
 <H3>Conversion</H3>
 
-<p>Note that there are no conversions between homogeneous vectors and strings in this SRFI.</p>
 
 <p><code>(@vector->list <i>@vec</i> [<i>start</i> [<i>end</i>]]) -> proper-list</code> [SRFI 4]</p>
 
@@ -537,29 +551,34 @@ The sample implementation is (not yet) in the repository of this SRFI.
 The following files are provided:
 
 <ul>
-<li><code>srfi/160/@.sld</code> - R7RS libraries
-<li><code>srfi/:160/@.scm</code> - Guile libraries on top of <code>(rnrs bytevectors)</code>; adaptable to other R6RS systems
-<li><code>srfi-160-@.scm</code> - Chicken libraries on top of native Chicken SRFI 4
+<li><code>srfi/160/at.sld</code> - R7RS libraries
+<li><code>srfi/:160/at.scm</code> - Guile libraries on top of <code>(rnrs bytevectors)</code>; adaptable to other R6RS systems
+<li><code>srfi-160-at.scm</code> - Chicken libraries on top of native Chicken SRFI 4
 <li><code>srfi/4.sld</code> - R7RS library for SRFI 4
 <li><code>srfi/4-vec.scm</code> - implementation of SRFI 4 procedures using heterogeneous vectors
 <li><code>srfi/4.scm</code> - implementation of SRFI 4 procedures on top of R6RS bytevectors library
 <li><code>srfi/bytevectors.scm</code> - implementation of R6RS <code>(rnrs bytevectors)</code> library for non-R6RS systems
 <li><code>srfi/bitvectors.scm</code> - SRFI-4-like implementation of u1vectors using u8vectors
 <li><code>srfi/cvectors.scm</code> - SRFI-4-like implementation of complex vectors using float vectors
-<li><code>srfi/vectors.scm</code> - implementation of non-SRFI 4 procedures
-<li><code>srfi/:9.sls</code> - implementation of SRFI 9 <code>define-record-type</code> on top of R6RS
-<li><code>atexpander.scm</code> - a trivial Scheme script to expand <code>vectors.scm</code> into <code>@vectors.scm</code>
+<li><code>srfi/atvectors.scm</code> - implementation of non-SRFI 4 procedures
+<li><code>srfi/nine.sch</code> - implementation of SRFI 9 <code>define-record-type</code> on top of R6RS
+<li><code>srfi/chicken4-64.scm</code> - implementation of {s64,u64}vectors for Chicken 4
+<li><code>atexpander.scm</code> - a trivial Scheme script to expand files into their variants
 </ul>
 
 in addition to various tests.
 
+<p>The sample implementation uses little-endian representations of
+all homogeneous vector types (but it is easy to change to big-endian representation
+if desired).  Float vectors use IEEE 32-bit and 64-bit binary floats;
+complex vectors use two consecutive floats with the real part first and the imaginary part second.
+It is assumed that 64-bit integers are representable in the
+underlying Scheme implementation, which typically is only true if the
+Scheme has bignums.
+
 <p>The file <code>srfi/4-vec.scm</code> should be used only if bytevectors are unavailable.
 If a native implementation of SRFI 4 is available, it should be used instead of
 <code>srfi/4.scm</code>.
-The file <code>srfi/bytevectors.scm</code> uses little-endian representations of
-all homogeneous vector types (but it is easy to change to big-endian representation
-if desired).  Float vectors use little-endian IEEE 32-bit and 64-bit binary floats;
-complex vectors use two consecutive floats with the real part first and the imaginary part second.
 If a native implementation of <code>(rnrs bytevectors)</code> is available, it should be
 used instead of <code>srfi/bytevectors.scm</code>.
 The Guile SRFI 4 module is not used, because it does not correctly distinguish between different
