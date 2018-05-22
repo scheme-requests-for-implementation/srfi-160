@@ -172,8 +172,8 @@ such an integer vector.  Thus a Scheme system with bignum support must
 implement all the integer vector datatypes, but a Scheme system might
 only support <code>s8vector</code>s, <code>u8vector</code>s,
 <code>s16vector</code>s and <code>u16vector</code>s if it only
-supports small integers in the range -2<sup>29</sup> to 2<sup>29</sup>-1 which would
-be the case if they are represented as 32 bit fixnums with a 2-bit tag).
+supports small integers in the range -2<sup>29</sup> to 2<sup>29</sup>-1, which would
+be the case if they are represented as 32-bit fixnums with a 2-bit tag).
 
         <p></p>
 
@@ -184,7 +184,7 @@ types are disjoint from each other and from all other Scheme types.
 	<p></p>
 
 Each element of a homogeneous vector must be <i>valid</i>.  That is, for an
-integer vector it must be an exact integer within the
+integer vector, it must be an exact integer within the
 exclusive range specified above; for a float vector, it must be an
 inexact real number; and for a complex vector, it must be an inexact
 complex number.  It is an error to try to use a constructor or mutator
