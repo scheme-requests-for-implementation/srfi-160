@@ -40,7 +40,10 @@ vectors).
 
 <H1>Issues</H1>
 
-<p>None at present.</p>
+<ul>
+  <li>The sample implementation is not yet in the repository of this SRFI.</li>
+  <li>Consider <code>&lt;</code>, <code>></code>, <code>&lt;=</code>, <code>>=</code>.</li>
+  <li>Consider conversion to and from hex strings.</li></ul>
 
 <H1>Rationale</H1>
 
@@ -71,7 +74,7 @@ by providing the <code>u1vector</code>,
 <code>c64vector</code>, and <code>c128vector</code> types, and
 by providing analogues for most of the heterogeneous vector procedures
 of <a href="https://srfi.schemers.org/srfi-133/srfi-133.html">
-SRFI 133</a>.  There are additional procedures, many of which are 
+SRFI 133</a>.  There are additional procedures, many of which are
 more or less closely analogous to the string procedures of SRFI 152.
 
 <p>Note that there are no conversions between homogeneous vectors and strings in this SRFI.</p>
@@ -403,7 +406,7 @@ The procedures with the same semantics as SRFI 133 are marked with [SRFI 133].
 
 <p><code>(@vector= <i>elt=? @vec ...</i>) -> boolean</code> [SRFI 133]</p>
 
-<p>TODO: consider <, >, <=, >=.</p>
+<p>TODO: Consider <code>&lt;</code>, <code>></code>, <code>&lt;=</code>, <code>>=</code>.</li>
 
 <p><code>(@vector-contains <i>@vec1 @vec2</i>) -> index-or-false</code></p>
 
@@ -559,7 +562,7 @@ elements satisfy <i>pred</i>.</p>
 
 Each homogeneous vector datatype has an external representation which
 may be supported by the <code>read</code> and <code>write</code>
-procedures and by the program parser.  
+procedures and by the program parser.
 Conformance to this SRFI does not in itself require support for these
 external representations.
 
@@ -609,7 +612,7 @@ This SRFI is packaged as thirteen libraries named <code>(srfi
 160 @)</code>, or <code>(srfi :160 @)</code> in R6RS systems, on the
 assumption that most programs will use only a few homogeneous vector
 types.  There is also a SRFI 4 library named <code>(srfi 4)</code>,
-or (<code>srfi :4)</code> in R6RS systems, which implements SRFI 4
+or <code>(srfi :4)</code> in R6RS systems, which implements SRFI 4
 on top of R6RS bytevectors.  Lastly, a <code>(r6rs bytevector)</code>
 library is provided for R7RS systems.
 
@@ -617,17 +620,17 @@ library is provided for R7RS systems.
 <H1>Implementation</H1>
 
 <p>The homogeneous vector datatypes described here suggest a concrete
-implementation as a sequence of 8, 16, 32 or 64 bit elements, using
+implementation as a sequence of 8-, 16-, 32- or 64-bit elements, using
 two's complement representation for the signed exact integers, and
 single and double precision IEEE-754 floating point representation for
 the inexact reals.  Although this is a practical implementation on
 many modern byte-addressed machines, a different implementation is
 possible for machines which don't support these concrete numeric types
-(the CRAY-T90 for example does not have a 32 bit floating point
-representation and the 64 bit floating point representation does not
+(the CRAY-T90 for example does not have a 32-bit floating point
+representation and the 64-bit floating point representation does not
 conform to IEEE-754, so both the <code>f32vector</code> and
 <code>f64vector</code> datatypes could be represented the same way
-with 64 bit floating point numbers).</p>
+with 64-bit floating point numbers).</p>
 
 <p>The sample implementation is (not yet) in the repository of this SRFI.
 It is constructed in three layers.  The lowest layer is a portable
