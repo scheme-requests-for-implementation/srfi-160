@@ -43,9 +43,9 @@ vectors).
 <H1>Issues</H1>
 
 <ul>
-  <li>The sample implementation is not yet in the repository of this SRFI.</li>
-  <li>Consider <code>&lt;</code>, <code>></code>, <code>&lt;=</code>, <code>>=</code>.</li>
-  <li>Consider conversion to and from hex strings.</li></ul>
+  <li>None at present.</li>
+
+</ul>
 
 <H1>Rationale</H1>
 
@@ -64,11 +64,12 @@ of homogeneous vectors allows certain errors to be caught earlier.
 	<p></p>
 
 This SRFI specifies a set of homogeneous vector datatypes which cover
-the most practical case, that is where the type of the elements is
+the most practical cases, that is where the type of the elements is
 numeric (exact integer or inexact real or complex) and the precision and
 representation is efficiently implemented on the hardware of most
 current computer architectures (8, 16, 32 and 64 bit integers, either
 signed or unsigned, and 32 and 64 bit floating point numbers).
+
         <p></p>
 
 This SRFI extends <a href="http://srfi.schemers.org/srfi-4/srfi-4.html">SRFI 4</a>
@@ -83,7 +84,7 @@ more or less closely analogous to the string procedures of SRFI 152.
 
 <H1>Specification</H1>
 
-There are 9 datatypes of exact integer homogeneous vectors (which will
+There are nine datatypes of exact integer homogeneous vectors (which will
 be called integer vectors):
 
 <TABLE>
@@ -121,7 +122,7 @@ be called integer vectors):
 
 	<p></p>
 
-There are 2 datatypes of inexact real homogeneous vectors (which will
+There are two datatypes of inexact real homogeneous vectors (which will
 be called float vectors):
 
 <TABLE>
@@ -144,7 +145,7 @@ The only difference between the two float vector types is that
 
 	<p></p>
 
-And there are 2 datatypes of inexact complex homogeneous vectors (which will
+And there are two datatypes of inexact complex homogeneous vectors (which will
 be called complex vectors):
 
 <TABLE>
@@ -179,8 +180,8 @@ such an integer vector.  Thus a Scheme system with bignum support must
 implement all the integer vector datatypes, but a Scheme system might
 only support <code>s8vector</code>s, <code>u8vector</code>s,
 <code>s16vector</code>s and <code>u16vector</code>s if it only
-supports small integers in the range -2<sup>29</sup> to 2<sup>29</sup>-1, which would
-be the case if they are represented as 32-bit fixnums with a 2-bit tag).
+supports integers in the range -2<sup>29</sup> to 2<sup>29</sup>-1 (which would
+be the case if they are represented as 32-bit machine integers with a 2-bit tag).
 
         <p></p>
 
@@ -217,6 +218,8 @@ they construct different homogeneous vector types.  Furthermore, except as
 otherwise noted, the semantics of each procedure are those of the corresponding
 SRFI 133 procedure, except that it is an error to attempt
 to insert an invalid value into a homogeneous vector.
+Consequently, only a brief description of each procedure is given, and
+SRFI 133 (or in some cases SRFI 152) should be consulted for the details.
 
     <p>
       In the section containing specifications of procedures, the
@@ -316,6 +319,7 @@ to insert an invalid value into a homogeneous vector.
       <dd>
         Any number that is valid with respect to the <i>@vec</i>.
         <br />
+
         <br />
       </dd>
 
@@ -355,65 +359,89 @@ to insert an invalid value into a homogeneous vector.
         <br />
       </dd>
 
-      <dt><i>
-        something<sub>1</sub> something<sub>2</sub>
-        ...
-        something<sub>n</sub>
-      </i></dt>
-      <dd>
-        Exactly equivalent to the previous argument notation, but this
-        also indicates that <tt><i>n</i></tt> will be used later in the
-        procedure description.
-        <br />
-        <br />
-      </dd>
     </dl>
 
 
 <H2>Procedures</H2>
 
 <p>The procedures shared with SRFI 4 are marked with [SRFI 4].
-The procedures with the same semantics as SRFI 133 are marked with [SRFI 133].
+The procedures with the same semantics as SRFI 133 are marked with [SRFI 133]
+unless they are already marked with [SRFI 4].
 The procedures analogous to SRFI 152 string procedures are marked with [SRFI 152].
 
 <H3>Constructors</H3>
 
 <p><code>(make-@vector <i>size</i> [<i>fill</i>]) -> @vector </code> [SRFI 4]</p>
 
+<p>Returns a @vector whose length is <i>size</i>.  If <i>fill</i> is provided,
+all the elements of the @vector are initialized to it.</p>
+
 <p><code>(@vector <i>value ...</i>) -> @vector </code> [SRFI 4]</p>
+
+<p>Returns a @vector initialized with <i>values</i>.</p>
 
 <p><code>(@vector-unfold <i>f length seed ...</i>) -> @vector</code> [SRFI 133]</p>
 
+<p>Create a @vector whose length is <i>length</i> and initialize it by calling
+f, f(f), f(f(f))) ... on the <i>seed</i>.</p>
+
 <p><code>(@vector-unfold-right <i>f length seed ...</i>) -> @vector</code> [SRFI 133]</p>
+
+<p>The same as <code>@vector-unfold</code>, but initializes the @vector from right to left.</p>
 
 <p><code>(@vector-copy <i>@vec</i> [<i>start</i> [<i>end</i>]]) -> @vector</code> [SRFI 133]</p>
 
+<p>Makes a copy of the portion of <i>@vec</i> from <i>start</i> to <i>end</i> and returns it.</p>
+
 <p><code>(@vector-reverse-copy <i>@vec</i> [<i>start</i> [<i>end</i>]]) -> @vector</code> [SRFI 133]</p>
+
+<p>The same as <code>@vector-copy</code>, but in reverse order.</p>
 
 <p><code>(@vector-append <i>@vec ...</i>) -> @vector</code> [SRFI 133]</p>
 
+<p>Returns a @vector containing all the elements of the <i>@vecs</i> in order.</p>
+
 <p><code> (@vector-concatenate <i>list-of-@vectors</i>) -> @vector</code> [SRFI 133]</p>
+
+<p>The same as <code>@vector-append</code>, but takes a list of @vectors rather than
+multiple arguments.</p>
 
 <p><code>(@vector-append-subvectors [<i>@vec start end] ...</i>) -> @vector</code> [SRFI 133]</p>
 
+<p>Concatenates the result of applying <code>@vector-copy</code> to each triplet of
+<i>@vec, start, end</i> arguments, but may be implemented more efficiently.</p>
+
 <H3>Predicates</H3>
 
-<p><code>(@? <i>obj</i>) -> boolean</code> [SRFI 133]</p>
+<p><code>(@? <i>obj</i>) -> boolean</code></p>
 
 <p>Returns <code>#t</code> if <i>obj</i> is a valid element of an
 @vector, and <code>#f</code> otherwise.</p>
 
 <p><code>(@vector? <i>obj</i>) -> boolean</code> [SRFI 4]</p>
 
+<p>Returns <code>#t</code> if <i>obj</i> is a @vector, and <code>#f</code>
+otherwise.</p>
+
 <p><code>(@vector-empty? <i>@vec</i>) -> boolean</code> [SRFI 133]</p>
 
+Returns <code>#t</code> if <i>@vec</i> has a length of zero,
+and <code>#f</code> otherwise.
+
 <p><code>(@vector= <i>elt=? @vec ...</i>) -> boolean</code> [SRFI 133]</p>
+
+<p>Compares the <i>@vecs</i> for elementwise equality, using
+<i>elt=?</i> to do the comparisons.</p>
 
 <H3>Selectors</H3>
 
 <p><code>(@vector-ref <i>@vec i</i>) -> value</code> [SRFI 4]</p>
 
+<p>Returns the <i>i</i>th element of <i>@vec</i>.</p>
+
 <p><code>(@vector-length <i>@vec</i>) -> exact nonnegative integer</code> [SRFI 4]</p>
+
+<p>Returns the length of <i>@vec</i></p>
 
 <H3>Iteration</H3>
 
@@ -434,7 +462,7 @@ elements of <i>@vec</i>.</p>
 <p><code>(@vector-split-at <i>@vec n</i>) -> @vector and @vector</code> [SRFI 152]</p>
 
 <p>Returns two values, both @vectors.  The first is the result of
-<code>(@vector-drop <i>@vec n</i>)</code>, and the second is
+<code>(@vector-take <i>@vec n</i>)</code>, and the second is
 the result of <code>(@vector-drop <i>@vec n</i>)</code>.</p>
 
 <p><code>(@vector-segment <i>@vec n</i>) -> list</code> [SRFI 152]</p>
@@ -447,49 +475,84 @@ The last @vector may be shorter than <i>n</i>.</p>
 
 <p><code>(@vector-fold-right <i>kons knil @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> object</code> [SRFI 133]</p>
 
+<p>Folds <i>kons</i> over the elements of <i>@vec</i> 
+in increasing/decreasing order using <i>knil</i>
+as the initial value.</p>
+
 <p><code>(@vector-map <i>f @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> @vector</code> [SRFI 133]</p>
 
 <p><code>(@vector-map! <i>f @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> unspecified</code> [SRFI 133]</p>
 
 <p><code>(@vector-for-each <i>f @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> unspecified</code> [SRFI 133]</p>
 
+<p>Iterate over the elements of <i>@vec</i> and apply <i>f</i>
+to each, returning respectively a @vector of the results,
+an undefined value with the results placed back in <i>@vec</i>,
+and an undefined value with no change to <i>@vec</i>.</p>
+
 <p><code>(@vector-count <i>pred? @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> exact nonnegative integer</code> [SRFI 133]</p>
+
+Call <i>pred?</i> on the nth argument of each <i>@vec</i> and
+return the number of calls that return true.</p>
 
 <p><code>(@vector-cumulate <i>f knil @vec</i>) -> @vector</code> [SRFI 133]</p>
 
+<p>Like <code>@vector-fold</code>, but returns an @vector of partial results
+rather than just the final result.</p>
+
 <H3>Searching</H3>
 
-<p><code>(@vector-take-while <i>@vec pred</i> -> index</code> [SRFI 152]</p>
+<p><code>(@vector-take-while <i>@vec pred?</i> -> index</code> [SRFI 152]</p>
 
-<p><code>(@vector-take-while-right <i>@vec pred</i> -> index</code> [SRFI 152]</p>
+<p><code>(@vector-take-while-right <i>@vec pred?</i> -> index</code> [SRFI 152]</p>
 
-Returns the longest initial prefix/suffix of @vec such that all its
-elements satisfy <i>pred</i>.</p>
+<p>Return the shortest prefix/suffix of <i>@vec</i> all of whose elements
+satisfy <i>pred?</i>.
 
 <p><code>(@vector-drop-while <i>@vec pred</i> -> index</code> [SRFI 152]</p>
 
 <p><code>(@vector-drop-while-right <i>@vec pred</i> -> index</code> [SRFI 152]</p>
 
-Drops the longest initial prefix/suffix of @vec such that all its
+Drops the longest initial prefix/suffix of <i>@vec</i> such that all its
 elements satisfy <i>pred</i>.</p>
 
-<p><code>(@vector-index <i>pred? @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
+<p><code>(@vector-index <i>pred? @vec.</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
 
-<p><code>(@vector-index-right <i>pred? @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
+<p><code>(@vector-index-right <i>pred? @vec.</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
 
-<p><code>(@vector-skip <i>pred? @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
+<p>Return the index of the first/last element of <i>@vec</i> that
+satisfies <i>pred?</i>.
 
-<p><code>(@vector-skip-right <i>pred? @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
+<p><code>(@vector-skip <i>pred? @vec</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
+
+<p><code>(@vector-skip-right <i>pred? @vec.</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
+
+<p>Returns the index of the first/last element of <i>@vec</i> that
+does not satisfy <i>pred?</i>.
 
 <p><code>(@vector-binary-search <i>@vec value =</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
 
+<p>Returns the index of any element of <i>@vec</i> that is the same as
+<i>value</i> in the sense of the <i>=</i> argument using a binary search.
+Returns <code>#f</code> if there is no such element.</p>
+
 <p><code>(@vector-any <i>pred? @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> value or #f</code> [SRFI 133]</p>
+
+<p>Returns the first set of elements from the <i>@vecs</i> which
+satisfy <i>pred?</i>, or <code>#f</code> if there is no such set.</p>
 
 <p><code>(@vector-every <i>pred? @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> value or #f</code> [SRFI 133]</p>
 
+<p>If all sets of elements from the <i>@vecs</i> satisfy <i>pred?</i>,
+return the last set.  If none do, return <code>#f</code>.</p>
+
 <p><code>(@vector-partition <i>pred? @vec</i>) -> @vector and integer</code> [SRFI 133]</p>
 
-<p><code>(@vector-skip <i>pred? @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
+<p>Returns a @vector of the same type as <i>@vec</i>, but with all elements
+satisfying <i>pred?</i> in the leftmost part of the vector and the other
+elements in the remaining part.  The order of elements is otherwise
+preserved.  Returns two values, the new @vector and the number of 
+elements satisfying <i>pred?</i>.</p>
 
 <p><code>(@vector-filter <i>pred? @vec</i> -> @vector</code> [SRFI 152]</p>
 
@@ -502,19 +565,29 @@ elements satisfy <i>pred</i>.</p>
 
 <p><code>(@vector-set! <i>@vec i value</i>) -> unspecified</code> [SRFI 4]</p>
 
+<p>Sets the <i>i</i>th element of <i>@vec</i> to <i>value</i>.</p>
+
 <p><code>(@vector-swap! <i>@vec i j</i>) -> unspecified</code> [SRFI 133]</p>
+
+<p>Interchanges the <i>i</i>th and <i>j</i>th elements of <i>@vec</i>.</p>
 
 <p><code>(@vector-fill! <i>@vec fill</i> [<i>start</i> [<i>end</i>]]) -> unspecified</code> [SRFI 133]</p>
 
+<p>Fills the portion of <i>@vec</i> from <i>start</i> to <i>end</i>
+with the value <i>fill</i>.</p>
+
 <p><code>(@vector-reverse! <i>@vec</i> [<i>start</i> [<i>end</i>]]) -> unspecified</code> [SRFI 133]</p>
+
+<p>Reverses the portion of <i>@vec</i> from <i>start</i> to <i>end</i>.</p>
 
 <p><code>(@vector-copy! <i>@to at @from</i> [<i>start</i> [<i>end</i>]]) -> unspecified</code> [SRFI 133]</p>
 
+<p>Copies the portion of <i>@from</i> from <i>start</i> to <i>end</i>
+onto <i>@to</i>, starting at index <i>@at</i>.
+
 <p><code>(@vector-reverse-copy! <i>@to at @from</i> [<i>start</i> [<i>end</i>]]) -> unspecified</code> [SRFI 133]</p>
 
-<p><code>(@vector-unfold! <i>f @vec start end seed ...</i>) -> unspecified</code> [SRFI 133]</p>
-
-<p><code>(@vector-unfold-right! <i>f @vec start end seed ...</i>) -> unspecified</code> [SRFI 133]</p>
+<p>The same as <code>@vector-copy!</code>, but copies in reverse.</p>
 
 <H3>Conversion</H3>
 
@@ -528,11 +601,11 @@ elements satisfy <i>pred</i>.</p>
 
 <p><code>(@vector->vector <i>@vec</i>) -> vector</code></p>
 
-<p>Returns a heterogeneous vector with the same elements as <code><i>@vec</i></code>.</p>
-
 <p><code>(vector->@vector <i>vec</i>) -> @vector</code></p>
 
-<p>Returns a homogeneous vector with the same elements as <code><i>vec</i></code>.</p>
+
+<p>Returns a list, @vector, or heterogeneous vector with the same
+elements as the argument, in reverse order where specified.</p>
 
 <H2>Optional lexical syntax</H2>
 
@@ -604,31 +677,23 @@ implementation as a sequence of 8-, 16-, 32- or 64-bit elements, using
 two's complement representation for the signed exact integers, and
 single and double precision IEEE-754 floating point representation for
 the inexact reals.  Although this is a practical implementation on
-many modern byte-addressed machines, a different implementation is
-possible for machines which don't support these concrete numeric types
-(the CRAY-T90 for example does not have a 32-bit floating point
-representation and the 64-bit floating point representation does not
-conform to IEEE-754, so both the <code>f32vector</code> and
-<code>f64vector</code> datatypes could be represented the same way
-with 64-bit floating point numbers).</p>
+essentially all current architectures, a different implementation is
+possible for machines which don't support these concrete numeric types.</p>
 
-<p>The sample implementation is (not yet) in the repository of this SRFI.
-It is constructed in three layers.  The lowest layer is a portable
+<p>The sample implementation, which is (not yet) in the repository of this SRFI,
+is constructed in three layers.</p> 
+
+<h2>Bytevector library layer</h2>
+
+<p> The lowest layer is a portable
 implementation of the R6RS bytevector library.  So that it can be
 run and tested on R6RS systems, it is named <code>(r6rs bytevectors)</code>
-rather than <code>(rnrs bytevectors (6))</code>.</p>
+rather than <code>(rnrs bytevectors (6))</code>.
+If a native R6RS library is available, it is likely to be much more
+performant and should be used instead.  In particular, the
+string conversions can be implemented much more efficiently in a
+low-level language such as C.</p>
 
-<p><b>WARNING:</b>This implementation does not handle denormalized IEEE numbers correctly.
-Therefore, the procedures
-<code>bytevector-ieee-single-native-ref</code>,
-<code>bytevector-ieee-double-native-ref</code>,
-<code>bytevector-ieee-single-native-set!</code>,
-and <code>bytevector-ieee-double-native-set!</code>
-should be replaced by native procedures if at all possible.
-The other procedures with <code>-native-</code> in their names should also
-be replaced by native code for the sake of performance.
-On R6RS systems the <code>(rnrs bytevectors (6))</code>
-library should be used instead.</p>
 
 <p>The following files are provided for this layer:</p>
 
@@ -651,22 +716,45 @@ procedures <code>make-bytevector</code>, <code>bytevector?</code>,
 In Chicken these are simulated with u8vectors from the native SRFI 4
 implementation.</li>
 
+<li><code>r6rs/srfi-56-ieee-impl.scm</code> - Implementation of native IEEE procedures
+from SRFI 56.  Currently not working and unused,
+so Chibi does not correctly support IEEE operations.</li>
+
+<li><code>r6rs/chicken-ieee.scm</code> - Chicken implementation of native IEEE procedures
+in mixed Scheme and C.</li>
+
 <li><code>r6rs/r7rs-shim.scm</code> - R7RS shim.
-Provides the procedures required by both R6RS and R7RS that are not
-primitive.</li>
+Provides the R7RS procedures <code>bytevector-copy</code>,
+<code>bytevector-copy!</code>, <code>utf8->string</code>,
+and <code>string->utf8</code>, plus a trivial implementation
+of <code>r6rs:bytevector-copy</code>.  These can be used by
+any R5RS system.</li>
 
-<li><code>r6rs/chicken-tests.scm</code> - Chicken tests.
+<li><code>r6rs/shared-test.scm</code> - Shared tests (no dependencies).</li>
+
+<li><code>r6rs/chicken-test.scm</code> - Chicken test script wrapper.
 </li>
 
-<li><code>r6rs/guile-tests.scm</code> - Guile tests.
+<li><code>r6rs/guile-tests.scm</code> - Guile test script wrapper.
 </li>
 
-<li><code>r6rs/r7rs-tests.scm</code> - Chibi tests.
+<li><code>r6rs/r7rs-tests.scm</code> - Chibi test script wrapper.
 </li>
 
-<li><code>r6rs/r6rs-tests.scm</code> - R6RS tests for the native library.
+<li><code>r6rs/r6rs-tests.scm</code> - Native R6RS library test script wrapper.
 </li>
 </ul>
+
+<p>This layer requires implementations of <code>bitwise-and</code>,
+<code>bitwise-ior</code>, <code>arithmetic-shift</code>, and
+<code>bit-field</code> from SRFI 152,which provides portable but very slow implementations
+of all of these.  If native implementations are available, they should be used instead.</p>
+
+<p>Also required are implementations of the four native IEEE procedures.  These are
+trivial to do in (non-portable) C for each implementation, and very difficult to do
+both portably and accurately in Scheme.</p>
+
+<h2>SRFI-4 layer</h2>
 
 <p>The second layer consists of two SRFI 4 implementations plus analogues of SRFI 4
 for u1vectors and complex vectors.
@@ -689,7 +777,9 @@ using bytevector library.</li>
 <li><code>srfi/4-vec.scm</code> - implementation of SRFI 4 procedures
 using heterogeneous vectors.</li>
 
-<li><code>srfi/4.sld</code> - R7RS library for SRFI 4.</li>
+<li><code>srfi/4-macros.scm</code> - macros used by this layer.
+
+<li><code>srfi/:4.sld</code> - R7RS library for SRFI 4.</li>
 
 <li><code>srfi/4.sls</code> - R6RS library for SRFI 4.</li>
 
@@ -697,9 +787,12 @@ using heterogeneous vectors.</li>
 
 <li><code>srfi/cvectors.scm</code> - SRFI-4-like implementation of complex vectors using float vectors.</li>
 
-<li><code>srfi/chicken4-64.scm</code> - implementation of {s64,u64}vectors for Chicken 4.</li>
+<li><code>srfi/chicken4-64.scm</code> - implementation of {s64,u64}vectors for Chicken 4.
+Numbers that don't fit into Chicken 4 fixnums will appear as inexact numbers.</li>
 
 </ul>
+
+<h2>SRFI 160 layer</h2>
 
 <p>The third layer is SRFI 160 itself.</p>
 
