@@ -246,14 +246,14 @@
 (define *scratch* (make-bytevector 8))
 
 (define (bytevector-ieee-single-native-ref bv k)
-  (bytevector-copy! *scratch* 0 bv k 4)
+  (bytevector-copy! *scratch* 0 bv k (+ k 4))
   (let* ((port (open-input-bytevector *scratch*))
          (result (read-ieee-float32 port)))
     (close-input-port port)
     result))
 
 (define (bytevector-ieee-double-native-ref bv k)
-  (bytevector-copy! *scratch* 0 bv k 8)
+  (bytevector-copy! *scratch* 0 bv k (+ k 8))
   (let* ((port (open-input-bytevector *scratch*))
          (result (read-ieee-float64 port)))
     (close-input-port port)

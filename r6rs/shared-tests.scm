@@ -1,10 +1,10 @@
 (define pinfty +inf.0)
 (define minfty -inf.0)
-(define fakenan +nan.0)
+(define nanval +nan.0)
 
 ;(define pinfty 1.0e307)
 ;(define minfty -1.0e307)
-;(define fakenan 12345.0)
+;(define nanval 12345.0)
 
 ;;;; Basic tests of (rnrs bytevectors).
 
@@ -227,7 +227,7 @@
   (display "before test 43")
   (newline)
   (test 43 (let ((x (roundtrip
-                  fakenan
+                  nanval
                   bytevector-ieee-single-ref bytevector-ieee-single-set!
                   0 'big)))
           (= x x))
@@ -256,7 +256,7 @@
         => minfty)
 
   (test 48 (let ((x (roundtrip
-                  fakenan
+                  nanval
                   bytevector-ieee-single-ref bytevector-ieee-single-set!
                   0 'little)))
           (= x x))
@@ -285,7 +285,7 @@
         => minfty)
 
   (test 53 (let ((x (roundtrip
-                  fakenan
+                  nanval
                   bytevector-ieee-single-ref bytevector-ieee-single-set!
                   1 'big)))
           (= x x))
@@ -314,7 +314,7 @@
         => minfty)
 
   (test 58 (let ((x (roundtrip
-                  fakenan
+                  nanval
                   bytevector-ieee-single-ref bytevector-ieee-single-set!
                   1 'little)))
           (= x x))
@@ -343,7 +343,7 @@
         => minfty)
 
   (test 63 (let ((x (roundtrip
-                  fakenan
+                  nanval
                   bytevector-ieee-single-ref bytevector-ieee-single-set!
                   2 'big)))
           (= x x))
@@ -372,7 +372,7 @@
         => minfty)
 
   (test 68 (let ((x (roundtrip
-                  fakenan
+                  nanval
                   bytevector-ieee-single-ref bytevector-ieee-single-set!
                   2 'little)))
           (= x x))
@@ -401,7 +401,7 @@
         => minfty)
 
   (test 73 (let ((x (roundtrip
-                  fakenan
+                  nanval
                   bytevector-ieee-single-ref bytevector-ieee-single-set!
                   3 'big)))
           (= x x))
@@ -430,7 +430,7 @@
         => minfty)
 
   (test 78 (let ((x (roundtrip
-                  fakenan
+                  nanval
                   bytevector-ieee-single-ref bytevector-ieee-single-set!
                   3 'little)))
           (= x x))
@@ -459,7 +459,7 @@
         => minfty)
 
   (test 83 (let ((x (roundtrip
-                  fakenan
+                  nanval
                   bytevector-ieee-double-ref bytevector-ieee-double-set!
                   0 'big)))
           (= x x))
@@ -488,7 +488,7 @@
         => minfty)
 
   (test 88 (let ((x (roundtrip
-                  fakenan
+                  nanval
                   bytevector-ieee-double-ref bytevector-ieee-double-set!
                   0 'little)))
           (= x x))
@@ -517,7 +517,7 @@
         => minfty)
 
   (test 93 (let ((x (roundtrip
-                  fakenan
+                  nanval
                   bytevector-ieee-double-ref bytevector-ieee-double-set!
                   1 'big)))
           (= x x))
@@ -546,7 +546,7 @@
         => minfty)
 
   (test 98 (let ((x (roundtrip
-                  fakenan
+                  nanval
                   bytevector-ieee-double-ref bytevector-ieee-double-set!
                   1 'little)))
           (= x x))
@@ -575,7 +575,7 @@
         => minfty)
 
   (test 103 (let ((x (roundtrip
-                  fakenan
+                  nanval
                   bytevector-ieee-double-ref bytevector-ieee-double-set!
                   2 'big)))
           (= x x))
@@ -604,7 +604,7 @@
         => minfty)
 
   (test 108 (let ((x (roundtrip
-                  fakenan
+                  nanval
                   bytevector-ieee-double-ref bytevector-ieee-double-set!
                   2 'little)))
           (= x x))
@@ -633,7 +633,7 @@
         => minfty)
 
   (test 113 (let ((x (roundtrip
-                  fakenan
+                  nanval
                   bytevector-ieee-double-ref bytevector-ieee-double-set!
                   3 'big)))
           (= x x))
@@ -662,7 +662,7 @@
         => minfty)
 
   (test 118 (let ((x (roundtrip
-                  fakenan
+                  nanval
                   bytevector-ieee-double-ref bytevector-ieee-double-set!
                   3 'little)))
           (= x x))

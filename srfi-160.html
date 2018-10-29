@@ -608,6 +608,13 @@ onto <i>@to</i>, starting at index <i>@at</i>.
 <p>Returns a list, @vector, or heterogeneous vector with the same
 elements as the argument, in reverse order where specified.</p>
 
+<H3>Output</H3>
+
+<p><code>(write-@vector <i>vec</i> [ <i>port</i> ] -> unspecified</code></p>
+
+<p>Prints to <i>port</i> (the current output port by default) a representation of
+<i>@vec</i> in the lexical syntax explained below.</p>
+
 <H2>Optional lexical syntax</H2>
 
 Each homogeneous vector datatype has an external representation which
@@ -699,12 +706,14 @@ low-level language such as C.</p>
 <p>The following files are provided for this layer:</p>
 
 <ul>
+<li><code>include</code> - an R6RS library for file inclusion
+</li>
+
 <li><code>r6rs.bytevectors.scm</code> - Chicken 4 library.
 </li>
 
 <li><code>r6rs/bytevectors.scm</code> - Guile library.
-Can be adapted to any R6RS system that provides
-<code>include</code>.</lcode>
+</li>
 
 <li><code>r6rs/bytevectors.sld</code> - Chibi library.
 Can be adapted to any R7RS system.</li>
@@ -780,16 +789,15 @@ using heterogeneous vectors.</li>
 
 <li><code>srfi/4-macros.scm</code> - macros used by this layer.
 
-<li><code>srfi/:4.sld</code> - R7RS library for SRFI 4.</li>
+<li><code>srfi/4.sld</code> - R7RS library for SRFI 4.</li>
 
-<li><code>srfi/4.sls</code> - R6RS library for SRFI 4.</li>
+<li><code>srfi/%2f4.sls</code> - R6RS library for SRFI 4.</li>
 
 <li><code>srfi/bitvectors.scm</code> - SRFI-4-like implementation of u1vectors using u8vectors.</li>
 
 <li><code>srfi/cvectors.scm</code> - SRFI-4-like implementation of complex vectors using float vectors.</li>
 
-<li><code>srfi/chicken4-64.scm</code> - implementation of {s64,u64}vectors for Chicken 4.
-Numbers that don't fit into Chicken 4 fixnums will appear as inexact numbers.</li>
+<li><code>srfi/chicken4-64.scm</code> - implementation of {s64,u64}vectors for Chicken 4.</li>
 
 </ul>
 
@@ -802,7 +810,7 @@ Numbers that don't fit into Chicken 4 fixnums will appear as inexact numbers.</l
 <ul>
 <li><code>srfi.160.at.scm</code> - Chicken libraries on top of native Chicken SRFI 4</li>
 
-<li><code>srfi/:160/at.scm</code> - Guile libraries on top of native Guile SRFI 4.
+<li><code>srfi/%2f160/at.scm</code> - Guile libraries on top of native Guile SRFI 4.
 Can be adapted to any R6RS system that provides <code>include</code>.</li>
 
 <li><code>srfi/160/at.scm</code> - Chibi libraries on top of SRFI 4.

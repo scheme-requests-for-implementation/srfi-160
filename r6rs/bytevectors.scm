@@ -77,7 +77,7 @@
     (only (rnrs r5rs) quotient remainder)
     (for (only (rnrs control) do) expand)
     (only (rnrs mutable-strings) string-set!)
-    (only (guile) include))
+    (include)
 
   (include "r7rs-shim.scm")
   (include "bytevectors-impl.scm")
