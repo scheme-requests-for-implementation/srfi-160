@@ -57,22 +57,22 @@
     (define (r6rs:error who what . irritants)
        (apply error what irritants))
 
-    (define (infinite? x) (not (or (finite? x) (nan? x))))
+    (define (infinite? x) (not (or (= x +inf.0) (= x -inf.0))))
 
     ;; define R6RS bytevector-copy! in terms of R7RS version
     (define (r6rs:bytevector-copy! source source-start target target-start count)
       (bytevector-copy! target target-start source source-start (+ source-start count)))
    
     ;; dummy native-ref procedures
-    (define (bytevector-ieee-single-native-ref bv k) 5.0)
-    (define (bytevector-ieee-double-native-ref bv k) 5.0)
-    (define (bytevector-ieee-single-native-set! bv k num) 5.0)
-    (define (bytevector-ieee-double-native-set! bv k num) 5.0)
+;    (define (bytevector-ieee-single-native-ref bv k) 5.0)
+;    (define (bytevector-ieee-double-native-ref bv k) 5.0)
+;    (define (bytevector-ieee-single-native-set! bv k num) 5.0)
+;    (define (bytevector-ieee-double-native-set! bv k num) 5.0)
 
   ) ; end begin
 
   (include "bytevectors-impl.scm")
-;  (include "srfi-56-ieee-impl.scm")
+  (include "srfi-56-ieee-impl.scm")
 
 ) ; r6rs bytevectors
 

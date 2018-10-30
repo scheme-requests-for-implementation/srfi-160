@@ -1,3 +1,11 @@
+(define pinfty +inf.0)
+(define minfty -inf.0)
+(define nanval +nan.0)
+
+;(define pinfty 1.0e307)
+;(define minfty -1.0e307)
+;(define nanval 12345.0)
+
 ;;;; Basic tests of (rnrs bytevectors).
 
 (define (iota count . o)
@@ -202,18 +210,24 @@
 
   ; Single precision, offset 0, big-endian
 
+  (display "before test 41")
+  (newline)
   (test 41 (roundtrip
-         +inf.0
+         pinfty
          bytevector-ieee-single-ref bytevector-ieee-single-set! 0 'big)
-        => +inf.0)
+        => pinfty)
 
+  (display "before test 42")
+  (newline)
   (test 42 (roundtrip
-         -inf.0
+         minfty
          bytevector-ieee-single-ref bytevector-ieee-single-set! 0 'big)
-        => -inf.0)
+        => minfty)
 
+  (display "before test 43")
+  (newline)
   (test 43 (let ((x (roundtrip
-                  +nan.0
+                  nanval
                   bytevector-ieee-single-ref bytevector-ieee-single-set!
                   0 'big)))
           (= x x))
@@ -232,17 +246,17 @@
   ; Single precision, offset 0, little-endian
 
   (test 46 (roundtrip
-         +inf.0
+         pinfty
          bytevector-ieee-single-ref bytevector-ieee-single-set! 0 'little)
-        => +inf.0)
+        => pinfty)
 
   (test 47 (roundtrip
-         -inf.0
+         minfty
          bytevector-ieee-single-ref bytevector-ieee-single-set! 0 'little)
-        => -inf.0)
+        => minfty)
 
   (test 48 (let ((x (roundtrip
-                  +nan.0
+                  nanval
                   bytevector-ieee-single-ref bytevector-ieee-single-set!
                   0 'little)))
           (= x x))
@@ -261,17 +275,17 @@
   ; Single precision, offset 1, big-endian
 
   (test 51 (roundtrip
-         +inf.0
+         pinfty
          bytevector-ieee-single-ref bytevector-ieee-single-set! 1 'big)
-        => +inf.0)
+        => pinfty)
 
   (test 52 (roundtrip
-         -inf.0
+         minfty
          bytevector-ieee-single-ref bytevector-ieee-single-set! 1 'big)
-        => -inf.0)
+        => minfty)
 
   (test 53 (let ((x (roundtrip
-                  +nan.0
+                  nanval
                   bytevector-ieee-single-ref bytevector-ieee-single-set!
                   1 'big)))
           (= x x))
@@ -289,18 +303,18 @@
 
   ; Single precision, offset 1, little-endian
 
-#;  (test 56 (roundtrip
-         +inf.0
+  (test 56 (roundtrip
+         pinfty
          bytevector-ieee-single-ref bytevector-ieee-single-set! 1 'little)
-        => +inf.0)
+        => pinfty)
 
   (test 57 (roundtrip
-         -inf.0
+         minfty
          bytevector-ieee-single-ref bytevector-ieee-single-set! 1 'little)
-        => -inf.0)
+        => minfty)
 
   (test 58 (let ((x (roundtrip
-                  +nan.0
+                  nanval
                   bytevector-ieee-single-ref bytevector-ieee-single-set!
                   1 'little)))
           (= x x))
@@ -319,17 +333,17 @@
   ; Single precision, offset 2, big-endian
 
   (test 61 (roundtrip
-         +inf.0
+         pinfty
          bytevector-ieee-single-ref bytevector-ieee-single-set! 2 'big)
-        => +inf.0)
+        => pinfty)
 
   (test 62 (roundtrip
-         -inf.0
+         minfty
          bytevector-ieee-single-ref bytevector-ieee-single-set! 2 'big)
-        => -inf.0)
+        => minfty)
 
   (test 63 (let ((x (roundtrip
-                  +nan.0
+                  nanval
                   bytevector-ieee-single-ref bytevector-ieee-single-set!
                   2 'big)))
           (= x x))
@@ -348,17 +362,17 @@
   ; Single precision, offset 2, little-endian
 
   (test 66 (roundtrip
-         +inf.0
+         pinfty
          bytevector-ieee-single-ref bytevector-ieee-single-set! 2 'little)
-        => +inf.0)
+        => pinfty)
 
   (test 67 (roundtrip
-         -inf.0
+         minfty
          bytevector-ieee-single-ref bytevector-ieee-single-set! 2 'little)
-        => -inf.0)
+        => minfty)
 
   (test 68 (let ((x (roundtrip
-                  +nan.0
+                  nanval
                   bytevector-ieee-single-ref bytevector-ieee-single-set!
                   2 'little)))
           (= x x))
@@ -377,17 +391,17 @@
   ; Single precision, offset 3, big-endian
 
   (test 71 (roundtrip
-         +inf.0
+         pinfty
          bytevector-ieee-single-ref bytevector-ieee-single-set! 3 'big)
-        => +inf.0)
+        => pinfty)
 
   (test 72 (roundtrip
-         -inf.0
+         minfty
          bytevector-ieee-single-ref bytevector-ieee-single-set! 3 'big)
-        => -inf.0)
+        => minfty)
 
   (test 73 (let ((x (roundtrip
-                  +nan.0
+                  nanval
                   bytevector-ieee-single-ref bytevector-ieee-single-set!
                   3 'big)))
           (= x x))
@@ -406,17 +420,17 @@
   ; Single precision, offset 3, little-endian
 
   (test 76 (roundtrip
-         +inf.0
+         pinfty
          bytevector-ieee-single-ref bytevector-ieee-single-set! 3 'little)
-        => +inf.0)
+        => pinfty)
 
   (test 77 (roundtrip
-         -inf.0
+         minfty
          bytevector-ieee-single-ref bytevector-ieee-single-set! 3 'little)
-        => -inf.0)
+        => minfty)
 
   (test 78 (let ((x (roundtrip
-                  +nan.0
+                  nanval
                   bytevector-ieee-single-ref bytevector-ieee-single-set!
                   3 'little)))
           (= x x))
@@ -435,17 +449,17 @@
   ; Double precision, offset 0, big-endian
 
   (test 81 (roundtrip
-         +inf.0
+         pinfty
          bytevector-ieee-double-ref bytevector-ieee-double-set! 0 'big)
-        => +inf.0)
+        => pinfty)
 
   (test 82 (roundtrip
-         -inf.0
+         minfty
          bytevector-ieee-double-ref bytevector-ieee-double-set! 0 'big)
-        => -inf.0)
+        => minfty)
 
   (test 83 (let ((x (roundtrip
-                  +nan.0
+                  nanval
                   bytevector-ieee-double-ref bytevector-ieee-double-set!
                   0 'big)))
           (= x x))
@@ -464,17 +478,17 @@
   ; Double precision, offset 0, little-endian
 
   (test 86 (roundtrip
-         +inf.0
+         pinfty
          bytevector-ieee-double-ref bytevector-ieee-double-set! 0 'little)
-        => +inf.0)
+        => pinfty)
 
   (test 87 (roundtrip
-         -inf.0
+         minfty
          bytevector-ieee-double-ref bytevector-ieee-double-set! 0 'little)
-        => -inf.0)
+        => minfty)
 
   (test 88 (let ((x (roundtrip
-                  +nan.0
+                  nanval
                   bytevector-ieee-double-ref bytevector-ieee-double-set!
                   0 'little)))
           (= x x))
@@ -493,17 +507,17 @@
   ; Double precision, offset 1, big-endian
 
   (test 91 (roundtrip
-         +inf.0
+         pinfty
          bytevector-ieee-double-ref bytevector-ieee-double-set! 1 'big)
-        => +inf.0)
+        => pinfty)
 
   (test 92 (roundtrip
-         -inf.0
+         minfty
          bytevector-ieee-double-ref bytevector-ieee-double-set! 1 'big)
-        => -inf.0)
+        => minfty)
 
   (test 93 (let ((x (roundtrip
-                  +nan.0
+                  nanval
                   bytevector-ieee-double-ref bytevector-ieee-double-set!
                   1 'big)))
           (= x x))
@@ -522,17 +536,17 @@
   ; Double precision, offset 1, little-endian
 
   (test 96 (roundtrip
-         +inf.0
+         pinfty
          bytevector-ieee-double-ref bytevector-ieee-double-set! 1 'little)
-        => +inf.0)
+        => pinfty)
 
   (test 97 (roundtrip
-         -inf.0
+         minfty
          bytevector-ieee-double-ref bytevector-ieee-double-set! 1 'little)
-        => -inf.0)
+        => minfty)
 
   (test 98 (let ((x (roundtrip
-                  +nan.0
+                  nanval
                   bytevector-ieee-double-ref bytevector-ieee-double-set!
                   1 'little)))
           (= x x))
@@ -551,17 +565,17 @@
   ; Double precision, offset 2, big-endian
 
   (test 101 (roundtrip
-         +inf.0
+         pinfty
          bytevector-ieee-double-ref bytevector-ieee-double-set! 2 'big)
-        => +inf.0)
+        => pinfty)
 
   (test 102 (roundtrip
-         -inf.0
+         minfty
          bytevector-ieee-double-ref bytevector-ieee-double-set! 2 'big)
-        => -inf.0)
+        => minfty)
 
   (test 103 (let ((x (roundtrip
-                  +nan.0
+                  nanval
                   bytevector-ieee-double-ref bytevector-ieee-double-set!
                   2 'big)))
           (= x x))
@@ -580,17 +594,17 @@
   ; Double precision, offset 2, little-endian
 
   (test 106 (roundtrip
-         +inf.0
+         pinfty
          bytevector-ieee-double-ref bytevector-ieee-double-set! 2 'little)
-        => +inf.0)
+        => pinfty)
 
   (test 107 (roundtrip
-         -inf.0
+         minfty
          bytevector-ieee-double-ref bytevector-ieee-double-set! 2 'little)
-        => -inf.0)
+        => minfty)
 
   (test 108 (let ((x (roundtrip
-                  +nan.0
+                  nanval
                   bytevector-ieee-double-ref bytevector-ieee-double-set!
                   2 'little)))
           (= x x))
@@ -609,17 +623,17 @@
   ; Double precision, offset 3, big-endian
 
   (test 111 (roundtrip
-         +inf.0
+         pinfty
          bytevector-ieee-double-ref bytevector-ieee-double-set! 3 'big)
-        => +inf.0)
+        => pinfty)
 
   (test 112 (roundtrip
-         -inf.0
+         minfty
          bytevector-ieee-double-ref bytevector-ieee-double-set! 3 'big)
-        => -inf.0)
+        => minfty)
 
   (test 113 (let ((x (roundtrip
-                  +nan.0
+                  nanval
                   bytevector-ieee-double-ref bytevector-ieee-double-set!
                   3 'big)))
           (= x x))
@@ -638,17 +652,17 @@
   ; Double precision, offset 3, little-endian
 
   (test 116 (roundtrip
-         +inf.0
+         pinfty
          bytevector-ieee-double-ref bytevector-ieee-double-set! 3 'little)
-        => +inf.0)
+        => pinfty)
 
   (test 117 (roundtrip
-         -inf.0
+         minfty
          bytevector-ieee-double-ref bytevector-ieee-double-set! 3 'little)
-        => -inf.0)
+        => minfty)
 
   (test 118 (let ((x (roundtrip
-                  +nan.0
+                  nanval
                   bytevector-ieee-double-ref bytevector-ieee-double-set!
                   3 'little)))
           (= x x))
