@@ -33,14 +33,15 @@ John Cowan (based on SRFI 4 by Marc Feeley)
 
 <H1>Abstract</H1>
 
-This SRFI describes a set of datatypes for vectors whose elements are
-of the same numeric type (signed or unsigned exact integer or inexact
-number of a given precision).  These datatypes support operations
-analogous to the Scheme vector type, but they are distinct datatypes.
+This SRFI describes a set of operations on SRFI 4 homogeneous vector
+types (plus a few additional types) that are closely analogous
+to the vector operations library,
+<a href="http://srfi.schemers.org/srfi-133/srfi-133.html">
+SRFI 133</a>.
 An external representation is specified which may be supported by the
 <code>read</code> and <code>write</code> procedures and by the program
-parser (i.e. programs can contain references to literal homogeneous
-vectors).
+parser so that programs can contain references to literal homogeneous
+vectors.
 
 <H1>Issues</H1>
 
@@ -77,10 +78,12 @@ signed or unsigned, and 32 and 64 bit floating point numbers).
 This SRFI extends <a href="http://srfi.schemers.org/srfi-4/srfi-4.html">SRFI 4</a>
 by providing the <code>u1vector</code>,
 <code>c64vector</code>, and <code>c128vector</code> types, and
-by providing analogues for most of the heterogeneous vector procedures
+by providing analogues for almost all of the heterogeneous vector procedures
 of <a href="https://srfi.schemers.org/srfi-133/srfi-133.html">
-SRFI 133</a>.  There are additional procedures, many of which are
-more or less closely analogous to the string procedures of SRFI 152.
+SRFI 133</a>.  There are some additional procedures, most of which are
+closely analogous to the string procedures of
+<a href="https://srfi.schemers.org/srfi-152/srfi-152.html">
+SRFI 152</a>.
 
 <p>Note that there are no conversions between homogeneous vectors and strings in this SRFI.</p>
 
@@ -122,6 +125,8 @@ be called integer vectors):
 </TR>
 </TABLE>
 
+All but the first are part of SRFI 4.
+
 	<p></p>
 
 There are two datatypes of inexact real homogeneous vectors (which will
@@ -139,10 +144,11 @@ be called float vectors):
 </TR>
 </TABLE>
 
+These are part of SRFI 4.
 	<p></p>
 
 The only difference between the two float vector types is that
-<code>f64vector</code>s preserve at least as much precision as
+<code>f64vector</code>s preserve at least as much precision and range as
 <code>f32vector</code>s (see the implementation section for details).
 
 	<p></p>
@@ -162,10 +168,12 @@ be called complex vectors):
 </TR>
 </TABLE>
 
+These are not part of SRFI 4.
+
 	<p></p>
 
 The only difference between the two complex vector types is that
-<code>c128vector</code>s preserve at least as much precision as
+<code>c128vector</code>s preserve at least as much precision and range as
 <code>c64vector</code>s (see the implementation section for details).
 
 	<p></p>
@@ -188,7 +196,7 @@ be the case if they are represented as 32-bit machine integers with a 2-bit tag)
         <p></p>
 
 Scheme systems which conform to this SRFI and also conform to either R6RS or R7RS
-must use the same datatype for bytevectors and for u8vectors.  All other homogeneous vector
+should use the same datatype for bytevectors and for u8vectors.  All other homogeneous vector
 types are disjoint from each other and from all other Scheme types.
 
 	<p></p>
@@ -205,7 +213,7 @@ to set an element to an invalid value.
       multiple vectors in parallel stop iterating and produce the final
       result when the end of the shortest vector is reached.  The sole
       exception is <tt>@vector=</tt>, which
-      automatically returns <tt>#f</tt> if the vectors' lengths vary.
+      automatically returns <tt>#f</tt> if the vectors' lengths are different.
     </p>
 
 
@@ -461,12 +469,6 @@ elements of <i>@vec</i>.</p>
 <p>Returns a @vector containing all except the first/last <i>n</i>
 elements of <i>@vec</i>.</p>
 
-<p><code>(@vector-split-at <i>@vec n</i>) -> @vector and @vector</code> [SRFI 152]</p>
-
-<p>Returns two values, both @vectors.  The first is the result of
-<code>(@vector-take <i>@vec n</i>)</code>, and the second is
-the result of <code>(@vector-drop <i>@vec n</i>)</code>.</p>
-
 <p><code>(@vector-segment <i>@vec n</i>) -> list</code> [SRFI 152]</p>
 
 <p>Returns a list of @vectors, each of which contains <i>n</i>
@@ -611,7 +613,7 @@ elements as the argument, in reverse order where specified.</p>
 
 <H3>Output</H3>
 
-<p><code>(write-@vector <i>vec</i> [ <i>port</i> ] -> unspecified</code></p>
+<p><code>(write-@vector <i>vec</i> [ <i>port</i> ] ) -> unspecified</code></p>
 
 <p>Prints to <i>port</i> (the current output port by default) a representation of
 <i>@vec</i> in the lexical syntax explained below.</p>
@@ -669,168 +671,98 @@ systems that use the <code>read</code> procedure to parse programs.
 <p>This SRFI is packaged as thirteen libraries named <code>(srfi
 160 @)</code>, or <code>(srfi :160 @)</code> in R6RS systems, on the
 assumption that most programs will use only a few homogeneous vector
-types.  There is also a SRFI 4 library named <code>(srfi 4)</code>,
-or <code>(srfi :4)</code> in R6RS systems, which implements SRFI 4
-on top of R6RS bytevectors.  Lastly, a <code>(r6rs bytevector)</code>
-library is provided for R7RS systems;
-it exports the same identifiers with the same meanings as the R6RS
-standard library <code>(rnrs bytevectors (6))</code>, except that
-because that library's definition of <code>bytevector-copy!</code>
-conflicts with R7RS, it is exported as <code>r6rs:bytevector-copy!</code>.
-This is the same convention that Larceny uses.</p>
+types.</p>
 
 <H1>Implementation</H1>
 
-<p>The homogeneous vector datatypes described here suggest a concrete
-implementation as a sequence of 8-, 16-, 32- or 64-bit elements, using
-two's complement representation for the signed exact integers, and
-single and double precision IEEE-754 floating point representation for
-the inexact reals.  Although this is a practical implementation on
-essentially all current architectures, a different implementation is
-possible for machines which don't support these concrete numeric types.</p>
+<h2>The SRFI 160 library</h2>
 
-<p>The sample implementation, which is (not yet) in the repository of this SRFI,
-is constructed in three layers.</p> 
+<p>The sample implementation is (not yet) in the repository of this SRFI.
+It depends on an implementation of SRFI 4.  For systems that do not have
+a native SRFI 4 implementation, the version in the
+<a href="https://github.com/scheme-requests-for-implementation/srfi-4/tree/master/contrib/cowan">
+<code>contrib/cowan</code> directory</a> of the SRFI 4 repository may be used.</p>
 
-<h2>Bytevector library layer</h2>
+<p>After downloading the source, it is necessary to run the <code>atexpander.sh</code>
+shell script in order to generate the individual files for the different types.
+This will take <code>at.sls</code>, for example, and create the files
+<code>u8.sls</code>, <code>s8.sls</code>, ... <code>c128.sls</code>.</p>
 
-<p> The lowest layer is a portable
-implementation of the R6RS bytevector library.  So that it can be
-run and tested on R6RS systems, it is named <code>(r6rs bytevectors)</code>
-rather than <code>(rnrs bytevectors (6))</code>.
-If a native R6RS library is available, it is likely to be much more
-performant and should be used instead.  In particular, the
-string conversions can be implemented much more efficiently in a
-low-level language such as C.</p>
-
-
-<p>The following files are provided for this layer:</p>
+<p>The following files are provided:</p>
 
 <ul>
-<li><code>include</code> - an R6RS library for file inclusion
-</li>
+<li><code>srfi.160.at.scm</code> - Skeleton for Chicken libraries.</li>
 
-<li><code>r6rs.bytevectors.scm</code> - Chicken 4 library.
-</li>
+<li><code>srfi/%3a160/at.scm</code> - Skeleton for Guile and Ypsilon libraries.
+Can be adapted to any R6RS system.</li>
 
-<li><code>r6rs/bytevectors.scm</code> - Guile library.
-</li>
-
-<li><code>r6rs/bytevectors.sld</code> - Chibi library.
+<li><code>srfi/160/at.sld</code> - Skeleton for Chibi libraries.
 Can be adapted to any R7RS system.</li>
 
-<li><code>r6rs/bytevectors-impl.scm</code> - Shared implementation.
-Can be adapted to any R5RS system that provides the primitive bytevector
-procedures <code>make-bytevector</code>, <code>bytevector?</code>,
-<code>bytevector-length</code>,
-<code>bytevector-u8-ref</code>, and <code>bytevector-u8-set!</code>.
-In Chicken these are simulated with u8vectors from the native SRFI 4
-implementation.</li>
+<li><code>srfi/160/at-133-impl.scm</code> - Skeleton for shared implementation of SRFI 133 procedures.</li>
 
-<li><code>r6rs/srfi-56-ieee-impl.scm</code> - Implementation of native IEEE procedures
-from SRFI 56.  Currently not working and unused,
-so Chibi does not correctly support IEEE operations.</li>
+<li><code>srfi/160/at-152-impl.scm</code> - Skeleton for shared implementation of SRFI 152 procedures.</li>
 
-<li><code>r6rs/chicken-ieee.scm</code> - Chicken implementation of native IEEE procedures
-in mixed Scheme and C.</li>
+<li><code>srfi/160/at-other-impl.scm</code> - Skeleton for shared implementation of other procedures.</li>
 
-<li><code>r6rs/r7rs-shim.scm</code> - R7RS shim.
-Provides the R7RS procedures <code>bytevector-copy</code>,
-<code>bytevector-copy!</code>, <code>utf8->string</code>,
-and <code>string->utf8</code>, plus a trivial implementation
-of <code>r6rs:bytevector-copy</code>.  These can be used by
-any R5RS system.</li>
+<li><code>atexpander.sh</code> - A trivial shell script using <code>sed</code>
+to expand files into their variants.</li>
 
-<li><code>r6rs/shared-test.scm</code> - Shared tests (no dependencies).</li>
+<li><code>srfi/160/shared-tests.scm</code> - Shared tests (no dependencies).</li>
 
-<li><code>r6rs/chicken-test.scm</code> - Chicken test script wrapper.
-</li>
+<li><code>srfi/160/chicken-tests.scm</code> - Chicken 5 test wrapper.</li>
 
-<li><code>r6rs/guile-tests.scm</code> - Guile test script wrapper.
-</li>
+<li><code>srfi/160/guile-tests.scm</code> - Guile test wrapper.</li>
 
-<li><code>r6rs/r7rs-tests.scm</code> - Chibi test script wrapper.
-</li>
+<li><code>srfi/160/chibi-tests.scm</code> - Chibi test wrapper.</li>
 
-<li><code>r6rs/r6rs-tests.scm</code> - Native R6RS library test script wrapper.
-</li>
+<li><code>srfi/160/ypsilon-tests.scm</code> - Ypsilon test wrapper.</li>
+
 </ul>
 
-<p>This layer requires implementations of <code>bitwise-and</code>,
-<code>bitwise-ior</code>, <code>arithmetic-shift</code>, and
-<code>bit-field</code> from SRFI 152,which provides portable but very slow implementations
-of all of these.  If native implementations are available, they should be used instead.</p>
+<h2>The SRFI x4 library</h2>
 
-<p>Also required are implementations of the four native IEEE procedures.  These are
-trivial to do in (non-portable) C for each implementation, and very difficult to do
-both portably and accurately in Scheme.</p>
+<p>The library <code>(srfi x4)</code> is in the repository of this SRFI.
+It supports three additional
+homogeneous vector types beyond the scope of SRFI 4:
+u1vectors, which support the values 0 and 1 and serve as bit vectors;
+c64vectors, which support inexact complex numbers as two IEEE 32-bit values;
+and c128vectors, which support inexact complex numbers as two IEEE 64-bit values.
+The same eight procedures are available as in SRFI 4.
+</p>
 
-<h2>SRFI-4 layer</h2>
+<p>The implementation depends on SRFI 4 and some bitwise operations.</p>
 
-<p>The second layer consists of two SRFI 4 implementations plus analogues of SRFI 4
-for u1vectors and complex vectors.
-One implementation is layered on top of <code>(rnrs bytevectors)</code>
-or <code>(r6rs bytevectors)</code>, and should be used if the implementation provides
-primitive bytevectors.  The second implementation is layered on top of plain Scheme
-vectors.  Both implementations require either SRFI 9, R6RS record types,
-or R7RS record types.</p>
-
-<p>If a native SRFI 4 implementation is available, it should be used instead of the
-implementation at this layer.  However, the SRFI 4 analogues for u1vectors and
-complex vectors will still be required.
-
-<p>The following files are provided for this layer:</p>
+<p>The following files are provided:</p>
 
 <ul>
-<li><code>srfi/4-impl.scm</code> - implementation of SRFI 4 procedures
-using bytevector library.</li>
+<li><code>srfi.x4.scm</code> - Chicken 5 <code>(srfi x4)</code> library.</li>
 
-<li><code>srfi/4-vec.scm</code> - implementation of SRFI 4 procedures
-using heterogeneous vectors.</li>
+<li><code>srfi/x4.scm</code> - Chibi <code>(srfi x4)</code> library.</li>
 
-<li><code>srfi/4-macros.scm</code> - macros used by this layer.
+<li><code>srfi/%a3x4.scm</code> - Guile and Ypsilon <code>(srfi :x4)</code> library.</li>
 
-<li><code>srfi/4.sld</code> - R7RS library for SRFI 4.</li>
+<li><code>srfi/x4/complex.scm</code> - Complex number implementation on top of SRFI 4.</li>
 
-<li><code>srfi/%3a4.sls</code> - R6RS library for SRFI 4.</li>
+<li><code>srfi/x4/bit.scm</code> - Bit vector number implementation on top of SRFI 4.</li>
 
-<li><code>srfi/bitvectors.scm</code> - SRFI-4-like implementation of u1vectors using u8vectors.</li>
+<li><code>srfi/x4/bitwise-core.scm</code> - Portable (but slow) bitwise implementation from SRFI 151.</li>
 
-<li><code>srfi/cvectors.scm</code> - SRFI-4-like implementation of complex vectors using float vectors.</li>
+<li><code>srfi/x4/r6rec.scm</code> - Record-type definitions for R6RS.</li>
 
-<li><code>srfi/chicken4-64.scm</code> - implementation of {s64,u64}vectors for Chicken 4.</li>
+<li><code>srfi/x4/r7rec.scm</code> - Record-type definitions for R7RS.</li>
+
+<li><code>srfi/x4/shared-tests.scm</code> - Shared tests (no dependencies).</li>
+
+<li><code>srfi/x4/chicken-tests.scm</code> - Chicken 5 test script wrapper.</li>
+
+<li><code>srfi/x4/guile-tests.scm</code> - Guile test script wrapper.</li>
+
+<li><code>srfi/x4/chibi-tests.scm</code> - Chibi test script wrapper.</li>
+
+<li><code>srfi/x4/ypsilon-tests.scm</code> - Ypsilon test script wrapper.</li>
 
 </ul>
-
-<h2>SRFI 160 layer</h2>
-
-<p>The third layer is SRFI 160 itself.</p>
-
-<p>The following files are provided for this layer:</p>
-
-<ul>
-<li><code>srfi.160.at.scm</code> - Chicken libraries on top of native Chicken SRFI 4</li>
-
-<li><code>srfi/%3a160/at.scm</code> - Guile libraries on top of native Guile SRFI 4.
-Can be adapted to any R6RS system that provides <code>include</code>.</li>
-
-<li><code>srfi/160/at.scm</code> - Chibi libraries on top of SRFI 4.
-Can be adapted to any R7RS system.</li>
-
-<li><code>srfi/160/at-impl.scm</code> - Shared implementation of non-SRFI 4 procedures.</li>
-
-<li><code>atexpander.sh</code> - a trivial shell script using <code>sed</code>
-to expand files into their variants</li>
-</ul>
-
-
-<p>The sample implementation uses little-endian representations of
-all homogeneous vector types (but it is easy to change to big-endian representation
-if desired).  Float vectors use IEEE 32-bit and 64-bit binary floats;
-complex vectors use two consecutive floats with the real part first and the imaginary part second.
-It is assumed that 64-bit integers are representable in the
-underlying Scheme implementation, which typically is only true if the
-Scheme has bignums.
 
 <H1>Copyright</H1>
 Copyright &copy; John Cowan 2018.
