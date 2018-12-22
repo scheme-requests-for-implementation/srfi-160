@@ -85,6 +85,10 @@ SRFI 133</a>.  There are some additional procedures, most of which are
 closely analogous to the string procedures of
 <a href="https://srfi.schemers.org/srfi-152/srfi-152.html">
 SRFI 152</a>.
+Finally, there are u1vector-only procedures which are analogues to the
+integer-based bitwise operations of
+<a href="http://srfi.schemers.org/srfi-151/srfi-151.html">SRFI 151</a>.
+</p>
 
 <p>Note that there are no conversions between homogeneous vectors and strings in this SRFI.</p>
 
@@ -612,6 +616,15 @@ onto <i>@to</i>, starting at index <i>@at</i>.
 <p>Returns a list, @vector, or heterogeneous vector with the same
 elements as the argument, in reverse order where specified.</p>
 
+<h3>Generators</h3>
+<p>
+<tt>(make-@vector-generator </tt><em>@vector</em><tt>)</tt>
+</p>
+<p>
+Returns a <a href="http://srfi.schemers.org/srfi-121/srfi-121.html">SRFI 121</a>
+generator that generates all the values of <em>@vector</em> in order
+Note that the generator is finite.
+</p>
 <H3>Output</H3>
 
 <p><code>(write-@vector <i>vec</i> [ <i>port</i> ] ) -> unspecified</code></p>
@@ -619,6 +632,249 @@ elements as the argument, in reverse order where specified.</p>
 <p>Prints to <i>port</i> (the current output port by default) a representation of
 <i>@vec</i> in the lexical syntax explained below.</p>
 
+<H2>Bitvector-only procedures</H2>
+
+<p>
+It is an error unless all <em>u1vector</em>
+arguments passed to the following procedures are of the same length.
+</p>
+
+<h3 id="Basicoperations">Basic operations</h3>
+<p>
+<tt>(u1vector-not </tt><em>u1vector</em><tt>)</tt>
+</p>
+<p>
+Returns the bitwise complement of <em>u1vector</em>; that is, all 1 bits are changed
+to 0 bits and all 0 bits to 1 bits.
+</p>
+<p>
+The following ten procedures correspond to the useful set
+of non-trivial two-argument boolean functions. For each such function,
+the corresponding u1vector operator
+maps that function across two or more u1vectors in a bitwise fashion.
+The core idea of this group of functions is this bitwise "lifting"
+of the set of dyadic boolean functions to u1vector parameters.
+</p>
+<p>
+<tt>(u1vector-and </tt><em>u1vector1</em> <em>u1vector2</em> <em>u1vector</em> ...<tt>)</tt><br />
+<tt>(u1vector-ior </tt><em>u1vector1</em> <em>u1vector2</em> <em>u1vector</em> ...<tt>)</tt><br />
+<tt>(u1vector-xor </tt><em>u1vector1</em> <em>u1vector2</em> <em>u1vector</em> ...<tt>)</tt><br />
+<tt>(u1vector-eqv </tt><em>u1vector1</em> <em>u1vector2</em> <em>u1vector</em> ...<tt>)</tt>
+</p>
+<p>
+These operations are associative.
+</p>
+<p>
+The <tt>u1vector-eqv</tt> procedure produces the
+complement of the <tt>u1vector-xor</tt> procedure.  When applied to three
+arguments, it does <em>not</em> produce a 1 bit
+everywhere that a, b and c all agree. That is, it does <em>not</em> produce
+</p>
+<pre>
+     (u1vector-ior (u1vector-and a b c)
+                  (u1vector-and (u1vector-not a)
+                               (u1vector-not b)
+                               (u1vector-not c)))
+</pre>
+<p>
+Rather, it produces <tt>(u1vector-eqv a (u1vector-eqv b c))</tt> or the equivalent
+<tt>(u1vector-eqv (u1vector-eqv a b) c)</tt>.
+</p>
+<p>
+<tt>(u1vector-nand </tt><em>u1vector1 u1vector2</em><tt>)</tt><br />
+<tt>(u1vector-nor </tt><em>u1vector1 u1vector2</em><tt>)</tt><br />
+<tt>(u1vector-andc1 </tt><em>u1vector1 u1vector2</em><tt>)</tt><br />
+<tt>(u1vector-andc2 </tt><em>u1vector1 u1vector2</em><tt>)</tt><br />
+<tt>(u1vector-orc1 </tt><em>u1vector1 u1vector2</em><tt>)</tt><br />
+<tt>(u1vector-orc2 </tt><em>u1vector1 u1vector2</em><tt>)</tt>
+</p>
+<p>
+These operations are not associative.
+</p>
+<h3 id="Quasiintegeroperations">Quasi-integer operations</h3>
+<p>
+<tt>(u1vector-logical-shift </tt><em>u1vector count</em><tt>)</tt>
+</p>
+<p>
+Returns the logical left shift when <em>count</em>>0; right shift when <em>count</em>&lt;0.
+Newly vacated bits are filled with 0.
+</p>
+<p>
+<tt>(u1vector-count </tt><em>u1vector</em><tt>)</tt>
+</p>
+<p>
+Returns the population count of 1's in <em>u1vector</em>.
+</p>
+<p>
+<tt>(u1vector-integer-length </tt><em>u1vector</em><tt>)</tt>
+</p>
+<p>
+The number of bits needed to represent the numeric value of <em>u1vector</em>, i.e.
+with all zero bits at the end of the vector removed.
+</p>
+<p>
+<tt>(u1vector-if </tt><em>if-u1vector then-u1vector else-u1vector</em><tt>)</tt>
+</p>
+<p>
+Merge the u1vectors <em>then-u1vector</em> and <em>else-u1vector</em>, with the u1vector <em>if-u1vector</em> determining
+from which u1vector to take each bit. That is, if the <em>k</em>th bit of <em>if-u1vector</em>
+is 1, then the <em>k</em>th bit of the result is the <em>k</em>th bit of <em>then-u1vector</em>, otherwise
+the <em>k</em>th bit of <em>else-u1vector</em>.  
+</p>
+
+
+<p>
+<tt>(u1vector-first-set-bit </tt><em>u1vector</em><tt>)</tt>
+</p>
+<p>
+Return the index of the first (smallest index) 1 bit in <em>u1vector</em>.
+Return -1 if <em>u1vector</em> contains no 1 bits.
+</p>
+<h3 id="Bitfieldoperations">Bit field operations</h3>
+<p>
+These functions operate on a contiguous field of bits (a "byte," in
+Common Lisp parlance) in a given u1vector. The <em>start</em> and <em>end</em>
+arguments, which are not optional, are
+non-negative exact integers specifying the field: it is the <em>end-start</em> bits
+running from bit <em>start</em> to bit <em>end</em>-1.
+</p>
+<p>
+<tt>(u1vector-field </tt><em>u1vector start end</em><tt>)</tt>
+</p>
+<p>
+Returns the field from <em>u1vector</em>, shifted
+down to the least-significant position in the result.
+</p>
+
+
+
+<p>
+<tt>(u1vector-field-any? </tt><em>u1vector start end</em><tt>)</tt>
+</p>
+<p>
+Returns true if any of the field's bits are set in <em>u1vector</em>, and false otherwise.
+</p>
+
+
+
+<p>
+<tt>(u1vector-field-every? </tt><em>u1vector start end</em><tt>)</tt>
+</p>
+<p>
+  Returns false if any of the field's bits are not set in <em>u1vector</em>, and true otherwise.
+</p>
+
+
+<p>
+<tt>(u1vector-field-clear </tt><em>u1vector start end</em><tt>)</tt><br />
+<tt>(u1vector-field-set </tt><em>u1vector start end</em><tt>)</tt>
+</p>
+<p>
+Returns <em>u1vector</em> with the field's bits set to all 0s/1s.
+</p>
+
+
+<p>
+<tt>(u1vector-field-replace </tt><em>dest source start end</em><tt>)</tt>
+</p>
+<p>
+Returns <em>dest</em> with the field replaced
+by the least-significant <em>end-start</em> bits in <em>source</em>.
+</p>
+
+
+
+<p>
+<tt>(u1vector-field-replace-same </tt><em>dest source start end</em><tt>)</tt>
+</p>
+<p>
+Returns <em>dest</em> with its field replaced
+by the corresponding field in <em>source</em>.
+</p>
+
+
+<p>
+<tt>(u1vector-field-rotate </tt><em>u1vector count start end</em><tt>)</tt>
+</p>
+<p>
+Returns <em>u1vector</em> with the field cyclically permuted
+by <em>count</em> bits towards high-order.
+</p>
+
+
+
+<p>
+<tt>(u1vector-field-reverse </tt><em>u1vector start end</em><tt>)</tt>
+</p>
+<p>
+Returns <em>u1vector</em> with the order of the bits in the field reversed.
+</p>
+
+
+
+<h3 id="Integerconversion">Integer conversion</h3>
+<p>
+<tt>(u1vector->integer </tt><em>u1vector</em> [ <em>len</em> ]<tt>)</tt><br />
+</p>
+<p>
+Returns a non-negative integer whose bits, starting with the least significant bit as bit 0,
+correspond to the bit in <em>u1vector</em>.
+</p>
+<p>
+<tt>(integer->u1vector </tt><em>integer</em><tt>)</tt><br />
+</p>
+<p>
+Returns a u1vector whose bits correspond to the bits of <em>integer</em>,
+starting with the least significant bit as bit 0.  It is an error if
+<em>integer</em> is negative.
+</p>
+
+
+<h3>Copying</h3>
+<p>
+<tt>(u1vector-duplicate </tt><em>u1vector</em><tt>)</tt>
+</p>
+<p>Has the same semantics as <tt>u1vector-copy</tt>, but does
+not take <em>start</em> and <em>end</em> arguments, and may be
+implemented more efficiently.
+</p>
+
+<h3>Mutators</h3>
+<p>The operations
+<code>u1vector-not!</code>,
+<code>u1vector-and!</code>,
+<code>u1vector-ior!</code>,
+<code>u1vector-xor!</code>,
+<code>u1vector-eqv!</code>,
+<code>u1vector-nand!</code>,
+<code>u1vector-nor!</code>,
+<code>u1vector-andc1!</code>,
+<code>u1vector-andc2!</code>,
+<code>u1vector-orc1!</code>,
+<code>u1vector-orc2!</code>,
+<code>u1vector-field-clear!</code>,
+<code>u1vector-field-set!</code>,
+<code>u1vector-field-replace!</code>,
+<code>u1vector-field-replace-same!</code>,
+<code>u1vector-field-rotate!</code>,
+and
+<code>u1vector-field-reverse!</code>
+have the same semantics as their counterparts without
+<code>!</code>, except that instead of allocating a
+result u1vector, the first u1vector argument is mutated
+and an unspecified value returned.</p>
+
+<h3>Output</h3>
+<p>
+<tt>(display-u1vector </tt><em>u1vector</em> [<em>port</em>]<tt>)</tt>
+</p>
+
+<p>
+Outputs <em>u1vector</em> to <em>port</em>,
+which defaults to the value of <tt>(current-output-port)</tt>,
+in Common Lisp format: that is, <tt>#*</tt> followed by
+an unbroken sequence of <tt>0</tt>s and <tt>1</tt>s.
+<p>
 <H2>Optional lexical syntax</H2>
 
 Each homogeneous vector datatype has an external representation which
@@ -679,7 +935,7 @@ types.</p>
 <h2>The SRFI 160 library</h2>
 
 <p>The sample implementation is (not yet) in the repository of this SRFI.
-It depends on an implementation of SRFI 4.  For systems that do not have
+It depends on implementations of SRFI 4 and SRFI 151.  For systems that do not have
 a native SRFI 4 implementation, the version in the
 <a href="https://github.com/scheme-requests-for-implementation/srfi-4/tree/master/contrib/cowan">
 <code>contrib/cowan</code> directory</a> of the SRFI 4 repository may be used.</p>
@@ -732,7 +988,7 @@ and c128vectors, which support inexact complex numbers as two IEEE 64-bit values
 The same eight procedures are available as in SRFI 4.
 </p>
 
-<p>The implementation depends on SRFI 4 and some bitwise operations.</p>
+<p>The implementation depends on SRFI 4 and SRFI 151.</p>
 
 <p>The following files are provided:</p>
 
@@ -746,8 +1002,6 @@ The same eight procedures are available as in SRFI 4.
 <li><code>srfi/x4/complex.scm</code> - Complex number implementation on top of SRFI 4.</li>
 
 <li><code>srfi/x4/bit.scm</code> - Bit vector number implementation on top of SRFI 4.</li>
-
-<li><code>srfi/x4/bitwise-core.scm</code> - Portable (but slow) bitwise implementation from SRFI 151.</li>
 
 <li><code>srfi/x4/r6rec.scm</code> - Record-type definitions for R6RS.</li>
 
