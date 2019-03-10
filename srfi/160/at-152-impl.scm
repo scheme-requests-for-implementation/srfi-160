@@ -47,7 +47,7 @@
 ;;; the file for further notes on porting & performance tuning.)
 
 
-;;; Support for START/END sub@vector specs
+;;; Support for START/END @subvector specs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; This macro parses optional start/end arguments from arg lists, defaulting
 ;;; them to 0/(@vector-length s), and checks them for correctness.
@@ -88,12 +88,12 @@
 			    (args (cdr args)))
 			(if (and (integer? end) (exact? end) (<= end slen))
 			    (values end args)
-			    (error "Illegal sub@vector END spec" proc end s)))
+			    (error "Illegal @subvector END spec" proc end s)))
 		      (values slen args))
 		(if (<= start end) (values args start end)
-		    (error "Illegal sub@vector START/END spec"
+		    (error "Illegal @subvector START/END spec"
 			   proc start end s)))
-	      (error "Illegal sub@vector START spec" proc start s)))
+	      (error "Illegal @subvector START spec" proc start s)))
 
 	(values '() 0 slen))))
 
@@ -102,7 +102,7 @@
     (if (pair? rest) (error "Extra arguments to procedure" proc rest)
 	(values start end))))
 
-(define (sub@vector-spec-ok? s start end)
+(define (@subvector-spec-ok? s start end)
   (and (@vector? s)
        (integer? start)
        (exact? start)
@@ -112,13 +112,13 @@
        (<= start end)
        (<= end (@vector-length s))))
 
-(define (check-sub@vector-spec proc s start end)
-  (if (not (sub@vector-spec-ok? s start end))
-      (error "Illegal sub@vector spec." proc s start end)))
+(define (check-@subvector-spec proc s start end)
+  (if (not (@subvector-spec-ok? s start end))
+      (error "Illegal @subvector spec." proc s start end)))
 
 
 
-;;; sub@vector S START [END] 
+;;; @subvector S START [END] 
 ;;; @vector-copy      S [START END]
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -127,9 +127,9 @@
 
 ;;; Split out so that other routines in this library can avoid arg-parsing
 ;;; overhead for END parameter.
-(define (%sub@vector s start end)
+(define (%@subvector s start end)
   (if (and (zero? start) (= end (@vector-length s))) s
-      (sub@vector s start end)))
+      (@subvector s start end)))
 
 ;;; Cutting & pasting @vectors
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -144,28 +144,28 @@
   (check-arg (lambda (val) (and (integer? n) (exact? n)
 				(<= 0 n (@vector-length s))))
 	     n @vector-take)
-  (%sub@vector s 0 n))
+  (%@subvector s 0 n))
 
 (define (@vector-take-right s n)
   (check-arg @vector? s @vector-take-right)
   (let ((len (@vector-length s)))
     (check-arg (lambda (val) (and (integer? n) (exact? n) (<= 0 n len)))
 	       n @vector-take-right)
-    (%sub@vector s (- len n) len)))
+    (%@subvector s (- len n) len)))
 
 (define (@vector-drop s n)
   (check-arg @vector? s @vector-drop)
   (let ((len (@vector-length s)))
     (check-arg (lambda (val) (and (integer? n) (exact? n) (<= 0 n len)))
 	       n @vector-drop)
-  (%sub@vector s n len)))
+  (%@subvector s n len)))
 
 (define (@vector-drop-right s n)
   (check-arg @vector? s @vector-drop-right)
   (let ((len (@vector-length s)))
     (check-arg (lambda (val) (and (integer? n) (exact? n) (<= 0 n len)))
 	       n @vector-drop-right)
-    (%sub@vector s 0 (- len n))))
+    (%@subvector s 0 (- len n))))
 
 
 ;;; Filtering @vectors
@@ -188,7 +188,7 @@
 					   (begin (@vector-set! temp i c)
 						  (+ i 1))))
 				     0 s start end)))
-	  (if (= ans-len slen) temp (sub@vector temp 0 ans-len)))))
+	  (if (= ans-len slen) temp (@subvector temp 0 ans-len)))))
 
 	  
 
@@ -202,33 +202,33 @@
 						  (+ i 1))
 					   i))
 				     0 s start end)))
-	  (if (= ans-len slen) temp (sub@vector temp 0 ans-len)))))
+	  (if (= ans-len slen) temp (@subvector temp 0 ans-len)))))
 (define (@vector-take-while s criterion . maybe-start+end)
   (let-@vector-start+end (start end) @vector-take-while s maybe-start+end
     (let ((idx (@vector-skip s criterion start end)))
       (if idx
-          (%sub@vector s 0 idx)
+          (%@subvector s 0 idx)
           ""))))
 
 (define (@vector-take-while-right s criterion . maybe-start+end)
   (let-@vector-start+end (start end) @vector-take-while s maybe-start+end
     (let ((idx (@vector-skip-right s criterion start end)))
       (if idx
-          (%sub@vector s (+ idx 1) (@vector-length s))
+          (%@subvector s (+ idx 1) (@vector-length s))
           ""))))
 
 (define (@vector-drop-while s criterion . maybe-start+end)
   (let-@vector-start+end (start end) @vector-drop-while s maybe-start+end
     (let ((idx (@vector-skip s criterion start end)))
       (if idx
-          (%sub@vector s idx (@vector-length s))
+          (%@subvector s idx (@vector-length s))
           s))))
 
 (define (@vector-drop-while-right s criterion . maybe-start+end)
   (let-@vector-start+end (start end) @vector-drop-while s maybe-start+end
     (let ((idx (@vector-skip-right s criterion start end)))
       (if idx
-          (%sub@vector s 0 (+ idx 1))
+          (%@subvector s 0 (+ idx 1))
           s))))
 
 (define (@vector-segment str k)
@@ -239,7 +239,7 @@
       (if (= start len)
         (reverse result)
         (let ((end (min (+ start k) len)))
-          (loop end (cons (%sub@vector str start end) result)))))))
+          (loop end (cons (%@subvector str start end) result)))))))
 
 ;;; Porting & performance-tuning notes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

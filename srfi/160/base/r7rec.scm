@@ -1,8 +1,4 @@
-;; The representation of bit and complex vectors
-
-(define-record-type <u1vector> (raw-make-u1vector len bv) u1vector?
-  (len u1vector-length)
-  (bv bv1))
+;; The representation of complex vectors
 
 (define-record-type <c64vector> (raw-make-c64vector bv) c64vector?
   (bv bv64))
