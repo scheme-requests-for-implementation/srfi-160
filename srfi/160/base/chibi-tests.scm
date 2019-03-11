@@ -1,6 +1,6 @@
 (import (scheme base))
 (import (scheme write))
 (import (scheme complex))
-(import (srfi x4))
+(import (srfi 160 base))
 
-(include "srfi/x4/shared-tests.scm")
+(include "srfi/160/base/shared-tests.scm")

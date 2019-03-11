@@ -1,6 +1,6 @@
-(cond-expand
-  (chicken (use test srfi-133))
-  (chibi (import (scheme base) (chibi test) (@vectors))))
+(import (scheme base))
+(import (chibi test))
+(import (srfi 160 @))
 (test-group "@vectors"
   (test-group "@vectors/basics"
     (define v (make-@vector 3 3))
@@ -34,7 +34,7 @@
     (test '#(a b c d) (@vector-append '#(a) '#(b c d)))
     (test '#(a #(b) #(c)) (@vector-append '#(a #(b)) '#(#(c))))
     (test '#(a b c d) (@vector-concatenate '(#(a b) #(c d))))
-    (test '#(a b h i) (@vector-append-sub@vectors '#(a b c d e) 0 2 '#(f g h i j) 2 4))
+    (test '#(a b h i) (@vector-append-subvectors '#(a b c d e) 0 2 '#(f g h i j) 2 4))
   ) ; end @vectors/constructors
 
   (test-group "@vectors/predicates"

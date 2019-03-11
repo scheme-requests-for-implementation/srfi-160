@@ -16,7 +16,7 @@
 ;;; @vector-unfold                   @vector-unfold-right
 ;;; @vector-copy                     @vector-reverse-copy
 ;;; @vector-append                   @vector-concatenate
-;;; @vector-append-sub@vectors
+;;; @vector-append-subvectors
 ;;;
 ;;; * Predicates
 ;;; @vector-empty?
@@ -651,9 +651,9 @@
                new-@vector))))))
 
 ;;; (@VECTOR-APPEND-SUB@VECTORS <arg> ...) -> @vector
-;;;   Like @VECTOR-APPEND but appends sub@vectors specified by
+;;;   Like @VECTOR-APPEND but appends subvectors specified by
 ;;;   <@vector> <start> <end> argument triples.
-(define (@vector-append-sub@vectors . args)
+(define (@vector-append-subvectors . args)
   ;; GATHER-ARGS returns three values: @vectors, starts, ends
   (define (gather-args args)
     (let loop ((args args) (vecs '()) (starts '()) (ends '()))
@@ -663,7 +663,7 @@
                (cons (car args) vecs)
                (cons (cadr args) starts)
                (cons (caddr args) ends)))))
-  ;; TOTAL-LENGTH computes the length of all sub@vectors
+  ;; TOTAL-LENGTH computes the length of all subvectors
   (define (total-length starts ends)
     (let loop ((count 0) (starts starts) (ends ends))
       (if (null? starts)
@@ -672,7 +672,7 @@
           (loop (+ count (- end start))
                 (cdr starts)
                 (cdr ends))))))
- ;; COPY-EACH! copies each sub@vector into a result @vector
+ ;; COPY-EACH! copies each @subvector into a result @vector
   (define (copy-each! result vecs starts ends)
     (let loop ((at 0) (vecs vecs) (starts starts) (ends ends))
       (if (null? vecs)
