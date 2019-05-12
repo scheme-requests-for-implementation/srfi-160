@@ -59,7 +59,7 @@
   (display tag)
   (display "vector TESTS:")
   (newline)
-  (let* ((bit (eq? tag 'u1))
+  (let* ((bit #f)
          (first (if bit 1 32.0))
          (second (if bit 0 32.0+47.0i))
          (third (if bit 1 -47.0i))
@@ -94,9 +94,6 @@
     (is-same? (Hvector->list vec1) (list second second second))
     (is-same? (Hvector->list vec2) (list first second third))
     (is-same? (Hvector->list vec3) (list third second first))))
-
-(test 'u1 make-u1vector u1vector u1vector? u1vector-length
-      u1vector-ref u1vector-set! u1vector->list list->u1vector)
 
 (test 'c64 make-c64vector c64vector c64vector? c64vector-length
       c64vector-ref c64vector-set! c64vector->list list->c64vector)

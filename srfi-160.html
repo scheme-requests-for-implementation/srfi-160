@@ -277,7 +277,7 @@ SRFI 133 (or in some cases SRFI 152) should be consulted for the details.
       <dt><i>i, j, start, at</i></dt>
       <dd>
         Must be an exact nonnegative integer less than the length of the @vector.
-        In <i>@vector-copy!</i> and <i>reverse-@vector-copy!</i>,
+        In <tt>@vector-copy!</tt> and <tt>reverse-@vector-copy!</tt>,
         <i>at</i> refers to the destination and <i>start</i> to the source.
         <br />
         <br />
@@ -394,12 +394,12 @@ all the elements of the @vector are initialized to it.</p>
 
 <p>Returns a @vector initialized with <i>values</i>.</p>
 
-<p><code>(@vector-unfold <i>f length seed ...</i>) -> @vector</code> [SRFI 133]</p>
+<p><code>(@vector-unfold <i>f length seed</i>) -> @vector</code> [SRFI 133]</p>
 
 <p>Create a @vector whose length is <i>length</i> and initialize it by calling
 f, f(f), f(f(f))) ... on the <i>seed</i>.</p>
 
-<p><code>(@vector-unfold-right <i>f length seed ...</i>) -> @vector</code> [SRFI 133]</p>
+<p><code>(@vector-unfold-right <i>f length seed</i>) -> @vector</code> [SRFI 133]</p>
 
 <p>The same as <code>@vector-unfold</code>, but initializes the @vector from right to left.</p>
 
@@ -479,28 +479,28 @@ elements of <i>@vec</i>.</p>
 consecutive elements of <i>@vec</i>.
 The last @vector may be shorter than <i>n</i>.</p>
 
-<p><code>(@vector-fold <i>kons knil @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> object</code> [SRFI 133]</p>
+<p><code>(@vector-fold <i>kons knil @vec</i>) -> object</code> [SRFI 133]</p>
 
-<p><code>(@vector-fold-right <i>kons knil @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> object</code> [SRFI 133]</p>
+<p><code>(@vector-fold-right <i>kons knil @vec</i>) -> object</code> [SRFI 133]</p>
 
 <p>Folds <i>kons</i> over the elements of <i>@vec</i> 
 in increasing/decreasing order using <i>knil</i>
 as the initial value.</p>
 
-<p><code>(@vector-map <i>f @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> @vector</code> [SRFI 133]</p>
+<p><code>(@vector-map <i>f @vec</i>) -> @vector</code> [SRFI 133]</p>
 
-<p><code>(@vector-map! <i>f @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> unspecified</code> [SRFI 133]</p>
+<p><code>(@vector-map! <i>f @vec</i>) -> unspecified</code> [SRFI 133]</p>
 
-<p><code>(@vector-for-each <i>f @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> unspecified</code> [SRFI 133]</p>
+<p><code>(@vector-for-each <i>f @vec</i>) -> unspecified</code> [SRFI 133]</p>
 
 <p>Iterate over the elements of <i>@vec</i> and apply <i>f</i>
 to each, returning respectively a @vector of the results,
 an undefined value with the results placed back in <i>@vec</i>,
 and an undefined value with no change to <i>@vec</i>.</p>
 
-<p><code>(@vector-count <i>pred? @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> exact nonnegative integer</code> [SRFI 133]</p>
+<p><code>(@vector-count <i>pred? @vec</i>) -> exact nonnegative integer</code> [SRFI 133]</p>
 
-Call <i>pred?</i> on the nth argument of each <i>@vec</i> and
+Call <i>pred?</i> on each argument of <i>@vec</i> and
 return the number of calls that return true.</p>
 
 <p><code>(@vector-cumulate <i>f knil @vec</i>) -> @vector</code> [SRFI 133]</p>
@@ -510,30 +510,30 @@ rather than just the final result.</p>
 
 <H3>Searching</H3>
 
-<p><code>(@vector-take-while <i>@vec pred?</i> -> index</code> [SRFI 152]</p>
+<p><code>(@vector-take-while <i>pred? @vec</i> -> @vector</code> [SRFI 152]</p>
 
-<p><code>(@vector-take-while-right <i>@vec pred?</i> -> index</code> [SRFI 152]</p>
+<p><code>(@vector-take-while-right <i>pred? @vec</i> -> @vector</code> [SRFI 152]</p>
 
 <p>Return the shortest prefix/suffix of <i>@vec</i> all of whose elements
 satisfy <i>pred?</i>.
 
-<p><code>(@vector-drop-while <i>@vec pred</i> -> index</code> [SRFI 152]</p>
+<p><code>(@vector-drop-while <i>pred? vec</i> -> @vector</code> [SRFI 152]</p>
 
-<p><code>(@vector-drop-while-right <i>@vec pred</i> -> index</code> [SRFI 152]</p>
+<p><code>(@vector-drop-while-right <i>pred? vec</i> -> @vector</code> [SRFI 152]</p>
 
 Drops the longest initial prefix/suffix of <i>@vec</i> such that all its
 elements satisfy <i>pred</i>.</p>
 
-<p><code>(@vector-index <i>pred? @vec.</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
+<p><code>(@vector-index <i>pred? @vec</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
 
-<p><code>(@vector-index-right <i>pred? @vec.</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
+<p><code>(@vector-index-right <i>pred? @vec</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
 
 <p>Return the index of the first/last element of <i>@vec</i> that
 satisfies <i>pred?</i>.
 
 <p><code>(@vector-skip <i>pred? @vec</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
 
-<p><code>(@vector-skip-right <i>pred? @vec.</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
+<p><code>(@vector-skip-right <i>pred? @vec</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
 
 <p>Returns the index of the first/last element of <i>@vec</i> that
 does not satisfy <i>pred?</i>.
@@ -544,12 +544,12 @@ does not satisfy <i>pred?</i>.
 <i>value</i> in the sense of the <i>=</i> argument using a binary search.
 Returns <code>#f</code> if there is no such element.</p>
 
-<p><code>(@vector-any <i>pred? @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> value or #f</code> [SRFI 133]</p>
+<p><code>(@vector-any <i>pred? @vec</i>) -> value or #f</code> [SRFI 133]</p>
 
 <p>Returns the first set of elements from the <i>@vecs</i> which
 satisfy <i>pred?</i>, or <code>#f</code> if there is no such set.</p>
 
-<p><code>(@vector-every <i>pred? @vec<sub>1</sub> @vec<sub>2</sub> ...</i>) -> value or #f</code> [SRFI 133]</p>
+<p><code>(@vector-every <i>pred? @vec</i>) -> value or #f</code> [SRFI 133]</p>
 
 <p>If all sets of elements from the <i>@vecs</i> satisfy <i>pred?</i>,
 return the last set.  If none do, return <code>#f</code>.</p>
