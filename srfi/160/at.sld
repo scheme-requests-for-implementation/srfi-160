@@ -23,7 +23,7 @@
   (export @vector-take-while @vector-take-while-right
           @vector-drop-while @vector-drop-while-right
           @vector-index @vector-index-right @vector-skip @vector-skip-right 
-          @vector-binary-search @vector-any @vector-every @vector-partition
+          @vector-any @vector-every @vector-partition
           @vector-filter @vector-remove)
   ;; Mutators 
   (export @vector-set! @vector-swap! @vector-fill! @vector-reverse!

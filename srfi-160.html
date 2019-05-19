@@ -538,21 +538,17 @@ satisfies <i>pred?</i>.
 <p>Returns the index of the first/last element of <i>@vec</i> that
 does not satisfy <i>pred?</i>.
 
-<p><code>(@vector-binary-search <i>@vec value =</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
+<p><code>(@vector-any <i>pred? @vec</i>) -> value or boolean</code> [SRFI 133]</p>
 
-<p>Returns the index of any element of <i>@vec</i> that is the same as
-<i>value</i> in the sense of the <i>=</i> argument using a binary search.
-Returns <code>#f</code> if there is no such element.</p>
+<p>Returns first element from the <i>@vec</i> which
+satisfies <i>pred?</i>, or <code>#f</code> if there is no such element.
+If <i>@vec</i> is empty, return <code>#f</code></p>
 
-<p><code>(@vector-any <i>pred? @vec</i>) -> value or #f</code> [SRFI 133]</p>
+<p><code>(@vector-every <i>pred? @vec</i>) -> value or boolean</code> [SRFI 133]</p>
 
-<p>Returns the first set of elements from the <i>@vecs</i> which
-satisfy <i>pred?</i>, or <code>#f</code> if there is no such set.</p>
-
-<p><code>(@vector-every <i>pred? @vec</i>) -> value or #f</code> [SRFI 133]</p>
-
-<p>If all sets of elements from the <i>@vecs</i> satisfy <i>pred?</i>,
-return the last set.  If none do, return <code>#f</code>.</p>
+<p>If all elements from <i>@vec</i> satisfy <i>pred?</i>,
+return the last element.  If not all do, return <code>#f</code>.
+If <i>@vec</i> is empty, return <code>#t</code></p>
 
 <p><code>(@vector-partition <i>pred? @vec</i>) -> @vector and integer</code> [SRFI 133]</p>
 

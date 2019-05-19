@@ -99,7 +99,7 @@
   (zero? (@vector-length vec)))
 
 (define (@vector= elt? . vecs)
-  (define (@vector=* elt? (car vecs) (cadr vecs) (cddr vecs)))
+  (@vector=* elt? (car vecs) (cadr vecs) (cddr vecs)))
 
 (define (@vector=* elt? vec1 vec2 vecs)
   (if (null? vecs)
@@ -225,5 +225,190 @@
     (@vector-copy vec idx (- len idx))))
 
 (define (@vector-drop-while-right pred? vec)
-  (let ((len (@vector-length vec)))
+  (let ((len (@vector-length vec))
+        (idx (@vector-skip-right pred? vec)))
+    (@vector-copy vec idx len)))
 
+
+(define (@vector-index pred? vec)
+  (let ((len (@vector-length vec)))
+    (let loop ((i 0))
+      (cond
+        ((= i len) #f)
+        ((pred? (@vector-ref vec i)) i)
+        (else (loop (+ i 1)))))))
+
+(define (@vector-index-right pred? vec)
+  (let ((len (@vector-length vec)))
+    (let loop ((i (- len 1)))
+      (cond
+        ((negative? i) #f)
+        ((pred? (@vector-ref vec i)) i)
+        (else (loop (- i 1)))))))
+
+(define (@vector-skip pred? vec)
+    (@vector-index (lambda (x) (not (pred? x))) vec))
+
+(define (@vector-skip-right pred? vec)
+    (@vector-index-right (lambda (x) (not (pred? x))) vec))
+
+(define (@vector-any pred? vec)
+  (let (idx (@vector-index pred? vec)))
+    (if idx (@vector-ref vec idx) #f)))
+
+(define (@vector-every pred? vec)
+  (let ((len (@vector-length vec)))
+    (let loop ((i 0))
+      (cond
+        ((= len 0) #t)
+        ((= i len) (@vector-ref (- len 1)))
+        ((pred? (@vector-ref i)) (loop (+ i 1)))
+        (else #f)))))
+
+(define (@vector-partition pred? vec)
+  (let* ((len (@vector-length vec))
+         (cnt (@vector-count pred? vec))
+         (r (make-@vector len)))
+    (let loop ((i 0) (yes 0) (no cnt))
+      (cond
+        ((= i len) r)
+        ((pred? (@vector-ref vec i))
+         (@vector-set r yes (@vector-ref vec i))
+         (loop (+ i 1) (+ yes 1) no))
+        (else
+         (@vector-set r no (@vector-ref vec i))
+         (loop (+ i 1) yes (+ no 1)))))))
+
+(define (@vector-filter pred? vec)
+  (let* ((len (@vector-length vec))
+         (cnt (@vector-count pred? vec))
+         (r (@make-vector cnt)))
+    (let loop ((i 0) (j 0))
+      (cond
+        ((= i len) r)
+        ((pred? (@vector-ref vec i))
+         (@vector-set r j (@vector-ref vec i))
+         (loop (+ i 1) (+ j 1)))
+        (else
+         (loop (+ i 1) j))))))
+
+(define (@vector-remove pred? vec)
+  (@vector-filter (lambda (x) (not (pred? x))) vec))
+
+;; @vector-set! defined in the base library
+
+(define (@vector-swap vec i j)
+  (let ((ival (@vector-ref vec i))
+        (jval (@vector-ref vec j)))
+    (vector-set! vec i jval)
+    (vector-set! vec j ival)))
+
+(define @vector-fill!
+  (case-lambda
+    ((vec fill) (@vector-fill-some! vec fill 0 (@vector-length vec)))
+    ((vec fill start) (@vector-fill-some! vec fill start (@vector-length vec)))
+    ((vec fill start end) (@vector-fill-some! vec fill start end))))
+
+(define (@vector-fill-some! vec fill start end)
+  (unless (= start end)
+    (@vector-set! vec start fill)
+    (@vector-fill-some! vec fill (+ start 1) end)))
+
+(define @vector-reverse!
+  (case-lambda
+    ((vec) (@vector-reverse-some! vec 0 (@vector-length vec)))
+    ((vec start) (@vector-reverse-some! vec start (@vector-length vec)))
+    ((vec start end) (@vector-reverse-some! vec start end))))
+
+(define (@vector-reverse-some! vec fill start end)
+  (let ((len (@vector-length vec)))
+    (let loop ((i 0) (j (- len 1)))
+      (when (i < j)
+        (vector-swap! vec i j)
+        (loop (+ i 1) (- j 1))))))
+
+(define @vector->list
+  (case-lambda
+    ((vec) (reverse (reverse-@vector->list* vec 0 (@vector-length vec))))
+    ((vec start) (reverse (reverse-@vector->list* vec start (@vector-length vec))))
+    ((vec start end) (reverse (reverse-@vector->list* vec start end)))))
+
+(define reverse-@vector->list
+  (case-lambda
+    ((vec) (reverse-@vector->list* vec 0 (@vector-length vec)))
+    ((vec start) (reverse-@vector->list* vec start (@vector-length vec)))
+    ((vec start end) (reverse-@vector->list* vec start end))))
+
+(define (reverse-@vector->list* vec start end)
+  (let loop ((i start) (r '()))
+    (if (= i end)
+      r
+      (loop (+ 1 i) (cons (@vector-ref vec i) r)))))
+
+(define (list->@vector list)
+  (let* ((len (length list))
+         (r (make-@vector len)))
+    (let loop ((i (- len 1)) (list list))
+      (cond
+        ((negative? i) r)
+        (else
+          (@vector-set! r i (car list))
+          (loop (+ i 1) (cdr list)))))))
+
+(define (reverse-list->@vector list)
+  (let* ((len (length list))
+         (r (make-@vector len)))
+    (let loop ((i 0) (list list))
+      (cond
+        ((= i len) r)
+        (else
+          (@vector-set! r i (car list))
+          (loop (+ i 1) (cdr list)))))))
+
+(define (@vector->vector vec)
+  (let* ((len (@vector-length vec))
+         (r (make-vector len)))
+    (let loop ((i 0))
+      (cond
+        ((= i len) r)
+        (else
+          (vector-set! (@vector-ref vec i))
+          (loop (+ i 1)))))))
+
+(define (vector->@vector vec)
+  (let* ((len (vector-length vec))
+         (r (make-@vector len)))
+    (let loop ((i 0))
+      (cond
+        ((= i len) r)
+        (else
+          (@vector-set! (vector-ref vec i))
+          (loop (+ i 1)))))))
+
+(define @vector->generator
+  (case-lambda ((vec) (@vector->generator vec 0 (@vector-length vec)))
+               ((vec start) (@vector->generator vec start (@vector-length vec)))
+               ((vec start end)
+                (lambda () (if (>= start end)
+                             (eof-object)
+                             (let ((next (@vector-ref vec start)))
+                              (set! start (+ start 1))
+                              next))))))
+
+(define @vector-write
+  (case-lambda
+    ((vec) (@vector-write* vec (current-output-port)))
+    ((vec port) (@vector-write* vec port))))
+
+
+(define (@vector-write* vec port)
+  (display "@(" port)  ; @-expansion is blind, so will expand this too
+  (let (last (- (@vector-length vec) 1)))
+    (let loop ((i 0))
+      (cond
+        ((= i last)
+         (write (@vector-ref vec i) port)
+         (display ")" port))
+        (else
+          (write (@vector-ref vec i) port)
+          (display " " port)))))
