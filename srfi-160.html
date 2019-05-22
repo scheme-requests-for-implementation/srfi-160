@@ -212,14 +212,6 @@ inexact real number; and for a complex vector, it must be an inexact
 complex number.  It is an error to try to use a constructor or mutator
 to set an element to an invalid value.
 
-    <p>
-      It should be noted that all of the procedures that iterate across
-      multiple vectors in parallel stop iterating and produce the final
-      result when the end of the shortest vector is reached.  The sole
-      exception is <tt>@vector=</tt>, which
-      immediately returns <tt>#f</tt> if the vectors' lengths are different.
-    </p>
-
 
 <H2>Notation</H2>
 
@@ -442,10 +434,11 @@ otherwise.</p>
 Returns <code>#t</code> if <i>@vec</i> has a length of zero,
 and <code>#f</code> otherwise.
 
-<p><code>(@vector= <i>elt=? @vec ...</i>) -> boolean</code> [SRFI 133]</p>
+<p><code>(@vector= <i>@vec ...</i>) -> boolean</code> [SRFI 133]</p>
 
 <p>Compares the <i>@vecs</i> for elementwise equality, using
-<i>elt=?</i> to do the comparisons.</p>
+<code>=</code> to do the comparisons.  Returns <code>#f</code>
+unless all @vectors are the same length.</p>
 
 <H3>Selectors</H3>
 
@@ -500,7 +493,7 @@ and an undefined value with no change to <i>@vec</i>.</p>
 
 <p><code>(@vector-count <i>pred? @vec</i>) -> exact nonnegative integer</code> [SRFI 133]</p>
 
-Call <i>pred?</i> on each argument of <i>@vec</i> and
+Call <i>pred?</i> on each element of <i>@vec</i> and
 return the number of calls that return true.</p>
 
 <p><code>(@vector-cumulate <i>f knil @vec</i>) -> @vector</code> [SRFI 133]</p>
@@ -552,7 +545,7 @@ If <i>@vec</i> is empty, return <code>#t</code></p>
 
 <p><code>(@vector-partition <i>pred? @vec</i>) -> @vector and integer</code> [SRFI 133]</p>
 
-<p>Returns a @vector of the same type as <i>@vec</i>, but with all elements
+<p>Returns an @vector of the same type as <i>@vec</i>, but with all elements
 satisfying <i>pred?</i> in the leftmost part of the vector and the other
 elements in the remaining part.  The order of elements is otherwise
 preserved.  Returns two values, the new @vector and the number of 
@@ -562,7 +555,7 @@ elements satisfying <i>pred?</i>.</p>
 
 <p><code>(@vector-remove <i>pred? @vec</i> -> @vector</code> [SRFI 152]</p>
 
-<p>Return a @vector containing the elements of @vec that satisfy / do not satisfy
+<p>Return an @vector containing the elements of @vec that satisfy / do not satisfy
 <i>pred?</i>.
 
 <H3>Mutators</H3>
@@ -703,6 +696,10 @@ a native SRFI 4 implementation, the version in the
 <code>contrib/cowan</code> directory</a> of the SRFI 4 repository may be used;
 it depends only on a minimal implementation of bytevectors.</p>
 
+<p>The tests are for the c64 and c128 procedures and the @? procedures only.
+The assumption is that tests for the underlying SRFI 4 procedures suffice
+for everything else.</p>
+
 <p>The following files are provided:</p>
 
 <ul>
@@ -711,8 +708,6 @@ it depends only on a minimal implementation of bytevectors.</p>
 <li><code>srfi/160/base/complex.scm</code> - Complex number implementation on top of SRFI 4.</li>
 
 <li><code>srfi/160/base/valid.scm</code> - Valid value predicates.</li>
-
-<li><code>srfi/160/base/r6rec.scm</code> - Record-type definitions for R6RS.</li>
 
 <li><code>srfi/160/base/r7rec.scm</code> - Record-type definitions for R7RS.</li>
 
@@ -730,8 +725,8 @@ described in the previous section.</p>
 
 <p>After downloading the source, it is necessary to run the <code>atexpander.sh</code>
 shell script in order to generate the individual files for the different types.
-This will take <code>at.sls</code>, for example, and create the files
-<code>u8.sls</code>, <code>s8.sls</code>, ... <code>c128.sls</code>.
+This will take <code>at.sld</code>, for example, and create the files
+<code>u8.sld</code>, <code>s8.sld</code>, ... <code>c128.sld</code>.
 The heavy lifting is done by <code>sed</code>.
 
 <p>The following files are provided:</p>
@@ -742,13 +737,10 @@ to expand skeleton files into their variants.</li>
 <li><code>srfi/160/at.sld</code> - Skeleton for Chibi libraries.
 Can be adapted to any R7RS system.</li>
 
-<li><code>srfi/160/at-133-impl.scm</code> - Skeleton for shared implementation of SRFI 133 procedures.</li>
+<li><code>srfi/160/at-impl.scm</code> - Skeleton for shared implementation of SRFI 160 procedures.</li>
 
-<li><code>srfi/160/at-152-impl.scm</code> - Skeleton for shared implementation of SRFI 152 procedures.</li>
-
-<li><code>srfi/160/at-other-impl.scm</code> - Skeleton for shared implementation of other procedures.</li>
-
-<li><code>srfi/160/at-tests.scm</code> - Skeleton for SRFI 133 tests (no dependencies).</li>
+<li><code>srfi/160/chibi-tests.scm</code> - Tests for Chibi of the s16 library only.
+The assumption is that if s16 works, everything works.</li>
 
 </ul>
 
