@@ -34,7 +34,7 @@
 
 (define-syntax is-same?
   (syntax-rules ()
-    ((what result expected)
+    ((is-same? result expected)
      (begin
        (display "Try ")
        (display 'result)
@@ -59,10 +59,9 @@
   (display tag)
   (display "vector TESTS:")
   (newline)
-  (let* ((bit (eq? tag 'u1))
-         (first (if bit 1 32.0))
-         (second (if bit 0 32.0+47.0i))
-         (third (if bit 1 -47.0i))
+  (let* ((first 32.0)
+         (second 32.0+47.0i)
+         (third -47.0i)
          (vec0 (make-Hvector 3))
          (vec1 (make-Hvector 3 second))
          (vec2 (Hvector first second third))
@@ -95,12 +94,71 @@
     (is-same? (Hvector->list vec2) (list first second third))
     (is-same? (Hvector->list vec3) (list third second first))))
 
-(test 'u1 make-u1vector u1vector u1vector? u1vector-length
-      u1vector-ref u1vector-set! u1vector->list list->u1vector)
-
 (test 'c64 make-c64vector c64vector c64vector? c64vector-length
       c64vector-ref c64vector-set! c64vector->list list->c64vector)
 
 (test 'c128 make-c128vector c128vector c128vector? c128vector-length
       c128vector-ref c128vector-set! c128vector->list list->c128vector)
+
+(define-syntax test-assert
+  (syntax-rules ()
+    ((test-assert expr)
+     (begin
+       (display "Try ")
+       (display 'expr)
+       (display " is ")
+       (display (if expr "true OK" "false FAIL"))
+       (newline)))))
+
+(define-syntax test-not
+  (syntax-rules ()
+    ((test-assert expr)
+     (begin
+       (display "Try ")
+       (display 'expr)
+       (display " is ")
+       (display (if expr "true FAIL" "false OK"))
+       (newline)))))
+
+(define-syntax integral-tests
+  (syntax-rules ()
+    ((integral-tests pred lo hi)
+     (begin
+       (test-not (pred 1/2))
+       (test-not (pred 1.0))
+       (test-not (pred 1+2i))
+       (test-not (pred 1.0+2.0i))
+       (test-assert (pred 0))
+       (test-assert (pred hi))
+       (test-assert (pred lo))
+       (test-not (pred (+ hi 1)))
+       (test-not (pred (- lo 1)))))))
+
+(display "STARTING @? TESTS")
+(newline)
+
+(integral-tests u8? 0 255)
+(integral-tests s8? -128 127)
+(integral-tests u16? 0 65535)
+(integral-tests s16? -32768 32767)
+(integral-tests u32? 0 4294967295)
+(integral-tests s32? -2147483648 2147483647)
+(integral-tests u64? 0 18446744073709551615)
+(integral-tests s64? -9223372036854775808 9223372036854775807)
+
+(test-assert (f32? 1.0))
+(test-not (f32? 1))
+(test-not (f32? 1.0+2.0i))
+
+(test-assert (f64? 1.0))
+(test-not (f64? 1))
+(test-not (f64? 1.0+2.0i))
+
+(test-assert (c64? 1.0))
+(test-not (c64? 1))
+(test-assert (c64? 1.0+2.0i))
+
+(test-assert (c128? 1.0))
+(test-not (c128? 1))
+(test-assert (c128? 1.0+2.0i))
 

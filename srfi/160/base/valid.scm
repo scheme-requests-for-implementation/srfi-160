@@ -4,7 +4,7 @@
 
 (define (u16? n) (and (exact-integer? n) (<= 0 n 65535)))
 
-(define (s16? n) (and (exact-integer? n) (<= -65536 n 65535)))
+(define (s16? n) (and (exact-integer? n) (<= -32768 n 32767)))
 
 (define (u32? n) (and (exact-integer? n) (<= 0 n 4294967295)))
 
