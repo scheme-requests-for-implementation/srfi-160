@@ -26,7 +26,7 @@
   (case-lambda
     ((vec) (@vector-copy* 0 (@vector-length vec)))
     ((vec start) (@vector-copy* start (@vector-length vec)))
-    ((vec start end) (@vector-copy* start end)))))
+    ((vec start end) (@vector-copy* start end))))
 
 (define (@vector-copy* vec start end)
   (let ((v (make-@vector (- end start))))
@@ -37,12 +37,12 @@
   (let loop ((at at) (i start))
     (unless (= start end)
       (@vector-set! to at (@vector-ref from i))
-      (loop (+ at 1) (+ i 1))))))
+      (loop (+ at 1) (+ i 1)))))
 
 (define @vector-reverse-copy
   (case-lambda
     ((vec) (@vector-reverse-copy* vec 0 (@vector-length vec)))
-    ((vec start) (@vector-reverse-copy* vec start (@vector-length vec))
+    ((vec start) (@vector-reverse-copy* vec start (@vector-length vec)))
     ((vec start end) (@vector-reverse-copy* vec start end))))
 
 (define (@vector-reverse-copy* vec start end)
@@ -64,9 +64,9 @@
     (let loop ((vecs vecs) (at 0))
       (unless (null? vecs)
         (let ((vec (car vecs)))
-          (vector-copy! v at vec 0 (@vector-length vec))
+          (@vector-copy! v at vec 0 (@vector-length vec))
           (loop (cdr vecs) (+ at (@vector-length vec)))))
-    v))
+    v)))
 
 (define (len-sum vecs)
   (if (null? vecs)
@@ -104,18 +104,18 @@
 (define (@vector=* elt? vec1 vec2 vecs)
   (if (null? vecs)
     (and
-      (@dyadic-vectors= elt? vec1 0 (@vector-length vec1)
+      (@dyadic-vecs= elt? vec1 0 (@vector-length vec1)
                           vec2 0 (@vector-length vec2))
       (if (null? vecs)
         #t
-        (@vector=* vec2 (car vecs) (cdr vecs)))))
+        (@vector=* vec2 (car vecs) (cdr vecs))))))
 
-(define (@dyadic-vectors= elt? vec1 start1 end1 vec2 start2 end2)
+(define (@dyadic-vecs= elt? vec1 start1 end1 vec2 start2 end2)
   (cond
     ((not (= end1 end2)) #f)
-    ((= start1 end1)) #t)
+    ((= start1 end1) #t)
     ((elt? (@vector-ref vec1 start1) (@vector-ref vec2 start2)
-     (@dyadic-vectors? elt? vec1 (+ start1 1) end1
+     (@dyadic-vecs= elt? vec1 (+ start1 1) end1
                          vec2 (+ start2 1) end2)))
     (else #f)))
 
@@ -125,7 +125,7 @@
 
 (define (@vector-take vec n)
   (let ((v (make-@vector n)))
-    (@vector-copy@! v 0 vec 0 n)
+    (@vector-copy! v 0 vec 0 n)
     v))
 
 (define (@vector-take-right vec n)
@@ -135,13 +135,13 @@
     v))
 
 (define (@vector-drop vec n)
-  (let ((v (make-vector n))
+  (let ((v (make-@vector n))
         (len (@vector-length vec)))
     (@vector-copy! v 0 n (- len n))
     v))
 
 (define (@vector-drop-right vec n)
-  (let ((v (make-vector n))
+  (let ((v (make-@vector n))
         (len (@vector-length vec)))
     (@vector-copy! v 0 vec 0 (- len n))
     v))
@@ -166,12 +166,12 @@
         r
         (loop (kons (@vector-ref vec i) r) (+ i 1))))))
 
-(define @vector-fold-right kons knil vec)
+(define (@vector-fold-right kons knil vec)
   (let ((len (@vector-length vec)))
-    (let loop ((r knil) (i (- end 1))
+    (let loop ((r knil) (i (- end 1)))
       (if (negative? i)
         r
-        (loop (kons (@vector-ref vec i) r) (- i 1)))))))
+        (loop (kons (@vector-ref vec i) r) (- i 1))))))
 
 (define (@vector-map f vec)
   (let* ((len (@vector-length vec))
@@ -186,7 +186,14 @@
   (let ((len (@vector-length vec)))
     (let loop ((i 0))
       (unless (= i len)
-        (@vector-set vec i (f (@vector-ref vec i)))
+        (@vector-set! vec i (f (@vector-ref vec i)))
+        (loop (+ i 1))))))
+
+(define (@vector-for-each f vec)
+  (let ((len (@vector-length vec)))
+    (let loop ((i 0))
+      (unless (= i len)
+        (f (@vector-ref vec i))
         (loop (+ i 1))))))
 
 (define (@vector-count pred? vec)
@@ -217,7 +224,7 @@
 
 (define (@vector-take-while-right pred? vec)
   (let ((len (@vector-length vec)))
-    (@vector-copy vec 0 (vector-index-right pred? vec))))
+    (@vector-copy vec 0 (@vector-index-right pred? vec))))
 
 (define (@vector-drop-while pred? vec)
   (let ((len (@vector-length vec))
@@ -228,7 +235,6 @@
   (let ((len (@vector-length vec))
         (idx (@vector-skip-right pred? vec)))
     (@vector-copy vec idx len)))
-
 
 (define (@vector-index pred? vec)
   (let ((len (@vector-length vec)))
@@ -253,7 +259,7 @@
     (@vector-index-right (lambda (x) (not (pred? x))) vec))
 
 (define (@vector-any pred? vec)
-  (let (idx (@vector-index pred? vec)))
+  (let ((idx (@vector-index pred? vec)))
     (if idx (@vector-ref vec idx) #f)))
 
 (define (@vector-every pred? vec)
@@ -273,21 +279,21 @@
       (cond
         ((= i len) r)
         ((pred? (@vector-ref vec i))
-         (@vector-set r yes (@vector-ref vec i))
+         (@vector-set! r yes (@vector-ref vec i))
          (loop (+ i 1) (+ yes 1) no))
         (else
-         (@vector-set r no (@vector-ref vec i))
+         (@vector-set! r no (@vector-ref vec i))
          (loop (+ i 1) yes (+ no 1)))))))
 
 (define (@vector-filter pred? vec)
   (let* ((len (@vector-length vec))
          (cnt (@vector-count pred? vec))
-         (r (@make-vector cnt)))
+         (r (make-@vector cnt)))
     (let loop ((i 0) (j 0))
       (cond
         ((= i len) r)
         ((pred? (@vector-ref vec i))
-         (@vector-set r j (@vector-ref vec i))
+         (@vector-set! r j (@vector-ref vec i))
          (loop (+ i 1) (+ j 1)))
         (else
          (loop (+ i 1) j))))))
@@ -297,11 +303,11 @@
 
 ;; @vector-set! defined in the base library
 
-(define (@vector-swap vec i j)
+(define (@vector-swap! vec i j)
   (let ((ival (@vector-ref vec i))
         (jval (@vector-ref vec j)))
-    (vector-set! vec i jval)
-    (vector-set! vec j ival)))
+    (@vector-set! vec i jval)
+    (@vector-set! vec j ival)))
 
 (define @vector-fill!
   (case-lambda
@@ -324,7 +330,7 @@
   (let ((len (@vector-length vec)))
     (let loop ((i 0) (j (- len 1)))
       (when (i < j)
-        (vector-swap! vec i j)
+        (@vector-swap! vec i j)
         (loop (+ i 1) (- j 1))))))
 
 (define @vector->list
@@ -372,7 +378,7 @@
       (cond
         ((= i len) r)
         (else
-          (vector-set! (@vector-ref vec i))
+          (vector-set! r i (@vector-ref vec i))
           (loop (+ i 1)))))))
 
 (define (vector->@vector vec)
@@ -382,7 +388,7 @@
       (cond
         ((= i len) r)
         (else
-          (@vector-set! (vector-ref vec i))
+          @vector-set! (vector-ref vec i)
           (loop (+ i 1)))))))
 
 (define @vector->generator
@@ -402,13 +408,13 @@
 
 
 (define (@vector-write* vec port)
-  (display "@(" port)  ; @-expansion is blind, so will expand this too
-  (let (last (- (@vector-length vec) 1)))
+  (display "@<" port)  ; @-expansion is blind, so will expand this too
+  (let ((last (- (@vector-length vec) 1)))
     (let loop ((i 0))
       (cond
         ((= i last)
          (write (@vector-ref vec i) port)
-         (display ")" port))
+         (display ">" port))
         (else
           (write (@vector-ref vec i) port)
-          (display " " port)))))
+          (display " " port))))))
