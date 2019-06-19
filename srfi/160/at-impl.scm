@@ -24,9 +24,9 @@
 
 (define @vector-copy
   (case-lambda
-    ((vec) (@vector-copy* 0 (@vector-length vec)))
-    ((vec start) (@vector-copy* start (@vector-length vec)))
-    ((vec start end) (@vector-copy* start end))))
+    ((vec) (@vector-copy* vec 0 (@vector-length vec)))
+    ((vec start) (@vector-copy* vec start (@vector-length vec)))
+    ((vec start end) (@vector-copy* vec start end))))
 
 (define (@vector-copy* vec start end)
   (let ((v (make-@vector (- end start))))
@@ -78,17 +78,17 @@
   (let ((v (make-@vector (len-subsum args))))
     (let loop ((args args) (at 0))
       (unless (null? args)
-        (let ((vec (car vecs))
-              (start (cadr vecs))
-              (end (caddr vecs)))
+        (let ((vec (car args))
+              (start (cadr args))
+              (end (caddr args)))
           (@vector-copy! v at vec start end)
-          (loop (cdddr vecs) (+ at (- end start))))))
+          (loop (cdddr args) (+ at (- end start))))))
     v))
 
-(define (len-subsum args)
-  (if (null? args)
+(define (len-subsum vecs)
+  (if (null? vecs)
     0
-    (+ (- (caddr args) (cadr args))
+    (+ (- (caddr vecs) (cadr vecs))
        (len-subsum (cdddr vecs)))))
 
 ;; @? defined in the base library
@@ -108,7 +108,7 @@
                           vec2 0 (@vector-length vec2))
       (if (null? vecs)
         #t
-        (@vector=* vec2 (car vecs) (cdr vecs))))))
+        (@vector=* elt? vec2 (car vecs) (cdr vecs))))))
 
 (define (@dyadic-vecs= elt? vec1 start1 end1 vec2 start2 end2)
   (cond
@@ -146,7 +146,7 @@
     (@vector-copy! v 0 vec 0 (- len n))
     v))
 
-(define (@vector-segment @vec n)
+(define (@vector-segment vec n)
   (let ((len (@vector-length vec)))
     (let loop ((r '()) (i 0) (remain len))
       (cond
@@ -155,7 +155,7 @@
         (else
           (let ((size (min n remain)))
             (loop
-              (cons (@vector-copy vec start size) r)
+              (cons (@vector-copy vec i size) r)
               (+ i size)
               (- remain size))))))))
 
@@ -168,7 +168,7 @@
 
 (define (@vector-fold-right kons knil vec)
   (let ((len (@vector-length vec)))
-    (let loop ((r knil) (i (- end 1)))
+    (let loop ((r knil) (i (- (@vector-length vec) 1)))
       (if (negative? i)
         r
         (loop (kons (@vector-ref vec i) r) (- i 1))))))
@@ -267,8 +267,8 @@
     (let loop ((i 0))
       (cond
         ((= len 0) #t)
-        ((= i len) (@vector-ref (- len 1)))
-        ((pred? (@vector-ref i)) (loop (+ i 1)))
+        ((= i len) (@vector-ref vec (- len 1)))
+        ((pred? (@vector-ref vec i)) (loop (+ i 1)))
         (else #f)))))
 
 (define (@vector-partition pred? vec)
@@ -326,18 +326,12 @@
     ((vec start) (@vector-reverse-some! vec start (@vector-length vec)))
     ((vec start end) (@vector-reverse-some! vec start end))))
 
-(define (@vector-reverse-some! vec fill start end)
+(define (@vector-reverse-some! vec start end)
   (let ((len (@vector-length vec)))
     (let loop ((i 0) (j (- len 1)))
       (when (i < j)
         (@vector-swap! vec i j)
         (loop (+ i 1) (- j 1))))))
-
-(define @vector->list
-  (case-lambda
-    ((vec) (reverse (reverse-@vector->list* vec 0 (@vector-length vec))))
-    ((vec start) (reverse (reverse-@vector->list* vec start (@vector-length vec))))
-    ((vec start end) (reverse (reverse-@vector->list* vec start end)))))
 
 (define reverse-@vector->list
   (case-lambda
@@ -350,16 +344,6 @@
     (if (= i end)
       r
       (loop (+ 1 i) (cons (@vector-ref vec i) r)))))
-
-(define (list->@vector list)
-  (let* ((len (length list))
-         (r (make-@vector len)))
-    (let loop ((i (- len 1)) (list list))
-      (cond
-        ((negative? i) r)
-        (else
-          (@vector-set! r i (car list))
-          (loop (+ i 1) (cdr list)))))))
 
 (define (reverse-list->@vector list)
   (let* ((len (length list))
@@ -408,13 +392,14 @@
 
 
 (define (@vector-write* vec port)
-  (display "@<" port)  ; @-expansion is blind, so will expand this too
+  (display "#@(" port)  ; @-expansion is blind, so will expand this too
   (let ((last (- (@vector-length vec) 1)))
     (let loop ((i 0))
       (cond
         ((= i last)
          (write (@vector-ref vec i) port)
-         (display ">" port))
+         (display ")" port))
         (else
           (write (@vector-ref vec i) port)
-          (display " " port))))))
+          (display " " port)
+          (loop (+ i 1)))))))

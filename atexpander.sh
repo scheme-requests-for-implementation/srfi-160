@@ -4,5 +4,6 @@
 for at in s16; do
     sed "s/@/$at/g" srfi/160/at.sld >srfi/160/$at.sld
     sed "s/@/$at/g" srfi/160/at-impl.scm >srfi/160/$at-impl.scm
+    sed "s/@/$at/g" srfi.160.at.scm >srfi.160.$at.scm
 done
 
