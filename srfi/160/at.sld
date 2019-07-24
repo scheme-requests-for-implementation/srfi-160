@@ -1,6 +1,7 @@
 (define-library (srfi 160 @)
   (import (scheme base))
   (import (scheme cxr))
+  (import (scheme case-lambda))
   (import (srfi 160 base))
   ;; Constructors 
   (export make-@vector @vector
@@ -32,6 +33,4 @@
   (export @vector->list reverse-@vector->list reverse-list->@vector
           @vector->vector vector->@vector)
   (include "@-133-impl.scm")
-  (include "@-152-impl.scm")
-  (include "@-other-impl.scm")
 )
