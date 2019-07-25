@@ -1,25 +1,24 @@
 ;;; This code is the same for all SRFI 160 vector sizes.
 ;;; The @s appearing in the code are expanded to u8, s8, etc.
-;;; The "base library" is (srfi 160 base).
 
-;; make-@vector defined in the base library
+;; make-@vector defined in (srfi 160 base)
 
-;; @vector defined in the base library
+;; @vector defined in (srfi 160 base)
 
 (define (@vector-unfold f len seed)
   (let ((v (make-@vector len)))
-    (let loop ((i 0) (value (f seed)))
+    (let loop ((i 0) (value (f i seed)))
       (unless (= i len)
         (@vector-set! v i value)
-        (loop (+ i 1) (f seed))))
+        (loop (+ i 1) (f i value))))
     v))
 
 (define (@vector-unfold-right f len seed)
   (let ((v (make-@vector len)))
-    (let loop ((i (- len 1)) (value (f seed)))
+    (let loop ((i (- len 1)) (value (f i seed)))
       (unless (= i -1)
         (@vector-set! v i value)
-        (loop (- i 1) (f seed))))
+        (loop (- i 1) (f i value))))
     v))
 
 (define @vector-copy
@@ -35,7 +34,7 @@
 
 (define (@vector-copy! to at from start end)
   (let loop ((at at) (i start))
-    (unless (= start end)
+    (unless (= i end)
       (@vector-set! to at (@vector-ref from i))
       (loop (+ at 1) (+ i 1)))))
 
@@ -54,7 +53,7 @@
   (let loop ((at at) (i (- end 1)))
     (unless (< i start)
       (@vector-set! to at (@vector-ref from i))
-      (loop (- at 1) (- i 1)))))
+      (loop (+ at 1) (- i 1)))))
 
 (define (@vector-append . vecs)
   (@vector-concatenate vecs))
@@ -91,37 +90,39 @@
     (+ (- (caddr vecs) (cadr vecs))
        (len-subsum (cdddr vecs)))))
 
-;; @? defined in the base library
+;; @? defined in (srfi 160 base)
 
-;; @vector? defined in the base library
+;; @vector? defined in (srfi 160 base)
 
 (define (@vector-empty? vec)
   (zero? (@vector-length vec)))
 
-(define (@vector= elt? . vecs)
-  (@vector=* elt? (car vecs) (cadr vecs) (cddr vecs)))
+(define (@vector= elt= . vecs)
+  (@vector=* elt= (car vecs) (cadr vecs) (cddr vecs)))
 
-(define (@vector=* elt? vec1 vec2 vecs)
+(define (@vector=* elt= vec1 vec2 vecs)
   (if (null? vecs)
     (and
-      (@dyadic-vecs= elt? vec1 0 (@vector-length vec1)
+      (@dyadic-vecs= elt= vec1 0 (@vector-length vec1)
                           vec2 0 (@vector-length vec2))
       (if (null? vecs)
         #t
-        (@vector=* elt? vec2 (car vecs) (cdr vecs))))))
+        (@vector=* elt= vec2 (car vecs) (cdr vecs))))))
 
-(define (@dyadic-vecs= elt? vec1 start1 end1 vec2 start2 end2)
+(define (@dyadic-vecs= elt= vec1 start1 end1 vec2 start2 end2)
   (cond
     ((not (= end1 end2)) #f)
-    ((= start1 end1) #t)
-    ((elt? (@vector-ref vec1 start1) (@vector-ref vec2 start2)
-     (@dyadic-vecs= elt? vec1 (+ start1 1) end1
-                         vec2 (+ start2 1) end2)))
+    ((not (< start1 end1)) #t)
+    ((let ((elt1 (@vector-ref vec1 start1))
+           (elt2 (@vector-ref vec2 start2)))
+      (elt= elt1 elt2))
+     (@dyadic-vecs= elt= vec1 (+ start1 1) end1
+                         vec2 (+ start2 1) end2))
     (else #f)))
 
-;; @vector-ref defined in the base library
+;; @vector-ref defined in (srfi 160 base)
 
-;; @vector-length defined in the base library
+;; @vector-length defined in (srfi 160 base)
 
 (define (@vector-take vec n)
   (let ((v (make-@vector n)))
@@ -135,29 +136,28 @@
     v))
 
 (define (@vector-drop vec n)
-  (let ((v (make-@vector n))
-        (len (@vector-length vec)))
-    (@vector-copy! v 0 n (- len n))
+ (let* ((len (@vector-length vec))
+        (rlen (- len n))
+        (v (make-@vector rlen)))
+    (@vector-copy! v 0 vec n rlen)
     v))
 
 (define (@vector-drop-right vec n)
-  (let ((v (make-@vector n))
-        (len (@vector-length vec)))
-    (@vector-copy! v 0 vec 0 (- len n))
+  (let* ((len (@vector-length vec))
+         (rlen (- len n))
+         (v (make-@vector rlen)))
+    (@vector-copy! v 0 vec 0 rlen)
     v))
 
 (define (@vector-segment vec n)
-  (let ((len (@vector-length vec)))
-    (let loop ((r '()) (i 0) (remain len))
-      (cond
-        ((zero? remain)
-         (reverse r))
-        (else
-          (let ((size (min n remain)))
-            (loop
-              (cons (@vector-copy vec i size) r)
-              (+ i size)
-              (- remain size))))))))
+  (let loop ((r '()) (i 0) (remain (@vector-length vec)))
+    (if (<= remain 0)
+      (reverse r)
+      (let ((size (min n remain)))
+        (loop
+          (cons (@vector-copy vec i (+ i size)) r)
+          (+ i size)
+          (- remain size))))))
 
 (define (@vector-fold kons knil vec)
   (let ((len (@vector-length vec)))
@@ -197,10 +197,12 @@
         (loop (+ i 1))))))
 
 (define (@vector-count pred? vec)
-  (@vector-fold
-    (lambda (subtotal elem) (+ subtotal (if (pred? elem) 1 0)))
-    0
-    vec))
+  (let ((len (@vector-length vec)))
+    (let loop ((i 0) (r 0))
+      (cond
+        ((= i (@vector-length vec)) r)
+        ((pred? (@vector-ref vec i)) (loop (+ i 1) (+ r 1)))
+        (else (loop (+ i 1) r))))))
 
 (define (@vector-cumulate f knil vec)
   (let* ((len (@vector-length vec))
@@ -301,7 +303,7 @@
 (define (@vector-remove pred? vec)
   (@vector-filter (lambda (x) (not (pred? x))) vec))
 
-;; @vector-set! defined in the base library
+;; @vector-set! defined in (srfi 160 base)
 
 (define (@vector-swap! vec i j)
   (let ((ival (@vector-ref vec i))
@@ -328,8 +330,8 @@
 
 (define (@vector-reverse-some! vec start end)
   (let ((len (@vector-length vec)))
-    (let loop ((i 0) (j (- len 1)))
-      (when (i < j)
+    (let loop ((i 0)(j (- len 1)))
+      (when (< i j)
         (@vector-swap! vec i j)
         (loop (+ i 1) (- j 1))))))
 

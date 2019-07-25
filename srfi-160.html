@@ -98,59 +98,35 @@ to be put into a future SRFI of their own.
 
 <H1>Specification</H1>
 
+<p>
 There are eight datatypes of exact integer homogeneous vectors (which will
 be called integer vectors):
+</p>
 
-<TABLE>
-<TR>
-<TD><TD><STRONG>datatype</STRONG> <TD><STRONG>type of elements</STRONG>
-</TR>
-<TR>
-<TD><TD><code>s8vector</code> <TD>signed exact integer in the range -2<sup>7</sup> to 2<sup>7</sup>-1
-</TR>
-<TR>
-<TD><TD><code>u8vector</code> <TD>unsigned exact integer in the range 0 to 2<sup>8</sup>-1
-</TR>
-<TR>
-<TD><TD><code>s16vector</code><TD>signed exact integer in the range -2<sup>15</sup> to 2<sup>15</sup>-1
-</TR>
-<TR>
-<TD><TD><code>u16vector</code><TD>unsigned exact integer in the range 0 to 2<sup>16</sup>-1
-</TR>
-<TR>
-<TD><TD><code>s32vector</code><TD>signed exact integer in the range -2<sup>31</sup> to 2<sup>31</sup>-1
-</TR>
-<TR>
-<TD><TD><code>u32vector</code><TD>unsigned exact integer in the range 0 to 2<sup>32</sup>-1
-</TR>
-<TR>
-<TD><TD><code>s64vector</code><TD>signed exact integer in the range -2<sup>63</sup> to 2<sup>63</sup>-1
-</TR>
-<TR>
-<TD><TD><code>u64vector</code><TD>unsigned exact integer in the range 0 to 2<sup>64</sup>-1
-</TR>
-</TABLE>
-
-All but the first are part of SRFI 4.
+<code>s8vector</code>:  signed exact integer in the range -2<sup>7</sup> to 2<sup>7</sup>-1<br/>
+<code>u8vector</code>:  unsigned exact integer in the range 0 to 2<sup>8</sup>-1<br/>
+<code>s16vector</code>: signed exact integer in the range -2<sup>15</sup> to 2<sup>15</sup>-1<br/>
+<code>u16vector</code>: unsigned exact integer in the range 0 to 2<sup>16</sup>-1<br/>
+<code>s32vector</code>: signed exact integer in the range -2<sup>31</sup> to 2<sup>31</sup>-1<br/>
+<code>u32vector</code>: unsigned exact integer in the range 0 to 2<sup>32</sup>-1<br/>
+<code>s64vector</code>: signed exact integer in the range -2<sup>63</sup> to 2<sup>63</sup>-1<br/>
+<code>u64vector</code>: unsigned exact integer in the range 0 to 2<sup>64</sup>-1<br/>
+<p>
+All are part of SRFI 4.
+</p>
 
 	<p></p>
 
 There are two datatypes of inexact real homogeneous vectors (which will
 be called float vectors):
+</p>
 
-<TABLE>
-<TR>
-<TD><TD><STRONG>datatype</STRONG> <TD><STRONG>type of elements</STRONG>
-</TR>
-<TR>
-<TD><TD><code>f32vector</code> <TD>inexact real
-</TR>
-<TR>
-<TD><TD><code>f64vector</code> <TD>inexact real
-</TR>
-</TABLE>
+<code>f32vector</code>: inexact real, typically 32 bits<br/>
+<code>f64vector</code>: inexact real, typically 64 bits<br/>
 
-These are part of SRFI 4.
+<p>
+These are also part of SRFI 4.
+</p>
 	<p></p>
 
 The only required difference between the two float vector types is that
@@ -159,22 +135,17 @@ The only required difference between the two float vector types is that
 
 	<p></p>
 
+<p>
 And there are two datatypes of inexact complex homogeneous vectors (which will
 be called complex vectors):
+</p>
 
-<TABLE>
-<TR>
-<TD><TD><STRONG>datatype</STRONG> <TD><STRONG>type of elements</STRONG>
-</TR>
-<TR>
-<TD><TD><code>c64vector</code> <TD>inexact complex
-</TR>
-<TR>
-<TD><TD><code>c128vector</code> <TD>inexact complex
-</TR>
-</TABLE>
+<code>c64vector</code>: inexact complex, typically 64 bits</br>
+<code>c128vector</code>: inexact complex, typically 128 bits</br>
 
-These are not part of SRFI 4.
+<p>
+These are <i>not</i> part of SRFI 4.
+</p>
 
 	<p></p>
 
@@ -228,6 +199,9 @@ SRFI 133 procedure, except that it is an error to attempt
 to insert an invalid value into a homogeneous vector.
 Consequently, only a brief description of each procedure is given, and
 SRFI 133 (or in some cases SRFI 152) should be consulted for the details.
+It is worth mentioning, however, that all the procedures that return one or
+more vectors (homogeneous or heterogeneous) invariably return newly allocated
+vectors specifically.
 
     <p>
       In the section containing specifications of procedures, the
@@ -236,13 +210,13 @@ SRFI 133 (or in some cases SRFI 152) should be consulted for the details.
     </p>
     <dl>
       <dt><i>(f arg<sub>1</sub> arg<sub>2</sub> ...) -> something</i></dt> <dd>
-        A procedure <tt><i>f</i></tt> that takes the parameters
-        <tt><i>arg<sub>1</sub> arg<sub>2</sub>
-        ...</i></tt> and returns a value of the
-        type <tt><i>something</i></tt>.
+        A procedure <code><i>f</i></code> that takes the parameters
+        <code><i>arg<sub>1</sub> arg<sub>2</sub>
+        ...</i></code> and returns a value of the
+        type <code><i>something</i></code>.
         If two values are returned, two types are specified.
-        If <tt><i>something</i></tt>
-        is <tt>unspecified</tt>, then <tt><i>f</i></tt> returns a single
+        If <code><i>something</i></code>
+        is <code>unspecified</code>, then <code><i>f</i></code> returns a single
         implementation-dependent value; this SRFI does not specify what it
         returns, and in order to write portable code, the return value
         should be ignored.
@@ -253,7 +227,7 @@ SRFI 133 (or in some cases SRFI 152) should be consulted for the details.
       <dt><i>vec</i></dt>
       <dd>
         Must be a heterogeneous vector, i.e. it must
-        satisfy the predicate <tt>vector?</tt>.
+        satisfy the predicate <code>vector?</code>.
         <br />
         <br />
       </dd>
@@ -261,8 +235,8 @@ SRFI 133 (or in some cases SRFI 152) should be consulted for the details.
       <dt><i>@vec, @to, @from</i></dt>
       <dd>
         Must be a homogeneous vector, i.e. it must
-        satisfy the predicate <tt>@vector?</tt>.
-        In <tt>@vector-copy!</tt> and <tt>reverse-@vector-copy!</tt>,
+        satisfy the predicate <code>@vector?</code>.
+        In <code>@vector-copy!</code> and <code>reverse-@vector-copy!</code>,
         <i>@to</i> is the destination and <i>@from</i> is the source.
         <br />
         <br />
@@ -271,7 +245,7 @@ SRFI 133 (or in some cases SRFI 152) should be consulted for the details.
       <dt><i>i, j, start, at</i></dt>
       <dd>
         Must be an exact nonnegative integer less than the length of the @vector.
-        In <tt>@vector-copy!</tt> and <tt>reverse-@vector-copy!</tt>,
+        In <code>@vector-copy!</code> and <code>reverse-@vector-copy!</code>,
         <i>at</i> refers to the destination and <i>start</i> to the source.
         <br />
         <br />
@@ -282,7 +256,7 @@ SRFI 133 (or in some cases SRFI 152) should be consulted for the details.
         Must be an exact nonnegative integer not less than <i>start</i>.
         This indicates the index directly before
         which traversal will stop &mdash; processing will occur until
-        the index of the vector is one less than <tt><i>end</i></tt>.  It is the
+        the index of the vector is one less than <code><i>end</i></code>.  It is the
         open right side of a range.
         <br />
         <br />
@@ -334,7 +308,7 @@ SRFI 133 (or in some cases SRFI 152) should be consulted for the details.
       <dt><i>[something]</i></dt>
       <dd>
         An optional argument; it needn't necessarily be applied.
-        <tt><i>Something</i></tt> needn't necessarily be one thing; for
+        <code><i>Something</i></code> needn't necessarily be one thing; for
         example, this usage of it is perfectly valid:
         <br />
         <br />
@@ -350,7 +324,7 @@ SRFI 133 (or in some cases SRFI 152) should be consulted for the details.
 
       <dt><i>something ...</i></dt>
       <dd>
-        Zero or more <tt><i>something</i></tt>s are
+        Zero or more <code><i>something</i></code>s are
         allowed to be arguments.
         <br />
         <br />
@@ -361,7 +335,7 @@ SRFI 133 (or in some cases SRFI 152) should be consulted for the details.
         ...
       </i></dt>
       <dd>
-        At least one <tt><i>something</i></tt> must be
+        At least one <code><i>something</i></code> must be
         arguments.
         <br />
         <br />
@@ -390,8 +364,13 @@ all the elements of the @vector are initialized to it.</p>
 
 <p><code>(@vector-unfold <i>f length seed</i>) -> @vector</code> [SRFI 133]</p>
 
-<p>Create a @vector whose length is <i>length</i> and initialize it by calling
-f, f(f), f(f(f))) ... on the <i>seed</i>.</p>
+<p>
+Creates a vector whose length is <i>length</i> and iterates across each index
+<i>k</i> between 0 and <i>length</i>, applying <i>f</i> at each iteration to the current
+index and current state, in that order, to receive two values: 
+the element to put in the k<i>th</i> slot of the new vector and a new state
+for the next iteration.
+On the first call to <i>f</i>, the state's value is zero.
 
 <p><code>(@vector-unfold-right <i>f length seed</i>) -> @vector</code> [SRFI 133]</p>
 
@@ -588,6 +567,17 @@ onto <i>@to</i>, starting at index <i>@at</i>.
 
 <p>The same as <code>@vector-copy!</code>, but copies in reverse.</p>
 
+<p><code>(@vector-unfold! <i>f vec start end seed</i>) -> @vector</code> [SRFI 133]</p>
+
+<p>Like <code>vector-unfold</code>, but the elements are copied into the
+vector <i>vec </i> starting at element <i>start</i> rather than into a newly allocated
+vector. Terminates when <i>end</i>-<i>start</i> elements have been generated.
+</p>
+
+<p><code>(@vector-unfold-right! <i>f vec start end seed</i>) -> @vector</code> [SRFI 133]</p>
+
+<p>The same as <code>@vector-unfold!</code>, but initializes the @vector from right to left.</p>
+
 <H3>Conversion</H3>
 
 <p><code>(@vector->list <i>@vec</i> [<i>start</i> [<i>end</i>]]) -> proper-list</code> [SRFI 4]</p>
@@ -608,13 +598,24 @@ elements as the argument, in reverse order where specified.</p>
 
 <h3>Generators</h3>
 <p>
-<tt>(make-@vector-generator </tt><em>@vector</em><tt>)</tt>
+<code>(make-@vector-generator </code><em>@vector</em><code>)</code>
 </p>
 <p>
 Returns a <a href="http://srfi.schemers.org/srfi-121/srfi-121.html">SRFI 121</a>
 generator that generates all the values of <em>@vector</em> in order.
 Note that the generator is finite.
 </p>
+
+<h3>Comparators</h3>
+<p>
+<code>@vector-comparator</code>
+</p>
+<p>
+Variable containing a
+<a href="http://srfi.schemers.org/srfi-128/srfi-128.html">SRFI 128</a>
+comparator whose components provide ordering and hashing of @vectors.
+</p>
+
 <H3>Output</H3>
 
 <p><code>(write-@vector <i>vec</i> [ <i>port</i> ] ) -> unspecified</code></p>
