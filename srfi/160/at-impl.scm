@@ -7,18 +7,20 @@
 
 (define (@vector-unfold f len seed)
   (let ((v (make-@vector len)))
-    (let loop ((i 0) (value (f i seed)))
+    (let loop ((i 0) (state seed))
       (unless (= i len)
-        (@vector-set! v i value)
-        (loop (+ i 1) (f i value))))
+        (let-values (((value newstate) (f i state)))
+          (@vector-set! v i value)
+          (loop (+ i 1) newstate))))
     v))
 
 (define (@vector-unfold-right f len seed)
   (let ((v (make-@vector len)))
-    (let loop ((i (- len 1)) (value (f i seed)))
+    (let loop ((i (- len 1)) (state seed))
       (unless (= i -1)
-        (@vector-set! v i value)
-        (loop (- i 1) (f i value))))
+        (let-values (((value newstate) (f i state)))
+          (@vector-set! v i value)
+          (loop (- i 1) newstate))))
     v))
 
 (define @vector-copy
@@ -137,9 +139,9 @@
 
 (define (@vector-drop vec n)
  (let* ((len (@vector-length vec))
-        (rlen (- len n))
-        (v (make-@vector rlen)))
-    (@vector-copy! v 0 vec n rlen)
+        (vlen (- len n))
+        (v (make-@vector vlen)))
+    (@vector-copy! v 0 vec n len)
     v))
 
 (define (@vector-drop-right vec n)
@@ -164,7 +166,7 @@
     (let loop ((r knil) (i 0))
       (if (= i len)
         r
-        (loop (kons (@vector-ref vec i) r) (+ i 1))))))
+        (loop (kons r (@vector-ref vec i)) (+ i 1))))))
 
 (define (@vector-fold-right kons knil vec)
   (let ((len (@vector-length vec)))
@@ -221,22 +223,30 @@
         (f (@vector-ref vec i))
         (loop (+ i 1))))))
 
+;;;;;;;;;;;;;;;;;;
 (define (@vector-take-while pred? vec)
-  (@vector-copy vec 0 (@vector-skip pred? vec)))
+  (let* ((len (@vector-length vec))
+         (idx (@vector-skip pred? vec))
+         (idx* (if idx idx len)))
+    (@vector-copy vec 0 idx*)))
 
 (define (@vector-take-while-right pred? vec)
-  (let ((len (@vector-length vec)))
-    (@vector-copy vec 0 (@vector-index-right pred? vec))))
+  (let* ((len (@vector-length vec))
+         (idx (@vector-skip-right pred? vec))
+         (idx* (if idx (+ idx 1) 0)))
+    (@vector-copy vec idx* len)))
 
 (define (@vector-drop-while pred? vec)
-  (let ((len (@vector-length vec))
-        (idx (@vector-skip pred? vec)))
-    (@vector-copy vec idx (- len idx))))
+  (let* ((len (@vector-length vec))
+         (idx (@vector-skip pred? vec))
+         (idx* (if idx idx len)))
+    (@vector-copy vec idx* len)))
 
 (define (@vector-drop-while-right pred? vec)
-  (let ((len (@vector-length vec))
-        (idx (@vector-skip-right pred? vec)))
-    (@vector-copy vec idx len)))
+  (let* ((len (@vector-length vec))
+         (idx (@vector-skip-right pred? vec))
+         (idx* (if idx idx -1)))
+    (@vector-copy vec 0 (+ 1 idx*))))
 
 (define (@vector-index pred? vec)
   (let ((len (@vector-length vec)))

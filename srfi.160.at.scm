@@ -2,7 +2,7 @@
   (import (scheme))
   (import (only (chicken base)
     open-input-string include define-record-type case-lambda
-    when unless))
+    when unless let-values))
   (import (only (chicken module) export))
   (import (srfi 160 base))
 

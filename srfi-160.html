@@ -459,7 +459,13 @@ The last @vector may be shorter than <i>n</i>.</p>
 
 <p>Folds <i>kons</i> over the elements of <i>@vec</i> 
 in increasing/decreasing order using <i>knil</i>
-as the initial value.</p>
+as the initial value.
+The <i>kons</i> procedure is called with the state first
+and the element second, as in SRFIs 43 and 133
+(heterogeneous vectors).
+This is the opposite order to that used in SRFI 1 (lists)
+and the various string SRFIs.
+</p>
 
 <p><code>(@vector-map <i>f @vec</i>) -> @vector</code> [SRFI 133]</p>
 
