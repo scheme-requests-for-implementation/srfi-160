@@ -6,7 +6,7 @@ This repository hosts [[https://srfi.schemers.org/srfi-160/][SRFI 160]]: Homogen
 
 This SRFI is in /draft/ status.
 
-See also [[https://srfi.schemers.org/srfi-4/][SRFI 4: Homogeneous numeric vector datatypes]].
+See also [[https://srfi.schemers.org/srfi-4/][SRFI 4: Homogeneous numeric vector datatypes]], [[https://srfi.schemers.org/srfi-133/][SRFI 133: Vector Library (R7RS-compatible)]], and [[https://srfi.schemers.org/srfi-152/][SRFI 152: String Library (reduced)]].
 
 The full documentation for this SRFI can be found in the [[https://srfi.schemers.org/srfi-160/srfi-160.html][SRFI Document]].
 
