@@ -3,4 +3,4 @@
 (import (scheme complex))
 (import (srfi 160 base))
 
-(include "srfi/160/base/shared-tests.scm")
+(include "shared-base-tests.scm")

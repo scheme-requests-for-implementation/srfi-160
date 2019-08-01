@@ -1,9 +1,11 @@
-(define-library (srfi 160 @)
-  (import (scheme base))
-  (import (scheme case-lambda))
-  (import (scheme cxr))
-  (import (scheme write))
+(module (srfi 160 @) ()
+  (import (scheme))
+  (import (only (chicken base)
+    open-input-string include define-record-type case-lambda
+    when unless let-values))
+  (import (only (chicken module) export))
   (import (srfi 160 base))
+
   ;; Constructors 
   (export make-@vector @vector
           @vector-unfold @vector-unfold-right
@@ -33,5 +35,10 @@
   ;; Conversion 
   (export @vector->list reverse-@vector->list reverse-list->@vector
           @vector->vector vector->@vector)
-  (include "@-impl.scm")
+
+  (include "srfi/160/@-impl.scm")
+
+  (define (eof-object)
+     (let* ((p (open-input-string "")) (e (read p)))
+      (close-input-port p) e))
 )
