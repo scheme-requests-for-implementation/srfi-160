@@ -371,7 +371,7 @@ Creates a vector whose length is <i>length</i> and iterates across each index
 index and current state, in that order, to receive two values: 
 the element to put in the k<i>th</i> slot of the new vector and a new state
 for the next iteration.
-On the first call to <i>f</i>, the state's value is zero.
+On the first call to <i>f</i>, the state's value is <i>seed</i>.
 
 <p><code>(@vector-unfold-right <i>f length seed</i>) -> @vector</code> [SRFI 133]</p>
 
