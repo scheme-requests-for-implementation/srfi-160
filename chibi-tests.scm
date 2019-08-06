@@ -6,4 +6,4 @@
 
 (begin
   (define (sub1 x) (- x 1)))
-(include "chibi-tests.scm")
+(include "shared-tests.scm")
