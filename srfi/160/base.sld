@@ -3,7 +3,11 @@
   (import (scheme complex))
   (import (only (srfi 151) bitwise-and bitwise-ior
                            bitwise-not arithmetic-shift))
-  (import (srfi 4))
+  ;; SRFI 4 versions of @vector->list don't accept start/end args
+  (import (except (srfi 4)
+    u8vector->list s8vector->list u16vector->list s16vector->list
+    u32vector->list s32vector->list u64vector->list s64vector->list
+    f32vector->list f64vector->list))
 
   (export
     make-u8vector make-s8vector make-u16vector make-s16vector
@@ -42,5 +46,17 @@
 
   (include "base/r7rec.scm")
   (include "base/complex.scm")
+  (include "base/u8-vector2list.scm")
+  (include "base/s8-vector2list.scm")
+  (include "base/u16-vector2list.scm")
+  (include "base/s16-vector2list.scm")
+  (include "base/u32-vector2list.scm")
+  (include "base/s32-vector2list.scm")
+  (include "base/u64-vector2list.scm")
+  (include "base/s64-vector2list.scm")
+  (include "base/f32-vector2list.scm")
+  (include "base/f64-vector2list.scm")
+  (include "base/c64-vector2list.scm")
+  (include "base/c128-vector2list.scm")
   (include "base/valid.scm")
 )

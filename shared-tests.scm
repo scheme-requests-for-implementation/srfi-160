@@ -4,6 +4,7 @@
 (define (steady i x) (values x x))
 (define (count-up i x) (values x (+ x 1)))
 (define (count-down i x) (values x (- x 1)))
+(define (odd+1 x) (if (odd? x) (+ 1 x) #f))
 
 (define-syntax test-equiv
   (syntax-rules ()
@@ -47,9 +48,9 @@
   (test-assert "not s16vector?" (not (s16vector? #t)))
   (test-assert "empty" (s16vector-empty? (s16vector)))
   (test-assert "not empty" (not (s16vector-empty? s5)))
-  (test-assert "=" (s16vector= = (s16vector 1 2 3) (s16vector 1 2 3)))
-  (test-assert "not =" (not (s16vector= = (s16vector 1 2 3) (s16vector 3 2 1))))
-  (test-assert "not =2" (not (s16vector= = (s16vector 1 2 3) (s16vector 1 2))))
+  (test-assert "=" (s16vector= (s16vector 1 2 3) (s16vector 1 2 3)))
+  (test-assert "not =" (not (s16vector= (s16vector 1 2 3) (s16vector 3 2 1))))
+  (test-assert "not =2" (not (s16vector= (s16vector 1 2 3) (s16vector 1 2))))
 ) ; end s16vector/predicates
 
 (test-group "s16vector/selectors"
@@ -96,8 +97,10 @@
   (test "skip-right" 3 (s16vector-skip-right odd? s5))
   (test-assert "any" (s16vector-any odd? s5))
   (test-assert "not any" (not (s16vector-any inexact? s5)))
+  (test "any + 1" 2 (s16vector-any odd+1 s5))
   (test-assert "every" (s16vector-every exact? s5))
   (test-assert "not every" (not (s16vector-every odd? s5)))
+  (test-assert "every + 1" (not (s16vector-every odd+1 s5)))
   (test-equiv "partition" '(1 3 5 2 4) (s16vector-partition odd? s5))
   (test-equiv "filter" '(1 3 5) (s16vector-filter odd? s5))
   (test-equiv "remove" '(2 4) (s16vector-remove odd? s5))
@@ -133,6 +136,41 @@
     (s16vector-reverse-copy! v 1 s5 2 4)
     (test-equiv "reverse-copy!" '(10 4 3 40 50) v))
 ) ; end s16vector/mutators
-) ; end s16vector
 
+(test-group "s16vector/conversion"
+  (test "@vector->list 1" '(1 2 3 4 5)
+        (s16vector->list s5))
+  (test "@vector->list 2" '(2 3 4 5)
+        (s16vector->list s5 1))
+  (test "@vector->list 3" '(2 3 4)
+        (s16vector->list s5 1 4))
+  (test "@vector->vector 1" #(1 2 3 4 5)
+        (s16vector->vector s5))
+  (test "@vector->vector 2" #(2 3 4 5)
+        (s16vector->vector s5 1))
+  (test "@vector->vector 3" #(2 3 4)
+        (s16vector->vector s5 1 4))
+  (test "reverse-@vector->list 1" '(5 4 3 2 1)
+        (reverse-s16vector->list s5))
+  (test "reverse-@vector->list 2" '(5 4 3 2)
+        (reverse-s16vector->list s5 1))
+  (test "reverse-@vector->list 3" '(4 3 2)
+        (reverse-s16vector->list s5 1 4))
+  (test "reverse-@vector->vector 1" #(5 4 3 2 1)
+        (reverse-s16vector->vector s5))
+  (test "reverse-@vector->vector 2" #(5 4 3 2)
+        (reverse-s16vector->vector s5 1))
+  (test "reverse-@vector->vector 3" #(4 3 2)
+        (reverse-s16vector->vector s5 1 4))
+  (test-equiv "list->@vector 1" '(1 2 3 4 5)
+        (s16vector->list '(1 2 3 4 5)))
+  (test-equiv "vector->@vector 1" '(1 2 3 4 5)
+        (vector->s16vector #(1 2 3 4 5)))
+  (test-equiv "vector->@vector 2" '(2 3 4 5)
+        (vector->s16vector s5 1))
+  (test-equiv "vector->@vector 3" '(2 3 4)
+        (vector->s16vector s5 1 4))
+) ; end s16vector/conversion
+
+) ; end s16vector
 (test-exit)

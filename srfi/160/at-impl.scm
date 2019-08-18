@@ -99,26 +99,26 @@
 (define (@vector-empty? vec)
   (zero? (@vector-length vec)))
 
-(define (@vector= elt= . vecs)
-  (@vector=* elt= (car vecs) (cadr vecs) (cddr vecs)))
+(define (@vector= . vecs)
+  (@vector=* (car vecs) (cadr vecs) (cddr vecs)))
 
-(define (@vector=* elt= vec1 vec2 vecs)
+(define (@vector=* vec1 vec2 vecs)
   (if (null? vecs)
     (and
-      (@dyadic-vecs= elt= vec1 0 (@vector-length vec1)
+      (@dyadic-vecs= vec1 0 (@vector-length vec1)
                           vec2 0 (@vector-length vec2))
       (if (null? vecs)
         #t
-        (@vector=* elt= vec2 (car vecs) (cdr vecs))))))
+        (@vector=* vec2 (car vecs) (cdr vecs))))))
 
-(define (@dyadic-vecs= elt= vec1 start1 end1 vec2 start2 end2)
+(define (@dyadic-vecs= vec1 start1 end1 vec2 start2 end2)
   (cond
     ((not (= end1 end2)) #f)
     ((not (< start1 end1)) #t)
     ((let ((elt1 (@vector-ref vec1 start1))
            (elt2 (@vector-ref vec2 start2)))
-      (elt= elt1 elt2))
-     (@dyadic-vecs= elt= vec1 (+ start1 1) end1
+      (= elt1 elt2))
+     (@dyadic-vecs= vec1 (+ start1 1) end1
                          vec2 (+ start2 1) end2))
     (else #f)))
 
@@ -198,12 +198,12 @@
         (f (@vector-ref vec i))
         (loop (+ i 1))))))
 
-(define (@vector-count pred? vec)
+(define (@vector-count pred vec)
   (let ((len (@vector-length vec)))
     (let loop ((i 0) (r 0))
       (cond
         ((= i (@vector-length vec)) r)
-        ((pred? (@vector-ref vec i)) (loop (+ i 1) (+ r 1)))
+        ((pred (@vector-ref vec i)) (loop (+ i 1) (+ r 1)))
         (else (loop (+ i 1) r))))))
 
 (define (@vector-cumulate f knil vec)
@@ -224,94 +224,101 @@
         (loop (+ i 1))))))
 
 ;;;;;;;;;;;;;;;;;;
-(define (@vector-take-while pred? vec)
+(define (@vector-take-while pred vec)
   (let* ((len (@vector-length vec))
-         (idx (@vector-skip pred? vec))
+         (idx (@vector-skip pred vec))
          (idx* (if idx idx len)))
     (@vector-copy vec 0 idx*)))
 
-(define (@vector-take-while-right pred? vec)
+(define (@vector-take-while-right pred vec)
   (let* ((len (@vector-length vec))
-         (idx (@vector-skip-right pred? vec))
+         (idx (@vector-skip-right pred vec))
          (idx* (if idx (+ idx 1) 0)))
     (@vector-copy vec idx* len)))
 
-(define (@vector-drop-while pred? vec)
+(define (@vector-drop-while pred vec)
   (let* ((len (@vector-length vec))
-         (idx (@vector-skip pred? vec))
+         (idx (@vector-skip pred vec))
          (idx* (if idx idx len)))
     (@vector-copy vec idx* len)))
 
-(define (@vector-drop-while-right pred? vec)
+(define (@vector-drop-while-right pred vec)
   (let* ((len (@vector-length vec))
-         (idx (@vector-skip-right pred? vec))
+         (idx (@vector-skip-right pred vec))
          (idx* (if idx idx -1)))
     (@vector-copy vec 0 (+ 1 idx*))))
 
-(define (@vector-index pred? vec)
+(define (@vector-index pred vec)
   (let ((len (@vector-length vec)))
     (let loop ((i 0))
       (cond
         ((= i len) #f)
-        ((pred? (@vector-ref vec i)) i)
+        ((pred (@vector-ref vec i)) i)
         (else (loop (+ i 1)))))))
 
-(define (@vector-index-right pred? vec)
+(define (@vector-index-right pred vec)
   (let ((len (@vector-length vec)))
     (let loop ((i (- len 1)))
       (cond
         ((negative? i) #f)
-        ((pred? (@vector-ref vec i)) i)
+        ((pred (@vector-ref vec i)) i)
         (else (loop (- i 1)))))))
 
-(define (@vector-skip pred? vec)
-    (@vector-index (lambda (x) (not (pred? x))) vec))
+(define (@vector-skip pred vec)
+    (@vector-index (lambda (x) (not (pred x))) vec))
 
-(define (@vector-skip-right pred? vec)
-    (@vector-index-right (lambda (x) (not (pred? x))) vec))
+(define (@vector-skip-right pred vec)
+    (@vector-index-right (lambda (x) (not (pred x))) vec))
 
-(define (@vector-any pred? vec)
-  (let ((idx (@vector-index pred? vec)))
-    (if idx (@vector-ref vec idx) #f)))
-
-(define (@vector-every pred? vec)
+(define (@vector-any pred vec)
   (let ((len (@vector-length vec)))
     (let loop ((i 0))
-      (cond
-        ((= len 0) #t)
-        ((= i len) (@vector-ref vec (- len 1)))
-        ((pred? (@vector-ref vec i)) (loop (+ i 1)))
-        (else #f)))))
+      (if (= i len)
+        #f
+        (let ((r (pred (@vector-ref vec i))))
+          (if r
+            r
+            (loop (+ i 1))))))))
 
-(define (@vector-partition pred? vec)
+(define (@vector-every pred vec)
+  (let ((len (@vector-length vec)))
+    (let loop ((i 0) (prev #t))
+      (if (= i len)
+        prev
+        (let ((r (pred (@vector-ref vec i))))
+          (if r
+            (loop (+ i 1) r)
+            #f))))))
+
+(define (@vector-partition pred vec)
   (let* ((len (@vector-length vec))
-         (cnt (@vector-count pred? vec))
+         (cnt (@vector-count pred vec))
          (r (make-@vector len)))
     (let loop ((i 0) (yes 0) (no cnt))
       (cond
         ((= i len) r)
-        ((pred? (@vector-ref vec i))
+        ((pred (@vector-ref vec i))
          (@vector-set! r yes (@vector-ref vec i))
          (loop (+ i 1) (+ yes 1) no))
         (else
          (@vector-set! r no (@vector-ref vec i))
          (loop (+ i 1) yes (+ no 1)))))))
 
-(define (@vector-filter pred? vec)
+(define (@vector-filter pred vec)
   (let* ((len (@vector-length vec))
-         (cnt (@vector-count pred? vec))
+         (cnt (@vector-count pred vec))
          (r (make-@vector cnt)))
     (let loop ((i 0) (j 0))
       (cond
         ((= i len) r)
-        ((pred? (@vector-ref vec i))
+        ((pred (@vector-ref vec i))
          (@vector-set! r j (@vector-ref vec i))
          (loop (+ i 1) (+ j 1)))
         (else
          (loop (+ i 1) j))))))
 
-(define (@vector-remove pred? vec)
-  (@vector-filter (lambda (x) (not (pred? x))) vec))
+(define (@vector-remove pred vec)
+  (@vector-filter (lambda (x) (not (pred x))) vec))
 
 ;; @vector-set! defined in (srfi 160 base)
 
@@ -367,22 +374,34 @@
           (@vector-set! r i (car list))
           (loop (+ i 1) (cdr list)))))))
 
-(define (@vector->vector vec)
-  (let* ((len (@vector-length vec))
+(define @vector->vector
+  (case-lambda
+    ((vec) (@vector->vector* vec 0 (@vector-length vec)))
+    ((vec start) (@vector->vector* vec start (@vector-length vec)))
+    ((vec start end) (@vector->vector* vec start end))))
+
+(define (@vector->vector* vec start end)
+  (let* ((len (- end start))
          (r (make-vector len)))
-    (let loop ((i 0))
+    (let loop ((i start))
       (cond
-        ((= i len) r)
+        ((= i end) r)
         (else
           (vector-set! r i (@vector-ref vec i))
           (loop (+ i 1)))))))
 
-(define (vector->@vector vec)
-  (let* ((len (vector-length vec))
+(define vector->@vector
+  (case-lambda
+    ((vec) (vector->@vector* vec 0 (@vector-length vec)))
+    ((vec start) (vector->@vector* vec start (@vector-length vec)))
+    ((vec start end) (vector->@vector* vec start end))))
+
+(define (vector->@vector* vec start end)
+  (let* ((len (- end start))
          (r (make-@vector len)))
     (let loop ((i 0))
       (cond
-        ((= i len) r)
+        ((= i end) r)
         (else
           @vector-set! (vector-ref vec i)
           (loop (+ i 1)))))))
