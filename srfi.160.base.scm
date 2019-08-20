@@ -1,6 +1,6 @@
 (module (srfi 160 base) ()
   (import (scheme))
-  (import (only (chicken base) include define-record-type))
+  (import (only (chicken base) include define-record-type case-lambda))
   (import (only (chicken module) export))
   (import (only (chicken bitwise) bitwise-and bitwise-ior
                            bitwise-not arithmetic-shift))

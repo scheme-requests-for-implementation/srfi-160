@@ -383,28 +383,28 @@
 (define (@vector->vector* vec start end)
   (let* ((len (- end start))
          (r (make-vector len)))
-    (let loop ((i start))
+    (let loop ((i start) (o 0))
       (cond
         ((= i end) r)
         (else
-          (vector-set! r i (@vector-ref vec i))
-          (loop (+ i 1)))))))
+          (vector-set! r o (@vector-ref vec i))
+          (loop (+ i 1) (+ o 1)))))))
 
 (define vector->@vector
   (case-lambda
-    ((vec) (vector->@vector* vec 0 (@vector-length vec)))
-    ((vec start) (vector->@vector* vec start (@vector-length vec)))
+    ((vec) (vector->@vector* vec 0 (vector-length vec)))
+    ((vec start) (vector->@vector* vec start (vector-length vec)))
     ((vec start end) (vector->@vector* vec start end))))
 
 (define (vector->@vector* vec start end)
   (let* ((len (- end start))
          (r (make-@vector len)))
-    (let loop ((i 0))
+    (let loop ((i start) (o 0))
       (cond
         ((= i end) r)
         (else
-          @vector-set! (vector-ref vec i)
-          (loop (+ i 1)))))))
+          (@vector-set! r o (vector-ref vec i))
+          (loop (+ i 1) (+ o 1)))))))
 
 (define @vector->generator
   (case-lambda ((vec) (@vector->generator vec 0 (@vector-length vec)))

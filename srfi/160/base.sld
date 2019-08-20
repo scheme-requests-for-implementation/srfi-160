@@ -1,5 +1,6 @@
 (define-library (srfi 160 base)
   (import (scheme base))
+  (import (scheme case-lambda))
   (import (scheme complex))
   (import (only (srfi 151) bitwise-and bitwise-ior
                            bitwise-not arithmetic-shift))
