@@ -416,13 +416,13 @@
                               (set! start (+ start 1))
                               next))))))
 
-(define @vector-write
+(define write-@vector
   (case-lambda
-    ((vec) (@vector-write* vec (current-output-port)))
-    ((vec port) (@vector-write* vec port))))
+    ((vec) (write-@vector* vec (current-output-port)))
+    ((vec port) (write-@vector* vec port))))
 
 
-(define (@vector-write* vec port)
+(define (write-@vector* vec port)
   (display "#@(" port)  ; @-expansion is blind, so will expand this too
   (let ((last (- (@vector-length vec) 1)))
     (let loop ((i 0))

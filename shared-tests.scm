@@ -160,5 +160,12 @@
         (vector->s16vector #(1 2 3 4 5) 1 4))
 ) ; end s16vector/conversion
 
+(test-group "s16vector/misc"
+  (let ((port (open-output-string)))
+    (write-s16vector s5 port)
+    (test "write-@vector" "#s16(1 2 3 4 5)" (get-output-string port))
+    (close-port port))
+) ; end s16vector/misc
+
 ) ; end s16vector
 (test-exit)

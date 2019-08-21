@@ -35,6 +35,8 @@
   ;; Conversion 
   (export @vector->list reverse-@vector->list reverse-list->@vector
           @vector->vector vector->@vector)
+  ;; Misc
+  (export make-@vector-generator @vector-comparator write-@vector)
 
   (include "srfi/160/@-impl.scm")
 
