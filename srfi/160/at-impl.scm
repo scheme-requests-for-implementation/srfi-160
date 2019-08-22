@@ -223,7 +223,6 @@
         (f (@vector-ref vec i))
         (loop (+ i 1))))))
 
-;;;;;;;;;;;;;;;;;;
 (define (@vector-take-while pred vec)
   (let* ((len (@vector-length vec))
          (idx (@vector-skip pred vec))
@@ -406,9 +405,9 @@
           (@vector-set! r o (vector-ref vec i))
           (loop (+ i 1) (+ o 1)))))))
 
-(define @vector->generator
-  (case-lambda ((vec) (@vector->generator vec 0 (@vector-length vec)))
-               ((vec start) (@vector->generator vec start (@vector-length vec)))
+(define make-@vector-generator
+  (case-lambda ((vec) (make-@vector-generator vec 0 (@vector-length vec)))
+               ((vec start) (make-@vector-generator vec start (@vector-length vec)))
                ((vec start end)
                 (lambda () (if (>= start end)
                              (eof-object)
@@ -434,3 +433,34 @@
           (write (@vector-ref vec i) port)
           (display " " port)
           (loop (+ i 1)))))))
+
+(define (@vector< vec1 vec2)
+  (let ((len1 (@vector-length vec1))
+        (len2 (@vector-length vec2)))
+    (cond
+      ((< len1 len2)
+       #t)
+      ((> len1 len2)
+       #f)
+      (else
+       (let loop ((i 0))
+         (cond
+           ((= i len1)
+            #f)
+           ((< (@vector-ref vec1 i) (@vector-ref vec2 i))
+            #t)
+           ((> (@vector-ref vec1 i) (@vector-ref vec2 i))
+            #f)
+           (else
+             (loop (+ i 1)))))))))
+
+(define (@vector-hash vec)
+  (let ((len (min 256 (@vector-length vec))))
+    (let loop ((i 0) (r 0))
+      (if (= i len)
+        (abs (floor (real-part (inexact->exact r))))
+        (loop (+ i 1) (+ r (@vector-ref vec i)))))))
+
+(define @vector-comparator
+  (make-comparator @vector? @vector= @vector< @vector-hash))
+

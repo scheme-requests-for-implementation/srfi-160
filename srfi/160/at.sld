@@ -2,7 +2,10 @@
   (import (scheme base))
   (import (scheme case-lambda))
   (import (scheme cxr))
+  (import (only (scheme r5rs) inexact->exact))
+  (import (scheme complex))
   (import (scheme write))
+  (import (srfi 128))
   (import (srfi 160 base))
   ;; Constructors 
   (export make-@vector @vector

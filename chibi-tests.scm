@@ -2,6 +2,7 @@
 (import (scheme base))
 (import (scheme write))
 (import (chibi test))
+(import (srfi 128))
 (import (srfi 160 s16))
 
 (begin

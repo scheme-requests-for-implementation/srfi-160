@@ -1,11 +1,16 @@
 (define (times2 x) (* x 2))
 (define s5 (s16vector 1 2 3 4 5))
+(define s4 (s16vector 1 2 3 4))
+(define s5+ (s16vector 1 2 3 4 6))
 
 (define (steady i x) (values x x))
 (define (count-up i x) (values x (+ x 1)))
 (define (count-down i x) (values x (- x 1)))
 (define (odd+1 x) (if (odd? x) (+ 1 x) #f))
+(define s16vector< (comparator-ordering-predicate s16vector-comparator))
+(define s16vector-hash (comparator-hash-function s16vector-comparator))
 
+(define g (make-s16vector-generator s5))
 (define-syntax test-equiv
   (syntax-rules ()
     ((test-equiv expect expr)
@@ -164,7 +169,21 @@
   (let ((port (open-output-string)))
     (write-s16vector s5 port)
     (test "write-@vector" "#s16(1 2 3 4 5)" (get-output-string port))
-    (close-port port))
+    (close-output-port port))
+
+  (test-assert "@vector< short" (s16vector< s4 s5))
+  (test-assert "not @vector< short" (not (s16vector< s5 s4)))
+  (test-assert "@vector< samelen" (s16vector< s5 s5+))
+  (test-assert "not @vector< samelen" (not (s16vector< s5+ s5+)))
+  (test-assert "@vector=" (s16vector= s5+ s5+))
+  (test "@vector-hash" 15 (s16vector-hash s5))
+
+  (test "@vector-gen 0" 1 (g))
+  (test "@vector-gen 1" 2 (g))
+  (test "@vector-gen 2" 3 (g))
+  (test "@vector-gen 3" 4 (g))
+  (test "@vector-gen 4" 5 (g))
+  (test-assert (eof-object? (g)))
 ) ; end s16vector/misc
 
 ) ; end s16vector
