@@ -211,7 +211,7 @@
          (v (make-@vector len)))
     (let loop ((r knil) (i 0))
       (unless (= i len)
-        (let ((next (f (@vector-ref vec i) r)))
+        (let ((next (f r (@vector-ref vec i))))
           (@vector-set! v i next)
           (loop next (+ i 1)))))
     v))
