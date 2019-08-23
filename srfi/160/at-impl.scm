@@ -252,14 +252,14 @@
           (apply f (%@vectors-ref vecs i))
           (loop (+ i 1)))))))
 
-(define (@vector-count pred? vec . vecs)
+(define (@vector-count pred vec . vecs)
   (if (null? vecs)
     ;; fast path
     (let ((len (@vector-length vec)))
       (let loop ((i 0) (r 0))
         (cond
          ((= i (@vector-length vec)) r)
-         ((pred? (@vector-ref vec i)) (loop (+ i 1) (+ r 1)))
+         ((pred (@vector-ref vec i)) (loop (+ i 1) (+ r 1)))
          (else (loop (+ i 1) r)))))
     ;; generic case
     (let* ((vecs (cons vec vecs))
@@ -267,7 +267,7 @@
       (let loop ((i 0) (r 0))
         (cond
          ((= i len) r)
-         ((apply pred? (%@vectors-ref vecs i)) (loop (+ i 1) (+ r 1)))
+         ((apply pred (%@vectors-ref vecs i)) (loop (+ i 1) (+ r 1)))
          (else (loop (+ i 1) r)))))))
 
 (define (@vector-cumulate f knil vec)
@@ -287,7 +287,7 @@
         (f (@vector-ref vec i))
         (loop (+ i 1))))))
 
-(define (@vector-take-while pred? vec)
+(define (@vector-take-while pred vec)
   (let* ((len (@vector-length vec))
          (idx (@vector-skip pred vec))
          (idx* (if idx idx len)))
@@ -311,14 +311,14 @@
          (idx* (if idx idx -1)))
     (@vector-copy vec 0 (+ 1 idx*))))
 
-(define (@vector-index pred? vec . vecs)
+(define (@vector-index pred vec . vecs)
   (if (null? vecs)
     ;; fast path
     (let ((len (@vector-length vec)))
       (let loop ((i 0))
         (cond
          ((= i len) #f)
-         ((pred? (@vector-ref vec i)) i)
+         ((pred (@vector-ref vec i)) i)
          (else (loop (+ i 1))))))
     ;; generic case
     (let* ((vecs (cons vec vecs))
@@ -326,17 +326,17 @@
       (let loop ((i 0))
         (cond
          ((= i len) #f)
-         ((apply pred? (%@vectors-ref vecs i)) i)
+         ((apply pred (%@vectors-ref vecs i)) i)
          (else (loop (+ i 1))))))))
 
-(define (@vector-index-right pred? vec . vecs)
+(define (@vector-index-right pred vec . vecs)
   (if (null? vecs)
     ;; fast path
     (let ((len (@vector-length vec)))
       (let loop ((i (- len 1)))
         (cond
          ((negative? i) #f)
-         ((pred? (@vector-ref vec i)) i)
+         ((pred (@vector-ref vec i)) i)
          (else (loop (- i 1))))))
     ;; generic case
     (let* ((vecs (cons vec vecs))
@@ -344,27 +344,27 @@
       (let loop ((i (- len 1)))
         (cond
          ((negative? i) #f)
-         ((apply pred? (%@vectors-ref vecs i)) i)
+         ((apply pred (%@vectors-ref vecs i)) i)
          (else (loop (- i 1))))))))
 
-(define (@vector-skip pred? vec . vecs)
+(define (@vector-skip pred vec . vecs)
   (if (null? vecs)
-    (@vector-index (lambda (x) (not (pred? x))) vec)
-    (apply @vector-index (lambda xs (not (apply pred? xs))) vec vecs)))
+    (@vector-index (lambda (x) (not (pred x))) vec)
+    (apply @vector-index (lambda xs (not (apply pred xs))) vec vecs)))
      
-(define (@vector-skip-right pred? vec . vecs)
+(define (@vector-skip-right pred vec . vecs)
   (if (null? vecs)
-    (@vector-index-right (lambda (x) (not (pred? x))) vec)
-    (apply @vector-index-right (lambda xs (not (apply pred? xs))) vec vecs)))
+    (@vector-index-right (lambda (x) (not (pred x))) vec)
+    (apply @vector-index-right (lambda xs (not (apply pred xs))) vec vecs)))
 
-(define (@vector-any pred? vec . vecs)
+(define (@vector-any pred vec . vecs)
   (if (null? vec)
     ;; fast path
     (let ((len (@vector-length vec)))
       (let loop ((i 0))
         (cond
          ((= i len) #f)
-         ((pred? (@vector-ref vec i)))  ;returns result of pred?
+         ((pred (@vector-ref vec i)))  ;returns result of pred
          (else (loop (+ i 1))))))
     ;; generic case
     (let* ((vecs (cons vec vecs))
@@ -372,17 +372,17 @@
       (let loop ((i 0))
         (cond
          ((= i len) #f)
-         ((apply pred? (%@vectors-ref vecs i))) ;returns result of pred?
+         ((apply pred (%@vectors-ref vecs i))) ;returns result of pred
          (else (loop (+ i 1))))))))
 
-(define (@vector-every pred? vec . vecs)
+(define (@vector-every pred vec . vecs)
   (if (null? vec)
     ;; fast path
     (let ((len (@vector-length vec)))
       (let loop ((i 0) (last #t))
         (cond
          ((= i len) last)
-         ((pred? (@vector-ref vec i)) => (lambda (r) (loop (+ i 1) r)))
+         ((pred (@vector-ref vec i)) => (lambda (r) (loop (+ i 1) r)))
          (else #f))))
     ;; generic case
     (let* ((vecs (cons vec vecs))
@@ -390,7 +390,7 @@
       (let loop ((i 0) (last #t))
         (cond
          ((= i len) last)
-         ((apply pred? (%@vectors-ref vecs i)) => (lambda (r) (loop (+ i 1) r)))
+         ((apply pred (%@vectors-ref vecs i)) => (lambda (r) (loop (+ i 1) r)))
          (else #f))))))
 
 (define (@vector-partition pred vec)
