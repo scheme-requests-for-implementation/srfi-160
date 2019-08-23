@@ -1,4 +1,4 @@
-;;;; Implementation of SRFI 4-ish c64vectors and c128vectors
+;;;; Implementation of SRFI 160 base c64vectors and c128vectors
 
 ;;; Main constructor
 
@@ -13,6 +13,26 @@
   (if (not (null? maybe-fill))
     (c128vector-simple-fill! vec (car maybe-fill)))
   vec)
+
+;; Simple fill! (not exported)
+
+(define (c64vector-simple-fill! vec value)
+  (define len (c64vector-length vec))
+  (let loop ((i 0))
+    (if (= i len)
+      vec
+      (begin
+        (c64vector-set! vec i value)
+        (loop (+ i 1))))))
+
+(define (c128vector-simple-fill! vec value)
+  (define len (c128vector-length vec))
+  (let loop ((i 0))
+    (if (= i len)
+      vec
+      (begin
+        (c128vector-set! vec i value)
+        (loop (+ i 1))))))
 
 ;;; Variable-argument constructor
 
@@ -84,39 +104,5 @@
         (c128vector-set! vec i (car list))
         (loop (+ i 1) (cdr list))))))
 
-;; Vec to list
-
-(define (c64vector->list vec)
-  (let loop ((i (- (c64vector-length vec) 1))
-             (list '()))
-    (if (< i 0)
-      list
-      (loop (- i 1) (cons (c64vector-ref vec i) list)))))
-
-(define (c128vector->list vec)
-  (let loop ((i (- (c128vector-length vec) 1))
-             (list '()))
-    (if (< i 0)
-      list
-      (loop (- i 1) (cons (c128vector-ref vec i) list)))))
-
-;; Simple fill! (not exported)
-
-(define (c64vector-simple-fill! vec value)
-  (define len (c64vector-length vec))
-  (let loop ((i 0))
-    (if (= i len)
-      vec
-      (begin
-        (c64vector-set! vec i value)
-        (loop (+ i 1))))))
-
-(define (c128vector-simple-fill! vec value)
-  (define len (c128vector-length vec))
-  (let loop ((i 0))
-    (if (= i len)
-      vec
-      (begin
-        (c128vector-set! vec i value)
-        (loop (+ i 1))))))
+;; Vec to list defined in at-vector2list
 

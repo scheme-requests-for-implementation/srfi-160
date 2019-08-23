@@ -2,7 +2,10 @@
   (import (scheme base))
   (import (scheme case-lambda))
   (import (scheme cxr))
+  (import (only (scheme r5rs) inexact->exact))
+  (import (scheme complex))
   (import (scheme write))
+  (import (srfi 128))
   (import (srfi 160 base))
   ;; Constructors 
   (export make-@vector @vector
@@ -33,5 +36,8 @@
   ;; Conversion 
   (export @vector->list reverse-@vector->list reverse-list->@vector
           @vector->vector vector->@vector)
+  ;; Misc
+  (export make-@vector-generator @vector-comparator write-@vector)
+
   (include "@-impl.scm")
 )

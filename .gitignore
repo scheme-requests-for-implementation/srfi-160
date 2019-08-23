@@ -1,4 +1,22 @@
-*~
+# Chicken compiler artifacts
+srfi.160.base.import.scm
+srfi.160.s16.import.scm
+
+# Expanded versions
+*u8*
+*s8*
+*u16*
+*s16*
+*u32*
+*s32*
+*u64*
+*s64*
+*f32*
+*f64*
+*c64*
+*c128*
+
+# Symlinks for (r6rs bytevectors) and (srfi 4)
 r6rs
 srfi/4
 srfi/4.sld

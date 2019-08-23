@@ -1,10 +1,16 @@
 (define (times2 x) (* x 2))
 (define s5 (s16vector 1 2 3 4 5))
+(define s4 (s16vector 1 2 3 4))
+(define s5+ (s16vector 1 2 3 4 6))
 
 (define (steady i x) (values x x))
 (define (count-up i x) (values x (+ x 1)))
 (define (count-down i x) (values x (- x 1)))
+(define (odd+1 x) (if (odd? x) (+ 1 x) #f))
+(define s16vector< (comparator-ordering-predicate s16vector-comparator))
+(define s16vector-hash (comparator-hash-function s16vector-comparator))
 
+(define g (make-s16vector-generator s5))
 (define-syntax test-equiv
   (syntax-rules ()
     ((test-equiv expect expr)
@@ -47,9 +53,9 @@
   (test-assert "not s16vector?" (not (s16vector? #t)))
   (test-assert "empty" (s16vector-empty? (s16vector)))
   (test-assert "not empty" (not (s16vector-empty? s5)))
-  (test-assert "=" (s16vector= = (s16vector 1 2 3) (s16vector 1 2 3)))
-  (test-assert "not =" (not (s16vector= = (s16vector 1 2 3) (s16vector 3 2 1))))
-  (test-assert "not =2" (not (s16vector= = (s16vector 1 2 3) (s16vector 1 2))))
+  (test-assert "=" (s16vector= (s16vector 1 2 3) (s16vector 1 2 3)))
+  (test-assert "not =" (not (s16vector= (s16vector 1 2 3) (s16vector 3 2 1))))
+  (test-assert "not =2" (not (s16vector= (s16vector 1 2 3) (s16vector 1 2))))
 ) ; end s16vector/predicates
 
 (test-group "s16vector/selectors"
@@ -65,18 +71,36 @@
   (test "segment" (list (s16vector 1 2 3) (s16vector 4 5))
         (s16vector-segment s5 3))
   (test "fold" -6 (s16vector-fold - 0 (s16vector 1 2 3)))
+  (test "fold" '(((0 1 4) 2 5) 3 6)
+        (s16vector-fold list 0 (s16vector 1 2 3) (s16vector 4 5 6)))
   (test "fold-right" 2 (s16vector-fold-right - 0 (s16vector 1 2 3)))
+  (test "fold-right" '(((0 3 6) 2 5) 1 4)
+        (s16vector-fold-right list 0 (s16vector 1 2 3) (s16vector 4 5 6)))
   (test-equiv "map" '(-1 -2 -3 -4 -5) (s16vector-map - s5))
+  (test-equiv "map" '(-2 -4 -6 -8 -10) (s16vector-map - s5 s5 s5 s5))
   (let ((v (s16vector 1 2 3 4 5)))
     (s16vector-map! - v)
     (test-equiv "map!" '(-1 -2 -3 -4 -5) v))
+  (let ((v (s16vector 1 2 3 4 5))
+        (v2 (s16vector 6 7 8 9 10)))
+    (s16vector-map! + v v2)
+    (test-equiv "map!" '(7 9 11 13 15) v))
   (let ((list '()))
     (s16vector-for-each
       (lambda (e) (set! list (cons e list)))
       s5)
     ;; stupid hack to shut up test egg about testing the value of a variable
     (test "for-each" '(5 4 3 2 1) (cons (car list) (cdr list))))
+  (let ((list '()))
+    (s16vector-for-each
+      (lambda (e1 e2) (set! list (cons (cons e1 e2) list)))
+      s5
+      (s16vector 6 7 8 9 10))
+    ;; stupid hack to shut up test egg about testing the value of a variable
+    (test "for-each" '((5 . 10) (4 . 9) (3 . 8) (2 . 7) (1 . 6))
+          (cons (car list) (cdr list))))
   (test "count" 3 (s16vector-count odd? s5))
+  (test "count" 2 (s16vector-count > s5 (s16vector 9 2 1 5 3)))
   (test-equiv "cumulate" '(1 3 6 10 15)
               (s16vector-cumulate + 0 s5))
 ) ; end s16vector/iteration
@@ -91,13 +115,27 @@
   (test-equiv "degenerate drop-while" '(1 2 3 4 5) (s16vector-drop-while inexact? s5))
   (test-equiv "degenerate drop-while-right" '(1 2 3 4 5) (s16vector-drop-while-right inexact? s5))
   (test "index" 1 (s16vector-index even? s5))
+  (test "index" 2 (s16vector-index < s5 (s16vector 0 0 10 10 0)))
   (test "index-right" 3 (s16vector-index-right even? s5))
+  (test "index-right" 3 (s16vector-index-right < s5 (s16vector 0 0 10 10 0)))
   (test "skip" 1 (s16vector-skip odd? s5))
+  (test "skip" 2 (s16vector-skip > s5 (s16vector 0 0 10 10 0)))
   (test "skip-right" 3 (s16vector-skip-right odd? s5))
-  (test-assert "any" (s16vector-any odd? s5))
+  (test "skip-right" 3 (s16vector-skip-right > s5 (s16vector 0 0 10 10 0)))
+  (test "any" 4 (s16vector-any (lambda (x) (and (even? x) (* x 2))) s5))
   (test-assert "not any" (not (s16vector-any inexact? s5)))
+  (test "any + 1" 2 (s16vector-any odd+1 s5))
   (test-assert "every" (s16vector-every exact? s5))
   (test-assert "not every" (not (s16vector-every odd? s5)))
+  (test-assert "every + 1" (not (s16vector-every odd+1 s5)))
+  (test "multi-any" 10 (s16vector-any (lambda (x y) (and (even? x) (even? y) (+ x y)))
+                                s5 (s16vector 0 1 2 6 4)))
+  (test "multi-any 2" #f (s16vector-any (lambda (x y) (and (even? x) (even? y) (+ x y)))
+                                s5 (s16vector 0 1 2 5 4)))
+  (test "multi-every" 10 (s16vector-every (lambda (x) (and (exact? x) (* x 2))) s5))
+  (test "multi-every-2" 10 (s16vector-every (lambda (x y) (and (exact? x) (exact? y) (+ x y)))
+                                    s5 s5))
+  (test-assert "multi-not every" (not (s16vector-every < s5 (s16vector 10 10 10 10 0))))
   (test-equiv "partition" '(1 3 5 2 4) (s16vector-partition odd? s5))
   (test-equiv "filter" '(1 3 5) (s16vector-filter odd? s5))
   (test-equiv "remove" '(2 4) (s16vector-remove odd? s5))
@@ -133,6 +171,50 @@
     (s16vector-reverse-copy! v 1 s5 2 4)
     (test-equiv "reverse-copy!" '(10 4 3 40 50) v))
 ) ; end s16vector/mutators
-) ; end s16vector
 
+(test-group "s16vector/conversion"
+  (test "@vector->list 1" '(1 2 3 4 5)
+        (s16vector->list s5))
+  (test "@vector->list 2" '(2 3 4 5)
+        (s16vector->list s5 1))
+  (test "@vector->list 3" '(2 3 4)
+        (s16vector->list s5 1 4))
+  (test "@vector->vector 1" #(1 2 3 4 5)
+        (s16vector->vector s5))
+  (test "@vector->vector 2" #(2 3 4 5)
+        (s16vector->vector s5 1))
+  (test "@vector->vector 3" #(2 3 4)
+        (s16vector->vector s5 1 4))
+  (test "list->@vector" '(1 2 3 4 5)
+        (s16vector->list s5))
+  (test-equiv "vector->@vector 1" '(1 2 3 4 5)
+        (vector->s16vector #(1 2 3 4 5)))
+  (test-equiv "vector->@vector 2" '(2 3 4 5)
+        (vector->s16vector #(1 2 3 4 5) 1))
+  (test-equiv "vector->@vector 3" '(2 3 4)
+        (vector->s16vector #(1 2 3 4 5) 1 4))
+) ; end s16vector/conversion
+
+(test-group "s16vector/misc"
+  (let ((port (open-output-string)))
+    (write-s16vector s5 port)
+    (test "write-@vector" "#s16(1 2 3 4 5)" (get-output-string port))
+    (close-output-port port))
+
+  (test-assert "@vector< short" (s16vector< s4 s5))
+  (test-assert "not @vector< short" (not (s16vector< s5 s4)))
+  (test-assert "@vector< samelen" (s16vector< s5 s5+))
+  (test-assert "not @vector< samelen" (not (s16vector< s5+ s5+)))
+  (test-assert "@vector=" (s16vector= s5+ s5+))
+  (test "@vector-hash" 15 (s16vector-hash s5))
+
+  (test "@vector-gen 0" 1 (g))
+  (test "@vector-gen 1" 2 (g))
+  (test "@vector-gen 2" 3 (g))
+  (test "@vector-gen 3" 4 (g))
+  (test "@vector-gen 4" 5 (g))
+  (test-assert (eof-object? (g)))
+) ; end s16vector/misc
+
+) ; end s16vector
 (test-exit)

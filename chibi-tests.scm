@@ -2,8 +2,9 @@
 (import (scheme base))
 (import (scheme write))
 (import (chibi test))
+(import (srfi 128))
 (import (srfi 160 s16))
 
 (begin
   (define (sub1 x) (- x 1)))
-(include "chibi-tests.scm")
+(include "shared-tests.scm")

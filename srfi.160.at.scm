@@ -4,6 +4,7 @@
     open-input-string include define-record-type case-lambda
     when unless let-values))
   (import (only (chicken module) export))
+  (import (srfi 128))
   (import (srfi 160 base))
 
   ;; Constructors 
@@ -35,6 +36,8 @@
   ;; Conversion 
   (export @vector->list reverse-@vector->list reverse-list->@vector
           @vector->vector vector->@vector)
+  ;; Misc
+  (export make-@vector-generator @vector-comparator write-@vector)
 
   (include "srfi/160/@-impl.scm")
 
