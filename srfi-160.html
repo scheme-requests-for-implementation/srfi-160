@@ -468,11 +468,12 @@ elements of <i>@vec</i>.</p>
 consecutive elements of <i>@vec</i>.
 The last @vector may be shorter than <i>n</i>.</p>
 
-<p><code>(@vector-fold <i>kons knil @vec</i>) -> object</code> [SRFI 133]</p>
+<p><code>(@vector-fold <i>kons knil @vec @vec2 ...</i>) -> object</code> [SRFI 133]</p>
 
-<p><code>(@vector-fold-right <i>kons knil @vec</i>) -> object</code> [SRFI 133]</p>
+<p><code>(@vector-fold-right <i>kons knil @vec @vec2 ...</i>) -> object</code> [SRFI 133]</p>
 
-<p>Folds <i>kons</i> over the elements of <i>@vec</i> 
+<p>When one @vector argument <i>@vec</i> is given,
+folds <i>kons</i> over the elements of <i>@vec</i> 
 in increasing/decreasing order using <i>knil</i>
 as the initial value.
 The <i>kons</i> procedure is called with the state first
@@ -482,87 +483,136 @@ This is the opposite order to that used in SRFI 1 (lists)
 and the various string SRFIs.
 </p>
 
-<p><code>(@vector-map <i>f @vec</i>) -> @vector</code> [SRFI 133]</p>
+<p>When multiple @vector arguments are given,
+<i>kons</i> is called with the current state value and
+each value from all the vectors; <i>@vector-fold</i> scans
+elements from left to right, while <i>@vector-fold-right</i>
+does from right to left.  If the lengths of vectors differ,
+only the portion of each vector up to the length of the shortest vector
+is scanned.
+</p>
 
-<p><code>(@vector-map! <i>f @vec</i>) -> unspecified</code> [SRFI 133]</p>
+<p><code>(@vector-map <i>f @vec @vec2 ...</i>) -> @vector</code> [SRFI 133]</p>
 
-<p><code>(@vector-for-each <i>f @vec</i>) -> unspecified</code> [SRFI 133]</p>
+<p><code>(@vector-map! <i>f @vec @vec2 ...</i>) -> unspecified</code> [SRFI 133]</p>
+
+<p><code>(@vector-for-each <i>f @vec @vec2 ...</i>) -> unspecified</code> [SRFI 133]</p>
 
 <p>Iterate over the elements of <i>@vec</i> and apply <i>f</i>
 to each, returning respectively a @vector of the results,
 an undefined value with the results placed back in <i>@vec</i>,
-and an undefined value with no change to <i>@vec</i>.</p>
+  and an undefined value with no change to <i>@vec</i>.</p>
 
-<p><code>(@vector-count <i>pred @vec</i>) -> exact nonnegative integer</code> [SRFI 133]</p>
+<p>If more than one vectors are passed, <i>f</i> gets one element
+  from each vector as arguments.  If the lengths of the vectors differ,
+  iteration stops at the end of the shortest vector.
+  for <code>@vector-map!</code>, only <i>@vec</i> is modified
+  even when multiple vectors are passed.
+</p>
 
-Call <i>pred</i> on each element of <i>@vec</i> and
-return the number of calls that return true.</p>
+<p><code>(@vector-count <i>pred? @vec @vec2 ...</i>) -> exact nonnegative integer</code> [SRFI 133]</p>
+
+<p>Call <i>pred?</i> on each element of <i>@vec</i> and
+  return the number of calls that return true.</p>
+
+<p>When multiple vectors are given, <i>pred?</i> must take
+the same number of arguments as the number of vectors, and
+corresponding elements from each vector are given for each iteration,
+which stops at the end of the shortest vector.</p>
+
 
 <p><code>(@vector-cumulate <i>f knil @vec</i>) -> @vector</code> [SRFI 133]</p>
 
-<p>Like <code>@vector-fold</code>, but returns an @vector with the same length as @vec.
-The <i>n</i>th element of the result vector is the result of folding over the
-first <i>n</i> elements of <i>@vector</i>, but should be computed more
-efficiently.</p>
+<p>Like <code>@vector-fold</code>, but returns an @vector of partial results
+rather than just the final result.</p>
 
 <H3>Searching</H3>
 
-<p><code>(@vector-take-while <i>pred @vec</i><code>)</code> -> @vector</code> [SRFI 152]</p>
+<p><code>(@vector-take-while <i>pred? @vec</i>) -> @vector</code> [SRFI 152]</p>
 
-<p><code>(@vector-take-while-right <i>pred @vec</i>) -> @vector</code> [SRFI 152]</p>
+<p><code>(@vector-take-while-right <i>pred? @vec</i>) -> @vector</code> [SRFI 152]</p>
 
-<p>Return the longest prefix/suffix of <i>@vec</i> all of whose elements
-satisfy <i>pred</i>.
+<p>Return the shortest prefix/suffix of <i>@vec</i> all of whose elements
+satisfy <i>pred?</i>.
 
-<p><code>(@vector-drop-while <i>pred vec</i>) -> @vector</code> [SRFI 152]</p>
+<p><code>(@vector-drop-while <i>pred? vec</i>) -> @vector</code> [SRFI 152]</p>
 
-<p><code>(@vector-drop-while-right <i>pred vec</i>) -> @vector</code> [SRFI 152]</p>
+<p><code>(@vector-drop-while-right <i>pred? vec</i>) -> @vector</code> [SRFI 152]</p>
 
-Drop the longest initial prefix/suffix of <i>@vec</i> such that all its
+<p>Drops the longest initial prefix/suffix of <i>@vec</i> such that all its
 elements satisfy <i>pred</i>.</p>
 
-<p><code>(@vector-index <i>pred @vec</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
+<p><code>(@vector-index <i>pred? @vec @vec2 ...</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
 
-<p><code>(@vector-index-right <i>pred @vec</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
+<p><code>(@vector-index-right <i>pred? @vec @vec2 ...</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
 
 <p>Return the index of the first/last element of <i>@vec</i> that
-satisfies <i>pred</i>, or <code>#f</code> if there is no such element.
+  satisfies <i>pred?</i>.
 
-<p><code>(@vector-skip <i>pred @vec</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
+<p>When multiple vectors are passed, <i>pred?</i> must take the
+  same number of arguments as the number of vectors, and corresponding
+  elements from each vector are passed for each iteration.
+  If the lengths of vectors differ, <i>vector-index</i> stops iteration
+  at the end of the shortest one.  Lengths of vectors must be the same
+  for <i>vector-index-right</i>.
+</p>
 
-<p><code>(@vector-skip-right <i>pred @vec</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
+<p><code>(@vector-skip <i>pred? @vec @vec2 ...</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
+
+<p><code>(@vector-skip-right <i>pred? @vec @vec2 ...</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
 
 <p>Returns the index of the first/last element of <i>@vec</i> that
-does not satisfy <i>pred</i>, or <code>#f</code> if there is no such element.
+does not satisfy <i>pred?</i>.
 
-<p><code>(@vector-any <i>pred @vec</i>) -> value or boolean</code> [SRFI 133]</p>
+<p>When multiple vectors are passed, <i>pred?</i> must take the
+  same number of arguments as the number of vectors, and corresponding
+  elements from each vector are passed for each iteration.
+  If the lengths of vectors differ, <i>vector-skip</i> stops iteration
+  at the end of the shortest one.  Lengths of vectors must be the same
+  for <i>vector-skip-right</i>.
+</p>
 
-<p>Invokes <i>pred</i> on each element of <i>@vec</i> in order, and returns the
-first such result other than <code>#f</code>,
-or <code>#f</code> if there is no such result.<p>
+<p><code>(@vector-any <i>pred? @vec @vec2 ...</i>) -> value or boolean</code> [SRFI 133]</p>
 
-<p><code>(@vector-every <i>pred @vec</i>) -> value or boolean</code> [SRFI 133]</p>
+<p>Returns first non-false result of applying <i>pred?</i> on
+  a element from the <i>@vec</i>, or
+  <code>#f</code> if there is no such element.
+  If <i>@vec</i> is empty, returns <code>#t</code></p>
 
-<p>Invokes <i>pred</i> on each element of <i>@vec</i> in order until
-the result is <code>#f</code>, and then returns <code>#f</code>.
-If there is no such result, then the result of the last call to
-<i>pred</i> is returned.  If <i>@vec</i> is empty, <code>#t</code>
-is returned.</p>
+<p>When multiple vectors are passed, <i>pred?</i> must take the
+  same number of arguments as the number of vectors, and corresponding
+  elements from each vector are passed for each iteration.
+  If the lengths of vectors differ, it stops
+  at the end of the shortest one.
+</p>
 
-<p><code>(@vector-partition <i>pred @vec</i>) -> @vector and integer</code> [SRFI 133]</p>
+<p><code>(@vector-every <i>pred? @vec @vec2 ...</i>) -> value or boolean</code> [SRFI 133]</p>
+
+<p>If all elements from <i>@vec</i> satisfy <i>pred?</i>,
+return the last result of <i>pred?</i>.  If not all do, return <code>#f</code>.
+  If <i>@vec</i> is empty, return <code>#t</code></p>
+
+<p>When multiple vectors are passed, <i>pred?</i> must take the
+  same number of arguments as the number of vectors, and corresponding
+  elements from each vector is passed for each iteration.
+  If the lengths of vectors differ, it stops
+  at the end of the shortest one.
+</p>
+
+<p><code>(@vector-partition <i>pred? @vec</i>) -> @vector and integer</code> [SRFI 133]</p>
 
 <p>Returns an @vector of the same type as <i>@vec</i>, but with all elements
-satisfying <i>pred</i> in the leftmost part of the vector and the other
+satisfying <i>pred?</i> in the leftmost part of the vector and the other
 elements in the remaining part.  The order of elements is otherwise
 preserved.  Returns two values, the new @vector and the number of 
-elements satisfying <i>pred</i>.</p>
+elements satisfying <i>pred?</i>.</p>
 
-<p><code>(@vector-filter <i>pred @vec</i>) -> @vector</code> [SRFI 152]</p>
+<p><code>(@vector-filter <i>pred? @vec</i>) -> @vector</code> [SRFI 152]</p>
 
-<p><code>(@vector-remove <i>pred @vec</i>) -> @vector</code> [SRFI 152]</p>
+<p><code>(@vector-remove <i>pred? @vec</i>) -> @vector</code> [SRFI 152]</p>
 
 <p>Return an @vector containing the elements of @vec that satisfy / do not satisfy
-<i>pred</i>.
+<i>pred?</i>.
 
 <H3>Mutators</H3>
 
