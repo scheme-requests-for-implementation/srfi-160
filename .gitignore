@@ -20,3 +20,6 @@ srfi.160.s16.import.scm
 r6rs
 srfi/4
 srfi/4.sld
+
+#Emacs backup files
+*~
