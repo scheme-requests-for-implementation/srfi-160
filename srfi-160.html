@@ -749,10 +749,26 @@ systems that use the <code>read</code> procedure to parse programs.
 <H1>Implementation</H1>
 
 <p>
-To reduce its complexity, this implementation is provided only for R7RS systems.
-However, making it available on R6RS systems as well as R5RS systems with bytevectors
+This implementation was developed on Chicken 5 and Chibi, and directly
+supports those two systems.  There is support for Gauche as well.
+It should be easy to adapt to other implementations.
+</p>
+
+<p>After downloading the source, it is necessary to run the <code>atexpander.sh</code>
+shell script in order to generate the individual files for the different types.
+This will take a <i>skeleton</i> file like <code>at.sld</code> and create the files
+<code>u8.sld</code>, <code>s8.sld</code>, ... <code>c128.sld</code>.
+The <code>unexpander.sh</code> script safely undoes the effects of
+<code>atexpander.sh</code>.
+The heavy lifting is done by <code>sed</code>.
+</p>
+
+<p>Making this SRFI  available on R6RS systems
 is straightforward, requiring only a replacement library file that includes the
 implementation files in the <code>srfi/160/base</code> directory.
+and the <code>srfi/160</code> directories.
+The file <code>include.scm</code> contains an R6RS <code>(include)</code>
+library that will be useful for systems that don't provide it.
 </p>
 
 <h2>The SRFI 160 base library</h2>
@@ -761,9 +777,9 @@ implementation files in the <code>srfi/160/base</code> directory.
 It supports the eight procedures of SRFI 4, namely <code>make-@vector</code>,
 <code>@vector</code>, <code>@vector?</code>, <code>@vector-length</code>,
 <code>@vector-ref</code>, <code>@vector-set!</code>, <code>@vector->list</code>,
-and <code>list->@vector</code>.  These are provided
+and <code>list->@vector</code>,
 not only for the ten homogeneous vector types supported by SRFI 4,
-but also the two homogeneous vector types beyond the scope of SRFI 4, namely
+but also for the two homogeneous vector types beyond the scope of SRFI 4, namely
 c64vectors and c128vectors.
 In addition, the <code>@?</code> procedure, which is not in SRFI 4, is available for all types.
 </p>
@@ -782,44 +798,52 @@ for everything else.</p>
 <p>The following files are provided:</p>
 
 <ul>
+<li><code>srfi.160.base.scm</code> - Chicken 5 <code>(srfi 160 base)</code> library.</li>
+
 <li><code>srfi/160/base.sld</code> - R7RS <code>(srfi 160 base)</code> library.</li>
 
 <li><code>srfi/160/base/complex.scm</code> - Complex number implementation on top of SRFI 4.</li>
 
-<li><code>srfi/160/base/valid.scm</code> - Valid value predicates.</li>
+<li><code>srfi/160/base/valid.scm</code> - Validity (<code>@?</code>) predicates.</li>
+<li><code>srfi/160/base/at-vector2list.scm</code> - Reimplementation of SRFI 4's <code>@vector->list</code> procedures that accept <i>start</i> and <i>end</i> optional arguments.</li>
 
-<li><code>srfi/160/base/r7rec.scm</code> - Record-type definitions for R7RS.</li>
+<li><code>srfi/160/base/r7rec.scm</code> - Record-type definitions for R7RS or SRFI 9.</li>
 
-<li><code>srfi/160/base/shared-tests.scm</code> - Shared tests (no dependencies).</li>
+<li><code>srfi/160/base/r6rec.scm</code> - Record-type definitions for R6RS.</li>
 
-<li><code>srfi/160/base/chibi-tests.scm</code> - Chibi test script wrapper.</li>
+<li><code>shared-base-tests.scm</code> - Shared tests (no dependencies).</li>
+
+<li><code>chibi-base-tests.scm</code> - Chibi test script wrapper.</li>
+
+<li><code>chicken-base-tests.scm</code> - Chicken 5 test script wrapper.</li>
 
 </ul>
 
-<h2>The SRFI 160 library</h2>
+<h2>The SRFI 160 libraries</h2>
 
-<p>The sample implementation is (not yet) in the repository of this SRFI.
-It depends on the implementation of the <code>(srfi 160 base)</code> library
-described in the previous section.</p>
-
-<p>After downloading the source, it is necessary to run the <code>atexpander.sh</code>
-shell script in order to generate the individual files for the different types.
-This will take <code>at.sld</code>, for example, and create the files
-<code>u8.sld</code>, <code>s8.sld</code>, ... <code>c128.sld</code>.
-The heavy lifting is done by <code>sed</code>.
 
 <p>The following files are provided:</p>
 <ul>
-<li><code>atexpander.sh</code> - A trivial shell script using <code>sed</code>
-to expand skeleton files into their variants.</li>
 
 <li><code>srfi/160/at.sld</code> - Skeleton for Chibi libraries.
 Can be adapted to any R7RS system.</li>
 
+<li><code>srfi.160.at.scm</code> - Skeleton for Chicken 5 libraries.
+Can be adapted to any R5RS system with simple byte vectors.</li>
+
 <li><code>srfi/160/at-impl.scm</code> - Skeleton for shared implementation of SRFI 160 procedures.</li>
 
-<li><code>srfi/160/chibi-tests.scm</code> - Tests for Chibi of the s16 library only.
+<li><code>shared-tests.scm</code> - Tests of the s16 library only
+(depends on Chicken or Chibi test library).
 The assumption is that if s16 works, everything works.</li>
+
+<li><code>chibi-tests.scm</code> - Chibi test script wrapper.</li>
+
+<li><code>chicken-tests.scm</code> - Chicken 5 test script wrapper.</li>
+
+<li><code>gauche-tests.scm</code> - Gauche test script
+with embedded testing library.</li>
+
 
 </ul>
 
