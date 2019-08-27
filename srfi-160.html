@@ -509,7 +509,7 @@ an undefined value with the results placed back in <i>@vec</i>,
 <p>If more than one vectors are passed, <i>f</i> gets one element
   from each vector as arguments.  If the lengths of the vectors differ,
   iteration stops at the end of the shortest vector.
-  for <code>@vector-map!</code>, only <i>@vec</i> is modified
+  For <code>@vector-map!</code>, only <i>@vec</i> is modified
   even when multiple vectors are passed.
 </p>
 
@@ -639,7 +639,7 @@ with the value <i>fill</i>.</p>
 <p><code>(@vector-copy! <i>@to at @from</i> [<i>start</i> [<i>end</i>]]) -> unspecified</code> [SRFI 133]</p>
 
 <p>Copies the portion of <i>@from</i> from <i>start</i> to <i>end</i>
-onto <i>@to</i>, starting at index <i>@at</i>.
+onto <i>@to</i>, starting at index <i>at</i>.
 
 <p><code>(@vector-reverse-copy! <i>@to at @from</i> [<i>start</i> [<i>end</i>]]) -> unspecified</code> [SRFI 133]</p>
 
@@ -649,7 +649,7 @@ onto <i>@to</i>, starting at index <i>@at</i>.
 
 <p>Like <code>vector-unfold</code>, but the elements are copied into the
 vector <i>vec </i> starting at element <i>start</i> rather than into a newly allocated
-vector. Terminates when <i>end</i>-<i>start</i> elements have been generated.
+vector. Terminates when <i>end</i> - <i>start</i> elements have been generated.
 </p>
 
 <p><code>(@vector-unfold-right! <i>f vec start end seed</i>) -> @vector</code> [SRFI 133]</p>
@@ -767,7 +767,7 @@ The heavy lifting is done by <code>sed</code>.
 
 <p>Making this SRFI  available on R6RS systems
 is straightforward, requiring only a replacement library file that includes the
-implementation files in the <code>srfi/160/base</code> directory.
+implementation files in the <code>srfi/160/base</code> directory
 and the <code>srfi/160</code> directories.
 The file <code>include.scm</code> contains an R6RS <code>(include)</code>
 library that will be useful for systems that don't provide it.
@@ -782,7 +782,7 @@ It supports the eight procedures of SRFI 4, namely <code>make-@vector</code>,
 and <code>list->@vector</code>,
 not only for the ten homogeneous vector types supported by SRFI 4,
 but also for the two homogeneous vector types beyond the scope of SRFI 4, namely
-c64vectors and c128vectors.
+<code>c64vectors</code> and <code>c128vectors</code>.
 In addition, the <code>@?</code> procedure, which is not in SRFI 4, is available for all types.
 </p>
 
