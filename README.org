@@ -1,6 +1,6 @@
 * SRFI 160: Homogeneous numeric vector libraries
 
-** by John Cowan (based on SRFI 4 by Marc Feeley)
+** by John Cowan (based on SRFI 4 by Marc Feeley) and Shiro Kawai (contributed a major patch)
 
 This repository hosts [[https://srfi.schemers.org/srfi-160/][SRFI 160]]: Homogeneous numeric vector libraries, a [[https://srfi.schemers.org/][Scheme Request for Implementation]].
 
