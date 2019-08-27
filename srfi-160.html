@@ -175,8 +175,10 @@ be the case if they are represented as 32-bit machine integers with a 2-bit tag)
         <p></p>
 
 Scheme systems which conform to this SRFI and also conform to either R6RS or R7RS
-should use the same datatype for bytevectors and for u8vectors.  All other homogeneous vector
-types are disjoint from each other and from all other Scheme types.
+should use the same datatype for bytevectors and for u8vectors,
+and systems that also implement SRFI 74 (blobs) should use the same
+datatype for them as well.  All other homogeneous vector
+types are disjoint from each other and from all other Scheme types,
 
 	<p></p>
 
