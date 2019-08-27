@@ -40,15 +40,15 @@ Shiro Kawai (contributed a major patch).
 
 <H1>Abstract</H1>
 
-This SRFI describes a set of operations on SRFI 4 homogeneous vector
-types (plus a few additional types) that are closely analogous
+<p>This SRFI describes a set of operations on SRFI 4 homogeneous
+vector types (plus a few additional types) that are closely analogous
 to the vector operations library,
 <a href="http://srfi.schemers.org/srfi-133/srfi-133.html">
 SRFI 133</a>.
 An external representation is specified which may be supported by the
 <code>read</code> and <code>write</code> procedures and by the program
 parser so that programs can contain references to literal homogeneous
-vectors.
+vectors.</p>
 
 <H1>Issues</H1>
 
@@ -59,7 +59,7 @@ vectors.
 
 <H1>Rationale</H1>
 
-Like lists, Scheme vectors are a heterogeneous datatype which impose
+<p>Like lists, Scheme vectors are a heterogeneous datatype which impose
 no restriction on the type of the elements.  This generality is not
 needed for applications where all the elements are of the same type.
 The use of Scheme vectors is not ideal for such applications because,
@@ -69,20 +69,16 @@ which means low space efficiency and slower access to the elements.
 Moreover, homogeneous vectors are convenient for interfacing with
 low-level libraries (e.g. binary block I/O) and to interface with
 foreign languages which support homogeneous vectors.  Finally, the use
-of homogeneous vectors allows certain errors to be caught earlier.
+of homogeneous vectors allows certain errors to be caught earlier.</p>
 
-	<p></p>
-
-This SRFI specifies a set of homogeneous vector datatypes which cover
+<p>This SRFI specifies a set of homogeneous vector datatypes which cover
 the most practical cases, that is where the type of the elements is
 numeric (exact integer or inexact real or complex) and the precision and
 representation is efficiently implemented on the hardware of most
 current computer architectures (8, 16, 32 and 64 bit integers, either
-signed or unsigned, and 32 and 64 bit floating point numbers).
+signed or unsigned, and 32 and 64 bit floating point numbers).</p>
 
-        <p></p>
-
-This SRFI extends <a href="http://srfi.schemers.org/srfi-4/srfi-4.html">SRFI 4</a>
+<p>This SRFI extends <a href="http://srfi.schemers.org/srfi-4/srfi-4.html">SRFI 4</a>
 by providing the additional
 <code>c64vector</code> and <code>c128vector</code> types, and
 by providing analogues for almost all of the heterogeneous vector procedures
@@ -96,7 +92,7 @@ SRFI 152</a>.
 <p>Note that there are no conversions between homogeneous vectors and strings in this SRFI.
 In addition, there is no support for u1vectors (bitvectors) provided, not because they are not
 useful, but because they are different enough in both specification and implementation
-to be put into a future SRFI of their own.
+to be put into a future SRFI of their own.</p>
 
 <H1>Specification</H1>
 
@@ -113,13 +109,12 @@ be called integer vectors):
 <code>u32vector</code>: unsigned exact integer in the range 0 to 2<sup>32</sup>-1<br/>
 <code>s64vector</code>: signed exact integer in the range -2<sup>63</sup> to 2<sup>63</sup>-1<br/>
 <code>u64vector</code>: unsigned exact integer in the range 0 to 2<sup>64</sup>-1<br/>
+
 <p>
 All are part of SRFI 4.
 </p>
 
-	<p></p>
-
-There are two datatypes of inexact real homogeneous vectors (which will
+<p>There are two datatypes of inexact real homogeneous vectors (which will
 be called float vectors):
 </p>
 
@@ -129,13 +124,10 @@ be called float vectors):
 <p>
 These are also part of SRFI 4.
 </p>
-	<p></p>
 
 <p><code>f64vector</code>s must preserve at least as
 much precision and range as <code>f32vector</code>s.  (See the
 implementation section for details.)</p>
-
-	<p></p>
 
 <p>
 And there are two datatypes of inexact complex homogeneous vectors (which will
@@ -149,15 +141,11 @@ be called complex vectors):
 These are <i>not</i> part of SRFI 4.
 </p>
 
-	<p></p>
-
 <p><code>c128vector</code>s must preserve at least as
 much precision and range as <code>c64vector</code>s.  (See the
 implementation section for details.)</p>
 
-	<p></p>
-
-A Scheme system that conforms to this SRFI does not have to support
+<p>A Scheme system that conforms to this SRFI does not have to support
 all of these homogeneous vector datatypes.  However, a Scheme system
 must support float vectors if it
 supports Scheme inexact reals (of any precision).  A Scheme system
@@ -170,29 +158,25 @@ implement all the integer vector datatypes, but a Scheme system might
 only support <code>s8vector</code>s, <code>u8vector</code>s,
 <code>s16vector</code>s and <code>u16vector</code>s if it only
 supports integers in the range -2<sup>29</sup> to 2<sup>29</sup>-1 (which would
-be the case if they are represented as 32-bit machine integers with a 2-bit tag).
+be the case if they are represented as 32-bit machine integers with a 2-bit tag).</p>
 
-        <p></p>
-
-Scheme systems which conform to this SRFI and also conform to either R6RS or R7RS
+<p>Scheme systems which conform to this SRFI and also conform to either R6RS or R7RS
 should use the same datatype for bytevectors and for u8vectors,
 and systems that also implement SRFI 74 (blobs) should use the same
 datatype for them as well.  All other homogeneous vector
-types are disjoint from each other and from all other Scheme types,
+types are disjoint from each other and from all other Scheme types,</p>
 
-	<p></p>
-
-Each element of a homogeneous vector must be <i>valid</i>.  That is, for an
+<p>Each element of a homogeneous vector must be <i>valid</i>.  That is, for an
 integer vector, it must be an exact integer within the
 inclusive range specified above; for a float vector, it must be an
 inexact real number; and for a complex vector, it must be an inexact
 complex number.  It is an error to try to use a constructor or mutator
-to set an element to an invalid value.
+to set an element to an invalid value.</p>
 
 
 <H2>Notation</H2>
 
-So as not to multiply the number of procedures described in this SRFI beyond necessity, a
+<p>So as not to multiply the number of procedures described in this SRFI beyond necessity, a
 special notational convention is used.  The description of the procedure
 <code>make-@vector</code> is really shorthand for the descriptions of the twelve
 procedures <code>make-s8vector</code>, <code>make-u8vector</code>, ...
@@ -205,7 +189,7 @@ Consequently, only a brief description of each procedure is given, and
 SRFI 133 (or in some cases SRFI 152) should be consulted for the details.
 It is worth mentioning, however, that all the procedures that return one or
 more vectors (homogeneous or heterogeneous) invariably return newly allocated
-vectors specifically.
+vectors specifically.</p>
 
     <p>
       In the section containing specifications of procedures, the
@@ -368,7 +352,7 @@ Note that there is no library named <code>(srfi 160)</code>.
 <p>The procedures shared with SRFI 4 are marked with [SRFI 4].
 The procedures with the same semantics as SRFI 133 are marked with [SRFI 133]
 unless they are already marked with [SRFI 4].
-The procedures analogous to SRFI 152 string procedures are marked with [SRFI 152].
+The procedures analogous to SRFI 152 string procedures are marked with [SRFI 152].</p>
 
 <H3>Constructors</H3>
 
@@ -389,7 +373,7 @@ Creates a vector whose length is <i>length</i> and iterates across each index
 index and current state, in that order, to receive two values: 
 the element to put in the k<i>th</i> slot of the new vector and a new state
 for the next iteration.
-On the first call to <i>f</i>, the state's value is <i>seed</i>.
+On the first call to <i>f</i>, the state's value is <i>seed</i>.</p>
 
 <p><code>(@vector-unfold-right <i>f length seed</i>) -> @vector</code> [SRFI 133]</p>
 
@@ -524,7 +508,6 @@ the same number of arguments as the number of vectors, and
 corresponding elements from each vector are given for each iteration,
 which stops at the end of the shortest vector.</p>
 
-
 <p><code>(@vector-cumulate <i>f knil @vec</i>) -> @vector</code> [SRFI 133]</p>
 
 <p>Like <code>@vector-fold</code>, but returns an @vector of partial results
@@ -537,7 +520,7 @@ rather than just the final result.</p>
 <p><code>(@vector-take-while-right <i>pred? @vec</i>) -> @vector</code> [SRFI 152]</p>
 
 <p>Return the shortest prefix/suffix of <i>@vec</i> all of whose elements
-satisfy <i>pred?</i>.
+satisfy <i>pred?</i>.</p>
 
 <p><code>(@vector-drop-while <i>pred? vec</i>) -> @vector</code> [SRFI 152]</p>
 
@@ -551,7 +534,7 @@ elements satisfy <i>pred</i>.</p>
 <p><code>(@vector-index-right <i>pred? @vec @vec2 ...</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
 
 <p>Return the index of the first/last element of <i>@vec</i> that
-  satisfies <i>pred?</i>.
+  satisfies <i>pred?</i>.</p>
 
 <p>When multiple vectors are passed, <i>pred?</i> must take the
   same number of arguments as the number of vectors, and corresponding
@@ -566,7 +549,7 @@ elements satisfy <i>pred</i>.</p>
 <p><code>(@vector-skip-right <i>pred? @vec @vec2 ...</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
 
 <p>Returns the index of the first/last element of <i>@vec</i> that
-does not satisfy <i>pred?</i>.
+does not satisfy <i>pred?</i>.</p>
 
 <p>When multiple vectors are passed, <i>pred?</i> must take the
   same number of arguments as the number of vectors, and corresponding
@@ -616,7 +599,7 @@ elements satisfying <i>pred?</i>.</p>
 <p><code>(@vector-remove <i>pred? @vec</i>) -> @vector</code> [SRFI 152]</p>
 
 <p>Return an @vector containing the elements of @vec that satisfy / do not satisfy
-<i>pred?</i>.
+<i>pred?</i>.</p>
 
 <H3>Mutators</H3>
 
@@ -640,7 +623,7 @@ with the value <i>fill</i>.</p>
 <p><code>(@vector-copy! <i>@to at @from</i> [<i>start</i> [<i>end</i>]]) -> unspecified</code> [SRFI 133]</p>
 
 <p>Copies the portion of <i>@from</i> from <i>start</i> to <i>end</i>
-onto <i>@to</i>, starting at index <i>at</i>.
+onto <i>@to</i>, starting at index <i>at</i>.</p>
 
 <p><code>(@vector-reverse-copy! <i>@to at @from</i> [<i>start</i> [<i>end</i>]]) -> unspecified</code> [SRFI 133]</p>
 
@@ -679,6 +662,7 @@ elements as the argument, in reverse order where specified.</p>
 <p>
 <code>(make-@vector-generator </code><em>@vector</em><code>)</code>
 </p>
+
 <p>
 Returns a <a href="http://srfi.schemers.org/srfi-121/srfi-121.html">SRFI 121</a>
 generator that generates all the values of <em>@vector</em> in order.
@@ -686,9 +670,11 @@ Note that the generator is finite.
 </p>
 
 <h3>Comparators</h3>
+
 <p>
 <code>@vector-comparator</code>
 </p>
+
 <p>
 Variable containing a
 <a href="http://srfi.schemers.org/srfi-128/srfi-128.html">SRFI 128</a>
@@ -704,15 +690,13 @@ comparator whose components provide ordering and hashing of @vectors.
 
 <H2>Optional lexical syntax</H2>
 
-Each homogeneous vector datatype has an external representation which
+<p>Each homogeneous vector datatype has an external representation which
 may be supported by the <code>read</code> and <code>write</code>
 procedures and by the program parser.
 Conformance to this SRFI does not in itself require support for these
-external representations.
+external representations.</p>
 
-	<p></p>
-
-For each value of <code>@</code> in {
+<p>For each value of <code>@</code> in {
 <code>s8</code>, <code>u8</code>,
 <code>s16</code>, <code>u16</code>,
 <code>s32</code>, <code>u32</code>,
@@ -721,25 +705,19 @@ For each value of <code>@</code> in {
 <code>c64</code>, <code>c128</code>
 }, if the datatype <code>@vector</code> is supported, then
 the external representation of instances of the datatype
-<code>@vector</code> is <code>#@(</code> ...elements... <code>)</code>.
+<code>@vector</code> is <code>#@(</code> ...elements... <code>)</code>.</p>
 
-	<p></p>
-
-For example, <code>#u8(0 #e1e2 #xff)</code> is a
+<p>For example, <code>#u8(0 #e1e2 #xff)</code> is a
 <code>u8vector</code> of length 3 containing 0, 100 and 255;
 <code>#f64(-1.5)</code> is an <code>f64vector</code> of length 1
-containing -1.5.
+containing -1.5.</p>
 
-	<p></p>
-
-Note that the syntax for float vectors conflicts with R5RS,
+<p>Note that the syntax for float vectors conflicts with R5RS,
 which parses <code>#f32()</code> as 3 objects: <code>#f</code>,
 <code>32</code> and <code>()</code>.  For this reason, conformance to
-this SRFI implies this minor nonconformance to R5RS.
+this SRFI implies this minor nonconformance to R5RS.</p>
 
-	<p></p>
-
-This external representation is also available in program source code.
+<p>This external representation is also available in program source code.
 For example, <code>(set! x '#u8(1 2 3))</code> will set <code>x</code>
 to the object <code>#u8(1 2 3)</code>.  Literal homogeneous vectors,
 like heterogeneous vectors, are self-evaluating; they do not need to be quoted.
@@ -747,7 +725,7 @@ Homogeneous vectors can appear in quasiquotations but must not contain
 <code>unquote</code> or <code>unquote-splicing</code> forms
 (i.e. <code>`(,x #u8(1 2))</code> is legal but <code>`#u8(1 ,x
 2)</code> is not).  This restriction is to accommodate the many Scheme
-systems that use the <code>read</code> procedure to parse programs.
+systems that use the <code>read</code> procedure to parse programs.</p>
 
 <H1>Implementation</H1>
 
