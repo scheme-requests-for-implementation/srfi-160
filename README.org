@@ -4,7 +4,7 @@
 
 This repository hosts [[https://srfi.schemers.org/srfi-160/][SRFI 160]]: Homogeneous numeric vector libraries, a [[https://srfi.schemers.org/][Scheme Request for Implementation]].
 
-This SRFI is in /draft/ status.
+This SRFI is in /final/ status.
 
 See also [[https://srfi.schemers.org/srfi-4/][SRFI 4: Homogeneous numeric vector datatypes]], [[https://srfi.schemers.org/srfi-74/][SRFI 74: Octet-Addressed Binary Blocks]], [[https://srfi.schemers.org/srfi-133/][SRFI 133: Vector Library (R7RS-compatible)]], and [[https://srfi.schemers.org/srfi-152/][SRFI 152: String Library (reduced)]].
 
