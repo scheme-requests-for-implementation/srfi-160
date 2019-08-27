@@ -131,9 +131,9 @@ These are also part of SRFI 4.
 </p>
 	<p></p>
 
-The only required difference between the two float vector types is that
-<code>f64vector</code>s preserve at least as much precision and range as
-<code>f32vector</code>s (see the implementation section for details).
+<p><code>f64vector</code>s must preserve at least as
+much precision and range as <code>f32vector</code>s.  (See the
+implementation section for details.)</p>
 
 	<p></p>
 
@@ -151,9 +151,9 @@ These are <i>not</i> part of SRFI 4.
 
 	<p></p>
 
-The only required difference between the two complex vector types is that
-<code>c128vector</code>s preserve at least as much precision and range as
-<code>c64vector</code>s (see the implementation section for details).
+<p><code>c128vector</code>s must preserve at least as
+much precision and range as <code>c64vector</code>s.  (See the
+implementation section for details.)</p>
 
 	<p></p>
 
@@ -257,7 +257,8 @@ vectors specifically.
 
       <dt><i>end</i></dt>
       <dd>
-        Must be an exact nonnegative integer not less than <i>start</i>.
+        Must be an exact nonnegative integer not less than
+	<i>start</i> and not greater than the length of the vector.
         This indicates the index directly before
         which traversal will stop &mdash; processing will occur until
         the index of the vector is one less than <code><i>end</i></code>.  It is the
@@ -384,7 +385,7 @@ all the elements of the @vector are initialized to it.</p>
 
 <p>
 Creates a vector whose length is <i>length</i> and iterates across each index
-<i>k</i> between 0 and <i>length</i>, applying <i>f</i> at each iteration to the current
+<i>k</i> between 0 and <i>length</i> - 1, applying <i>f</i> at each iteration to the current
 index and current state, in that order, to receive two values: 
 the element to put in the k<i>th</i> slot of the new vector and a new state
 for the next iteration.
@@ -555,9 +556,9 @@ elements satisfy <i>pred</i>.</p>
 <p>When multiple vectors are passed, <i>pred?</i> must take the
   same number of arguments as the number of vectors, and corresponding
   elements from each vector are passed for each iteration.
-  If the lengths of vectors differ, <i>vector-index</i> stops iteration
+  If the lengths of vectors differ, <code>@vector-index</code> stops iteration
   at the end of the shortest one.  Lengths of vectors must be the same
-  for <i>vector-index-right</i>.
+  for <code>@vector-index-right</code>.
 </p>
 
 <p><code>(@vector-skip <i>pred? @vec @vec2 ...</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
@@ -570,9 +571,9 @@ does not satisfy <i>pred?</i>.
 <p>When multiple vectors are passed, <i>pred?</i> must take the
   same number of arguments as the number of vectors, and corresponding
   elements from each vector are passed for each iteration.
-  If the lengths of vectors differ, <i>vector-skip</i> stops iteration
+  If the lengths of vectors differ, <code>@vector-skip</code> stops iteration
   at the end of the shortest one.  Lengths of vectors must be the same
-  for <i>vector-skip-right</i>.
+  for <code>@vector-skip-right</code>.
 </p>
 
 <p><code>(@vector-any <i>pred? @vec @vec2 ...</i>) -> value or boolean</code> [SRFI 133]</p>
