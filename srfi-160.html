@@ -491,6 +491,10 @@ and an undefined value with no change to <i>@vec</i>.</p>
   even when multiple vectors are passed.
 </p>
 
+<p>If <code>@vector-map</code> or <code>@vector-map!</code> returns
+more than once (i.e. because of a continuation captured by <i>f</i>),
+the values returned or stored by earlier returns may be mutated.</p>
+
 <p><code>(@vector-count <i>pred? @vec @vec2 ...</i>) -> exact nonnegative integer</code> [SRFI 133]</p>
 
 <p>Call <i>pred?</i> on each element of <i>@vec</i> and
