@@ -474,7 +474,7 @@
       (cond
         ((= i len) r)
         (else
-          (@vector-set! r i (car list))
+          (@vector-set! r (- len i 1) (car list))
           (loop (+ i 1) (cdr list)))))))
 
 (define @vector->vector
