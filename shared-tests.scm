@@ -170,6 +170,16 @@
     (display "reverse-copy!\n")
     (s16vector-reverse-copy! v 1 s5 2 4)
     (test-equiv "reverse-copy!" '(10 4 3 40 50) v))
+  (let ((v (s16vector 1 2 3 4 5 6 7 8)))
+    (display "unfold!")
+    (s16vector-unfold! (lambda (x) (values (* x 2) (* x 2)))
+                       v 1 6 -1)
+    (test-equiv "vector-unfold!" '(1 -2 -4 -8 -16 -32 7 8) v))
+  (let ((v (s16vector 1 2 3 4 5 6 7 8)))
+    (display "unfold-right!")
+    (s16vector-unfold-right! (lambda (x) (values (* x 2) (* x 2)))
+                             v 1 6 -1)
+    (test-equiv "vector-unfold!" '(1 -32 -16 -8 -4 -2 7 8) v))
 ) ; end s16vector/mutators
 
 (test-group "s16vector/conversion"

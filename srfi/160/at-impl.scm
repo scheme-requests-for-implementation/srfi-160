@@ -455,6 +455,20 @@
         (@vector-swap! vec i j)
         (loop (+ i 1) (- j 1))))))
 
+(define (@vector-unfold! f vec start end seed)
+  (let loop ((i start) (seed seed))
+    (when (< i end)
+      (let-values (((elt seed) (f seed)))
+        (@vector-set! vec i elt)
+        (loop (+ i 1) seed)))))
+
+(define (@vector-unfold-right! f vec start end seed)
+  (let loop ((i (- end 1)) (seed seed))
+    (when (>= i start)
+      (let-values (((elt seed) (f seed)))
+        (@vector-set! vec i elt)
+        (loop (- i 1) seed)))))
+
 (define reverse-@vector->list
   (case-lambda
     ((vec) (reverse-@vector->list* vec 0 (@vector-length vec)))
