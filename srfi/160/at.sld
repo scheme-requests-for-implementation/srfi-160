@@ -32,7 +32,8 @@
           @vector-filter @vector-remove)
   ;; Mutators 
   (export @vector-set! @vector-swap! @vector-fill! @vector-reverse!
-          @vector-copy! @vector-reverse-copy!)
+          @vector-copy! @vector-reverse-copy!
+          @vector-unfold! @vector-unfold-right!)
   ;; Conversion 
   (export @vector->list reverse-@vector->list reverse-list->@vector
           @vector->vector vector->@vector)
