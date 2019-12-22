@@ -35,7 +35,8 @@
           @vector-copy! @vector-reverse-copy!
           @vector-unfold! @vector-unfold-right!)
   ;; Conversion 
-  (export @vector->list reverse-@vector->list reverse-list->@vector
+  (export @vector->list reverse-@vector->list
+          list->@vector reverse-list->@vector
           @vector->vector vector->@vector)
   ;; Misc
   (export make-@vector-generator @vector-comparator write-@vector)

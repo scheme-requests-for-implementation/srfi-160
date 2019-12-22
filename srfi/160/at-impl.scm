@@ -481,6 +481,16 @@
       r
       (loop (+ 1 i) (cons (@vector-ref vec i) r)))))
 
+(define (list->@vector list)
+  (let* ((len (length list))
+         (r (make-@vector len)))
+    (let loop ((i 0) (list list))
+      (cond
+        ((= i len) r)
+        (else
+          (@vector-set! r i (car list))
+          (loop (+ i 1) (cdr list)))))))
+
 (define (reverse-list->@vector list)
   (let* ((len (length list))
          (r (make-@vector len)))
