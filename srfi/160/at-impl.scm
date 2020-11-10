@@ -358,7 +358,7 @@
     (apply @vector-index-right (lambda xs (not (apply pred xs))) vec vecs)))
 
 (define (@vector-any pred vec . vecs)
-  (if (null? vec)
+  (if (null? vecs)
     ;; fast path
     (let ((len (@vector-length vec)))
       (let loop ((i 0))
@@ -376,7 +376,7 @@
          (else (loop (+ i 1))))))))
 
 (define (@vector-every pred vec . vecs)
-  (if (null? vec)
+  (if (null? vecs)
     ;; fast path
     (let ((len (@vector-length vec)))
       (let loop ((i 0) (last #t))
