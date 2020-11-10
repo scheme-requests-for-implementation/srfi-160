@@ -1,6 +1,12 @@
 * SRFI 160: Homogeneous numeric vector libraries
 
-** by John Cowan (based on SRFI 4 by Marc Feeley) and Shiro Kawai (contributed a major patch)
+** by John Cowan and Shiro Kawai (contributed a major patch)
+
+Based on SRFI 4 by Marc Feeley.
+
+
+
+keywords: [[https://srfi.schemers.org/?keywords=data-structure][Data Structure]], [[https://srfi.schemers.org/?keywords=r7rs-large][R7RS Large]], [[https://srfi.schemers.org/?keywords=r7rs-large-tangerine][R7RS Large: Tangerine Edition]]
 
 This repository hosts [[https://srfi.schemers.org/srfi-160/][SRFI 160]]: Homogeneous numeric vector libraries, a [[https://srfi.schemers.org/][Scheme Request for Implementation]].
 
