@@ -34,7 +34,15 @@
     (@vector-copy! v 0 vec start end)
     v))
 
-(define (@vector-copy! to at from start end)
+(define @vector-copy!
+  (case-lambda
+    ((to at from)
+     (@vector-copy!* to at from 0 (@vector-length from)))
+    ((to at from start)
+     (@vector-copy!* to at from start (@vector-length from)))
+    ((to at from start end) (@vector-copy!* to at from start end))))
+
+(define (@vector-copy!* to at from start end)
   (let loop ((at at) (i start))
     (unless (= i end)
       (@vector-set! to at (@vector-ref from i))
@@ -51,7 +59,15 @@
     (@vector-reverse-copy! v 0 vec start end)
     v))
 
-(define (@vector-reverse-copy! to at from start end)
+(define @vector-reverse-copy!
+  (case-lambda
+    ((to at from)
+     (@vector-reverse-copy!* to at from 0 (@vector-length from)))
+    ((to at from start)
+     (@vector-reverse-copy!* to at from start (@vector-length from)))
+    ((to at from start end) (@vector-reverse-copy!* to at from start end))))
+
+(define (@vector-reverse-copy!* to at from start end)
   (let loop ((at at) (i (- end 1)))
     (unless (< i start)
       (@vector-set! to at (@vector-ref from i))
