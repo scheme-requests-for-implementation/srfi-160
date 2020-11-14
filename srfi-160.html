@@ -37,7 +37,9 @@ Shiro Kawai (contributed a major patch).
   <li>Draft #11 published: 2019-07-31</li>
   <li>Finalized: 2019-08-27</li>
   <li>Revised to fix errata:
-    <ul><li>2019-08-29 (Document behavior on multiple returns.)</li></ul></li>
+    <ul>
+      <li>2019-08-29 (Document behavior on multiple returns.)</li>
+      <li>2020-11-14 (Removed error in description of <code>list->@vector</code>.)</li></ul></li>
 </ul>
 
 <H1>Abstract</H1>
@@ -645,7 +647,7 @@ vector. Terminates when <i>end</i> - <i>start</i> elements have been generated.
 
 <p><code>(reverse-@vector->list <i>@vec</i> [<i>start</i> [<i>end</i>]]) -> proper-list</code> [SRFI 133]</p>
 
-<p><code>(list->@vector <i>proper-list</i>) -> @vector</code> [SRFI 4 plus <i>start</i> and <i>end</i>]</p>
+<p><code>(list->@vector <i>proper-list</i>) -> @vector</code></p>
 
 <p><code>(reverse-list->@vector <i>proper-list</i>) -> @vector</code> [SRFI 133]</p>
 
