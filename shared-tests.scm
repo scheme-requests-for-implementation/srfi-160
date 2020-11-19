@@ -54,8 +54,14 @@
   (test-assert "empty" (s16vector-empty? (s16vector)))
   (test-assert "not empty" (not (s16vector-empty? s5)))
   (test-assert "=" (s16vector= (s16vector 1 2 3) (s16vector 1 2 3)))
+  (test-assert "= multi" (s16vector= (s16vector 1 2 3)
+                                     (s16vector 1 2 3)
+                                     (s16vector 1 2 3)))
   (test-assert "not =" (not (s16vector= (s16vector 1 2 3) (s16vector 3 2 1))))
   (test-assert "not =2" (not (s16vector= (s16vector 1 2 3) (s16vector 1 2))))
+  (test-assert "not = multi" (not (s16vector= (s16vector 1 2 3)
+                                              (s16vector 1 2 3)
+                                              (s16vector 3 2 1))))
 ) ; end s16vector/predicates
 
 (test-group "s16vector/selectors"
