@@ -119,13 +119,10 @@
   (@vector=* (car vecs) (cadr vecs) (cddr vecs)))
 
 (define (@vector=* vec1 vec2 vecs)
-  (if (null? vecs)
-    (and
-      (@dyadic-vecs= vec1 0 (@vector-length vec1)
-                          vec2 0 (@vector-length vec2))
-      (if (null? vecs)
-        #t
-        (@vector=* vec2 (car vecs) (cdr vecs))))))
+  (and (@dyadic-vecs= vec1 0 (@vector-length vec1)
+                      vec2 0 (@vector-length vec2))
+       (or (null? vecs)
+           (@vector=* vec2 (car vecs) (cdr vecs)))))
 
 (define (@dyadic-vecs= vec1 start1 end1 vec2 start2 end2)
   (cond
