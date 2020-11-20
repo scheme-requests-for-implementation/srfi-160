@@ -462,11 +462,10 @@
     ((vec start end) (@vector-reverse-some! vec start end))))
 
 (define (@vector-reverse-some! vec start end)
-  (let ((len (@vector-length vec)))
-    (let loop ((i 0)(j (- len 1)))
-      (when (< i j)
-        (@vector-swap! vec i j)
-        (loop (+ i 1) (- j 1))))))
+  (let loop ((i start) (j (- end 1)))
+    (when (< i j)
+      (@vector-swap! vec i j)
+      (loop (+ i 1) (- j 1)))))
 
 (define (@vector-unfold! f vec start end seed)
   (let loop ((i start) (seed seed))
