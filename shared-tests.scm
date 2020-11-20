@@ -79,7 +79,7 @@
   (test "fold" -6 (s16vector-fold - 0 (s16vector 1 2 3)))
   (test "fold" '(((0 1 4) 2 5) 3 6)
         (s16vector-fold list 0 (s16vector 1 2 3) (s16vector 4 5 6)))
-  (test "fold-right" 2 (s16vector-fold-right - 0 (s16vector 1 2 3)))
+  (test "fold-right" -6 (s16vector-fold-right - 0 (s16vector 1 2 3)))
   (test "fold-right" '(((0 3 6) 2 5) 1 4)
         (s16vector-fold-right list 0 (s16vector 1 2 3) (s16vector 4 5 6)))
   (test-equiv "map" '(-1 -2 -3 -4 -5) (s16vector-map - s5))
