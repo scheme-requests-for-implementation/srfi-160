@@ -202,7 +202,7 @@
       (let loop ((r knil) (i (- (@vector-length vec) 1)))
         (if (negative? i)
           r
-          (loop (kons (@vector-ref vec i) r) (- i 1)))))
+          (loop (kons r (@vector-ref vec i)) (- i 1)))))
     ;; generic case
     (let* ((vecs (cons vec vecs))
            (len (apply min (map @vector-length vecs))))
