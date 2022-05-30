@@ -231,7 +231,7 @@
           (@vector-set! v i (apply f (%@vectors-ref vecs i)))
           (loop (+ i 1))))
       v)))
-    
+
 
 (define (@vector-map! f vec . vecs)
   (if (null? vecs)
@@ -364,7 +364,7 @@
   (if (null? vecs)
     (@vector-index (lambda (x) (not (pred x))) vec)
     (apply @vector-index (lambda xs (not (apply pred xs))) vec vecs)))
-     
+
 (define (@vector-skip-right pred vec . vecs)
   (if (null? vecs)
     (@vector-index-right (lambda (x) (not (pred x))) vec)
@@ -470,14 +470,14 @@
 (define (@vector-unfold! f vec start end seed)
   (let loop ((i start) (seed seed))
     (when (< i end)
-      (let-values (((elt seed) (f seed)))
+      (let-values (((elt seed) (f i seed)))
         (@vector-set! vec i elt)
         (loop (+ i 1) seed)))))
 
 (define (@vector-unfold-right! f vec start end seed)
   (let loop ((i (- end 1)) (seed seed))
     (when (>= i start)
-      (let-values (((elt seed) (f seed)))
+      (let-values (((elt seed) (f i seed)))
         (@vector-set! vec i elt)
         (loop (- i 1) seed)))))
 
@@ -593,4 +593,3 @@
 
 (define @vector-comparator
   (make-comparator @vector? @vector= @vector< @vector-hash))
-
