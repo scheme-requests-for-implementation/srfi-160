@@ -39,7 +39,8 @@ Shiro Kawai (contributed a major patch).
   <li>Revised to fix errata:
     <ul>
       <li>2019-08-29 (Document behavior on multiple returns.)</li>
-      <li>2020-11-14 (Removed error in description of <code>list->@vector</code>.)</li></ul></li>
+      <li>2020-11-14 (Removed error in description of <code>list->@vector</code>.)</li>
+      <li>2022-08-21 (It was unspecified what <code><a href="#vector-segment">vector-segment</a></code> does with an inexact or non-positive argument.</li></ul></li>
 </ul>
 
 <H1>Abstract</H1>
@@ -447,11 +448,12 @@ elements of <i>@vec</i>.</p>
 <p>Returns a @vector containing all except the first/last <i>n</i>
 elements of <i>@vec</i>.</p>
 
-<p><code>(@vector-segment <i>@vec n</i>) -> list</code> [SRFI 152]</p>
+<p><code id="vector-segment">(@vector-segment <i>@vec n</i>) -> list</code> [SRFI 152]</p>
 
 <p>Returns a list of @vectors, each of which contains <i>n</i>
 consecutive elements of <i>@vec</i>.
-The last @vector may be shorter than <i>n</i>.</p>
+The last @vector may be shorter than <i>n</i>.  It is an error if
+<i>n</i> is not an exact positive integer.</p>
 
 <p><code>(@vector-fold <i>kons knil @vec @vec2 ...</i>) -> object</code> [SRFI 133]</p>
 

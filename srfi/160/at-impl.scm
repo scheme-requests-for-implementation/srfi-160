@@ -165,6 +165,8 @@
     v))
 
 (define (@vector-segment vec n)
+  (unless (and (integer? n) (positive? n))
+    (error "length must be a positive integer" n))
   (let loop ((r '()) (i 0) (remain (@vector-length vec)))
     (if (<= remain 0)
       (reverse r)
