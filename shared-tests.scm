@@ -142,7 +142,10 @@
   (test "multi-every-2" 10 (s16vector-every (lambda (x y) (and (exact? x) (exact? y) (+ x y)))
                                     s5 s5))
   (test-assert "multi-not every" (not (s16vector-every < s5 (s16vector 10 10 10 10 0))))
-  (test-equiv "partition" '(1 3 5 2 4) (s16vector-partition odd? s5))
+  (test-equiv "partition" '(1 3 5 2 4)
+              (call-with-values
+                  (lambda () (s16vector-partition odd? s5))
+                (lambda (vec cnt) vec)))
   (test-equiv "filter" '(1 3 5) (s16vector-filter odd? s5))
   (test-equiv "remove" '(2 4) (s16vector-remove odd? s5))
 ) ; end s16vector/searching
