@@ -513,7 +513,7 @@ which stops at the end of the shortest vector.</p>
 
 <p><code>(@vector-cumulate <i>f knil @vec</i>) -&gt; @vector</code> [SRFI 133]</p>
 
-<p>Like <code>@vector-fold</code>, but returns an @vector of partial results
+<p>Like <code>@vector-fold</code>, but returns a @vector of partial results
 rather than just the final result.</p>
 
 <H3>Searching</H3>
@@ -591,7 +591,7 @@ return the last result of <i>pred?</i>.  If not all do, return <code>#f</code>.
 
 <p><code>(@vector-partition <i>pred? @vec</i>) -&gt; @vector and integer</code> [SRFI 133]</p>
 
-<p>Returns an @vector of the same type as <i>@vec</i>, but with all elements
+<p>Returns a @vector of the same type as <i>@vec</i>, but with all elements
 satisfying <i>pred?</i> in the leftmost part of the vector and the other
 elements in the remaining part.  The order of elements is otherwise
 preserved.  Returns two values, the new @vector and the number of 
@@ -601,7 +601,7 @@ elements satisfying <i>pred?</i>.</p>
 
 <p><code>(@vector-remove <i>pred? @vec</i>) -&gt; @vector</code> [SRFI 152]</p>
 
-<p>Return an @vector containing the elements of @vec that satisfy / do not satisfy
+<p>Return a @vector containing the elements of @vec that satisfy / do not satisfy
 <i>pred?</i>.</p>
 
 <H3>Mutators</H3>
