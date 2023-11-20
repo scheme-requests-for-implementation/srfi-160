@@ -65,12 +65,12 @@ in the absence of a compiler with a fancy static analysis, the
 representation will typically use some form of boxing of the elements
 which means low space efficiency and slower access to the elements.
 Moreover, homogeneous vectors are convenient for interfacing with
-low-level libraries (e.g. binary block I/O) and to interface with
+low-level libraries (e.g., binary block I/O) and to interface with
 foreign languages which support homogeneous vectors.  Finally, the use
 of homogeneous vectors allows certain errors to be caught earlier.</p>
 
 <p>This SRFI specifies a set of homogeneous vector datatypes which cover
-the most practical cases, that is where the type of the elements is
+the most practical cases, that is, where the type of the elements is
 numeric (exact integer or inexact real or complex) and the precision and
 representation is efficiently implemented on the hardware of most
 current computer architectures (8, 16, 32 and 64 bit integers, either
@@ -162,7 +162,7 @@ be the case if they are represented as 32-bit machine integers with a 2-bit tag)
 should use the same datatype for bytevectors and for u8vectors,
 and systems that also implement SRFI 74 (blobs) should use the same
 datatype for them as well.  All other homogeneous vector
-types are disjoint from each other and from all other Scheme types,</p>
+types are disjoint from each other and from all other Scheme types.</p>
 
 <p>Each element of a homogeneous vector must be <i>valid</i>.  That is, for an
 integer vector, it must be an exact integer within the
@@ -430,7 +430,7 @@ unless all @vectors are the same length.</p>
 
 <p><code>(@vector-length <i>@vec</i>) -&gt; exact nonnegative integer</code> [SRFI 4]</p>
 
-<p>Returns the length of <i>@vec</i></p>
+<p>Returns the length of <i>@vec</i>.</p>
 
 <H3>Iteration</H3>
 
