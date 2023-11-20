@@ -39,7 +39,7 @@ Shiro Kawai (contributed a major patch).
   <li>Revised to fix errata:
     <ul>
       <li>2019-08-29 (Document behavior on multiple returns.)</li>
-      <li>2020-11-14 (Removed error in description of <code>list->@vector</code>.)</li>
+      <li>2020-11-14 (Removed error in description of <code>list-&gt;@vector</code>.)</li>
       <li>2022-08-21 (It was unspecified what <code><a href="#vector-segment">vector-segment</a></code> does with an inexact or non-positive argument.</li></ul></li>
 </ul>
 
@@ -195,7 +195,7 @@ vectors specifically.</p>
       values:
     </p>
     <dl>
-      <dt><i>(f arg<sub>1</sub> arg<sub>2</sub> ...) -> something</i></dt> <dd>
+      <dt><i>(f arg<sub>1</sub> arg<sub>2</sub> ...) -&gt; something</i></dt> <dd>
         A procedure <code><i>f</i></code> that takes the parameters
         <code><i>arg<sub>1</sub> arg<sub>2</sub>
         ...</i></code> and returns a value of the
@@ -354,16 +354,16 @@ The procedures analogous to SRFI 152 string procedures are marked with [SRFI 152
 
 <H3>Constructors</H3>
 
-<p><code>(make-@vector <i>size</i> [<i>fill</i>]) -> @vector </code> [SRFI 4]</p>
+<p><code>(make-@vector <i>size</i> [<i>fill</i>]) -&gt; @vector </code> [SRFI 4]</p>
 
 <p>Returns a @vector whose length is <i>size</i>.  If <i>fill</i> is provided,
 all the elements of the @vector are initialized to it.</p>
 
-<p><code>(@vector <i>value ...</i>) -> @vector </code> [SRFI 4]</p>
+<p><code>(@vector <i>value ...</i>) -&gt; @vector </code> [SRFI 4]</p>
 
 <p>Returns a @vector initialized with <i>values</i>.</p>
 
-<p><code>(@vector-unfold <i>f length seed</i>) -> @vector</code> [SRFI 133]</p>
+<p><code>(@vector-unfold <i>f length seed</i>) -&gt; @vector</code> [SRFI 133]</p>
 
 <p>
 Creates a vector whose length is <i>length</i> and iterates across each index
@@ -373,50 +373,50 @@ the element to put in the k<i>th</i> slot of the new vector and a new state
 for the next iteration.
 On the first call to <i>f</i>, the state's value is <i>seed</i>.</p>
 
-<p><code>(@vector-unfold-right <i>f length seed</i>) -> @vector</code> [SRFI 133]</p>
+<p><code>(@vector-unfold-right <i>f length seed</i>) -&gt; @vector</code> [SRFI 133]</p>
 
 <p>The same as <code>@vector-unfold</code>, but initializes the @vector from right to left.</p>
 
-<p><code>(@vector-copy <i>@vec</i> [<i>start</i> [<i>end</i>]]) -> @vector</code> [SRFI 133]</p>
+<p><code>(@vector-copy <i>@vec</i> [<i>start</i> [<i>end</i>]]) -&gt; @vector</code> [SRFI 133]</p>
 
 <p>Makes a copy of the portion of <i>@vec</i> from <i>start</i> to <i>end</i> and returns it.</p>
 
-<p><code>(@vector-reverse-copy <i>@vec</i> [<i>start</i> [<i>end</i>]]) -> @vector</code> [SRFI 133]</p>
+<p><code>(@vector-reverse-copy <i>@vec</i> [<i>start</i> [<i>end</i>]]) -&gt; @vector</code> [SRFI 133]</p>
 
 <p>The same as <code>@vector-copy</code>, but in reverse order.</p>
 
-<p><code>(@vector-append <i>@vec ...</i>) -> @vector</code> [SRFI 133]</p>
+<p><code>(@vector-append <i>@vec ...</i>) -&gt; @vector</code> [SRFI 133]</p>
 
 <p>Returns a @vector containing all the elements of the <i>@vecs</i> in order.</p>
 
-<p><code> (@vector-concatenate <i>list-of-@vectors</i>) -> @vector</code> [SRFI 133]</p>
+<p><code>(@vector-concatenate <i>list-of-@vectors</i>) -&gt; @vector</code> [SRFI 133]</p>
 
 <p>The same as <code>@vector-append</code>, but takes a list of @vectors rather than
 multiple arguments.</p>
 
-<p><code>(@vector-append-subvectors [<i>@vec start end] ...</i>) -> @vector</code> [SRFI 133]</p>
+<p><code>(@vector-append-subvectors [<i>@vec start end] ...</i>) -&gt; @vector</code> [SRFI 133]</p>
 
 <p>Concatenates the result of applying <code>@vector-copy</code> to each triplet of
 <i>@vec, start, end</i> arguments, but may be implemented more efficiently.</p>
 
 <H3>Predicates</H3>
 
-<p><code>(@? <i>obj</i>) -> boolean</code></p>
+<p><code>(@? <i>obj</i>) -&gt; boolean</code></p>
 
 <p>Returns <code>#t</code> if <i>obj</i> is a valid element of an
 @vector, and <code>#f</code> otherwise.</p>
 
-<p><code>(@vector? <i>obj</i>) -> boolean</code> [SRFI 4]</p>
+<p><code>(@vector? <i>obj</i>) -&gt; boolean</code> [SRFI 4]</p>
 
 <p>Returns <code>#t</code> if <i>obj</i> is a @vector, and <code>#f</code>
 otherwise.</p>
 
-<p><code>(@vector-empty? <i>@vec</i>) -> boolean</code> [SRFI 133]</p>
+<p><code>(@vector-empty? <i>@vec</i>) -&gt; boolean</code> [SRFI 133]</p>
 
 Returns <code>#t</code> if <i>@vec</i> has a length of zero,
 and <code>#f</code> otherwise.
 
-<p><code>(@vector= <i>@vec ...</i>) -> boolean</code> [SRFI 133]</p>
+<p><code>(@vector= <i>@vec ...</i>) -&gt; boolean</code> [SRFI 133]</p>
 
 <p>Compares the <i>@vecs</i> for elementwise equality, using
 <code>=</code> to do the comparisons.  Returns <code>#f</code>
@@ -424,40 +424,40 @@ unless all @vectors are the same length.</p>
 
 <H3>Selectors</H3>
 
-<p><code>(@vector-ref <i>@vec i</i>) -> value</code> [SRFI 4]</p>
+<p><code>(@vector-ref <i>@vec i</i>) -&gt; value</code> [SRFI 4]</p>
 
 <p>Returns the <i>i</i>th element of <i>@vec</i>.</p>
 
-<p><code>(@vector-length <i>@vec</i>) -> exact nonnegative integer</code> [SRFI 4]</p>
+<p><code>(@vector-length <i>@vec</i>) -&gt; exact nonnegative integer</code> [SRFI 4]</p>
 
 <p>Returns the length of <i>@vec</i></p>
 
 <H3>Iteration</H3>
 
-<p><code>(@vector-take <i>@vec n</i>) -> @vector</code>] [SRFI 152]</p>
+<p><code>(@vector-take <i>@vec n</i>) -&gt; @vector</code>] [SRFI 152]</p>
 
-<p><code>(@vector-take-right <i>@vec n</i>) -> @vector</code> [SRFI 152]</p>
+<p><code>(@vector-take-right <i>@vec n</i>) -&gt; @vector</code> [SRFI 152]</p>
 
 <p>Returns a @vector containing the first/last <i>n</i>
 elements of <i>@vec</i>.</p>
 
-<p><code>(@vector-drop <i>@vec n</i>) -> @vector</code> [SRFI 152]</p>
+<p><code>(@vector-drop <i>@vec n</i>) -&gt; @vector</code> [SRFI 152]</p>
 
-<p><code>(@vector-drop-right <i>@vec n</i>) -> @vector</code> [SRFI 152]</p>
+<p><code>(@vector-drop-right <i>@vec n</i>) -&gt; @vector</code> [SRFI 152]</p>
 
 <p>Returns a @vector containing all except the first/last <i>n</i>
 elements of <i>@vec</i>.</p>
 
-<p><code id="vector-segment">(@vector-segment <i>@vec n</i>) -> list</code> [SRFI 152]</p>
+<p><code id="vector-segment">(@vector-segment <i>@vec n</i>) -&gt; list</code> [SRFI 152]</p>
 
 <p>Returns a list of @vectors, each of which contains <i>n</i>
 consecutive elements of <i>@vec</i>.
 The last @vector may be shorter than <i>n</i>.  It is an error if
 <i>n</i> is not an exact positive integer.</p>
 
-<p><code>(@vector-fold <i>kons knil @vec @vec2 ...</i>) -> object</code> [SRFI 133]</p>
+<p><code>(@vector-fold <i>kons knil @vec @vec2 ...</i>) -&gt; object</code> [SRFI 133]</p>
 
-<p><code>(@vector-fold-right <i>kons knil @vec @vec2 ...</i>) -> object</code> [SRFI 133]</p>
+<p><code>(@vector-fold-right <i>kons knil @vec @vec2 ...</i>) -&gt; object</code> [SRFI 133]</p>
 
 <p>When one @vector argument <i>@vec</i> is given,
 folds <i>kons</i> over the elements of <i>@vec</i> 
@@ -479,11 +479,11 @@ only the portion of each vector up to the length of the shortest vector
 is scanned.
 </p>
 
-<p><code>(@vector-map <i>f @vec @vec2 ...</i>) -> @vector</code> [SRFI 133]</p>
+<p><code>(@vector-map <i>f @vec @vec2 ...</i>) -&gt; @vector</code> [SRFI 133]</p>
 
-<p><code>(@vector-map! <i>f @vec @vec2 ...</i>) -> unspecified</code> [SRFI 133]</p>
+<p><code>(@vector-map! <i>f @vec @vec2 ...</i>) -&gt; unspecified</code> [SRFI 133]</p>
 
-<p><code>(@vector-for-each <i>f @vec @vec2 ...</i>) -> unspecified</code> [SRFI 133]</p>
+<p><code>(@vector-for-each <i>f @vec @vec2 ...</i>) -&gt; unspecified</code> [SRFI 133]</p>
 
 <p>Iterate over the elements of <i>@vec</i> and apply <i>f</i>
 to each, returning respectively a @vector of the results,
@@ -501,7 +501,7 @@ and an undefined value with no change to <i>@vec</i>.</p>
 more than once (i.e. because of a continuation captured by <i>f</i>),
 the values returned or stored by earlier returns may be mutated.</p>
 
-<p><code>(@vector-count <i>pred? @vec @vec2 ...</i>) -> exact nonnegative integer</code> [SRFI 133]</p>
+<p><code>(@vector-count <i>pred? @vec @vec2 ...</i>) -&gt; exact nonnegative integer</code> [SRFI 133]</p>
 
 <p>Call <i>pred?</i> on each element of <i>@vec</i> and
   return the number of calls that return true.</p>
@@ -511,30 +511,30 @@ the same number of arguments as the number of vectors, and
 corresponding elements from each vector are given for each iteration,
 which stops at the end of the shortest vector.</p>
 
-<p><code>(@vector-cumulate <i>f knil @vec</i>) -> @vector</code> [SRFI 133]</p>
+<p><code>(@vector-cumulate <i>f knil @vec</i>) -&gt; @vector</code> [SRFI 133]</p>
 
 <p>Like <code>@vector-fold</code>, but returns an @vector of partial results
 rather than just the final result.</p>
 
 <H3>Searching</H3>
 
-<p><code>(@vector-take-while <i>pred? @vec</i>) -> @vector</code> [SRFI 152]</p>
+<p><code>(@vector-take-while <i>pred? @vec</i>) -&gt; @vector</code> [SRFI 152]</p>
 
-<p><code>(@vector-take-while-right <i>pred? @vec</i>) -> @vector</code> [SRFI 152]</p>
+<p><code>(@vector-take-while-right <i>pred? @vec</i>) -&gt; @vector</code> [SRFI 152]</p>
 
 <p>Return the shortest prefix/suffix of <i>@vec</i> all of whose elements
 satisfy <i>pred?</i>.</p>
 
-<p><code>(@vector-drop-while <i>pred? @vec</i>) -> @vector</code> [SRFI 152]</p>
+<p><code>(@vector-drop-while <i>pred? @vec</i>) -&gt; @vector</code> [SRFI 152]</p>
 
-<p><code>(@vector-drop-while-right <i>pred? @vec</i>) -> @vector</code> [SRFI 152]</p>
+<p><code>(@vector-drop-while-right <i>pred? @vec</i>) -&gt; @vector</code> [SRFI 152]</p>
 
 <p>Drops the longest initial prefix/suffix of <i>@vec</i> such that all its
 elements satisfy <i>pred</i>.</p>
 
-<p><code>(@vector-index <i>pred? @vec @vec2 ...</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
+<p><code>(@vector-index <i>pred? @vec @vec2 ...</i>) -&gt; exact nonnegative integer or #f</code> [SRFI 133]</p>
 
-<p><code>(@vector-index-right <i>pred? @vec @vec2 ...</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
+<p><code>(@vector-index-right <i>pred? @vec @vec2 ...</i>) -&gt; exact nonnegative integer or #f</code> [SRFI 133]</p>
 
 <p>Return the index of the first/last element of <i>@vec</i> that
   satisfies <i>pred?</i>.</p>
@@ -547,9 +547,9 @@ elements satisfy <i>pred</i>.</p>
   for <code>@vector-index-right</code>.
 </p>
 
-<p><code>(@vector-skip <i>pred? @vec @vec2 ...</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
+<p><code>(@vector-skip <i>pred? @vec @vec2 ...</i>) -&gt; exact nonnegative integer or #f</code> [SRFI 133]</p>
 
-<p><code>(@vector-skip-right <i>pred? @vec @vec2 ...</i>) -> exact nonnegative integer or #f</code> [SRFI 133]</p>
+<p><code>(@vector-skip-right <i>pred? @vec @vec2 ...</i>) -&gt; exact nonnegative integer or #f</code> [SRFI 133]</p>
 
 <p>Returns the index of the first/last element of <i>@vec</i> that
 does not satisfy <i>pred?</i>.</p>
@@ -562,7 +562,7 @@ does not satisfy <i>pred?</i>.</p>
   for <code>@vector-skip-right</code>.
 </p>
 
-<p><code>(@vector-any <i>pred? @vec @vec2 ...</i>) -> value or boolean</code> [SRFI 133]</p>
+<p><code>(@vector-any <i>pred? @vec @vec2 ...</i>) -&gt; value or boolean</code> [SRFI 133]</p>
 
 <p>Returns first non-false result of applying <i>pred?</i> on
   a element from the <i>@vec</i>, or
@@ -576,7 +576,7 @@ does not satisfy <i>pred?</i>.</p>
   at the end of the shortest one.
 </p>
 
-<p><code>(@vector-every <i>pred? @vec @vec2 ...</i>) -> value or boolean</code> [SRFI 133]</p>
+<p><code>(@vector-every <i>pred? @vec @vec2 ...</i>) -&gt; value or boolean</code> [SRFI 133]</p>
 
 <p>If all elements from <i>@vec</i> satisfy <i>pred?</i>,
 return the last result of <i>pred?</i>.  If not all do, return <code>#f</code>.
@@ -589,7 +589,7 @@ return the last result of <i>pred?</i>.  If not all do, return <code>#f</code>.
   at the end of the shortest one.
 </p>
 
-<p><code>(@vector-partition <i>pred? @vec</i>) -> @vector and integer</code> [SRFI 133]</p>
+<p><code>(@vector-partition <i>pred? @vec</i>) -&gt; @vector and integer</code> [SRFI 133]</p>
 
 <p>Returns an @vector of the same type as <i>@vec</i>, but with all elements
 satisfying <i>pred?</i> in the leftmost part of the vector and the other
@@ -597,65 +597,65 @@ elements in the remaining part.  The order of elements is otherwise
 preserved.  Returns two values, the new @vector and the number of 
 elements satisfying <i>pred?</i>.</p>
 
-<p><code>(@vector-filter <i>pred? @vec</i>) -> @vector</code> [SRFI 152]</p>
+<p><code>(@vector-filter <i>pred? @vec</i>) -&gt; @vector</code> [SRFI 152]</p>
 
-<p><code>(@vector-remove <i>pred? @vec</i>) -> @vector</code> [SRFI 152]</p>
+<p><code>(@vector-remove <i>pred? @vec</i>) -&gt; @vector</code> [SRFI 152]</p>
 
 <p>Return an @vector containing the elements of @vec that satisfy / do not satisfy
 <i>pred?</i>.</p>
 
 <H3>Mutators</H3>
 
-<p><code>(@vector-set! <i>@vec i value</i>) -> unspecified</code> [SRFI 4]</p>
+<p><code>(@vector-set! <i>@vec i value</i>) -&gt; unspecified</code> [SRFI 4]</p>
 
 <p>Sets the <i>i</i>th element of <i>@vec</i> to <i>value</i>.</p>
 
-<p><code>(@vector-swap! <i>@vec i j</i>) -> unspecified</code> [SRFI 133]</p>
+<p><code>(@vector-swap! <i>@vec i j</i>) -&gt; unspecified</code> [SRFI 133]</p>
 
 <p>Interchanges the <i>i</i>th and <i>j</i>th elements of <i>@vec</i>.</p>
 
-<p><code>(@vector-fill! <i>@vec fill</i> [<i>start</i> [<i>end</i>]]) -> unspecified</code> [SRFI 133]</p>
+<p><code>(@vector-fill! <i>@vec fill</i> [<i>start</i> [<i>end</i>]]) -&gt; unspecified</code> [SRFI 133]</p>
 
 <p>Fills the portion of <i>@vec</i> from <i>start</i> to <i>end</i>
 with the value <i>fill</i>.</p>
 
-<p><code>(@vector-reverse! <i>@vec</i> [<i>start</i> [<i>end</i>]]) -> unspecified</code> [SRFI 133]</p>
+<p><code>(@vector-reverse! <i>@vec</i> [<i>start</i> [<i>end</i>]]) -&gt; unspecified</code> [SRFI 133]</p>
 
 <p>Reverses the portion of <i>@vec</i> from <i>start</i> to <i>end</i>.</p>
 
-<p><code>(@vector-copy! <i>@to at @from</i> [<i>start</i> [<i>end</i>]]) -> unspecified</code> [SRFI 133]</p>
+<p><code>(@vector-copy! <i>@to at @from</i> [<i>start</i> [<i>end</i>]]) -&gt; unspecified</code> [SRFI 133]</p>
 
 <p>Copies the portion of <i>@from</i> from <i>start</i> to <i>end</i>
 onto <i>@to</i>, starting at index <i>at</i>.</p>
 
-<p><code>(@vector-reverse-copy! <i>@to at @from</i> [<i>start</i> [<i>end</i>]]) -> unspecified</code> [SRFI 133]</p>
+<p><code>(@vector-reverse-copy! <i>@to at @from</i> [<i>start</i> [<i>end</i>]]) -&gt; unspecified</code> [SRFI 133]</p>
 
 <p>The same as <code>@vector-copy!</code>, but copies in reverse.</p>
 
-<p><code>(@vector-unfold! <i>f @vec start end seed</i>) -> @vector</code> [SRFI 133]</p>
+<p><code>(@vector-unfold! <i>f @vec start end seed</i>) -&gt; @vector</code> [SRFI 133]</p>
 
 <p>Like <code>vector-unfold</code>, but the elements are copied into the
 vector <i>@vec</i> starting at element <i>start</i> rather than into a newly allocated
 vector. Terminates when <i>end</i> - <i>start</i> elements have been generated.
 </p>
 
-<p><code>(@vector-unfold-right! <i>f @vec start end seed</i>) -> @vector</code> [SRFI 133]</p>
+<p><code>(@vector-unfold-right! <i>f @vec start end seed</i>) -&gt; @vector</code> [SRFI 133]</p>
 
 <p>The same as <code>@vector-unfold!</code>, but initializes the @vector from right to left.</p>
 
 <H3>Conversion</H3>
 
-<p><code>(@vector->list <i>@vec</i> [<i>start</i> [<i>end</i>]]) -> proper-list</code> [SRFI 4 plus <i>start</i> and <i>end</i>]</p>
+<p><code>(@vector-&gt;list <i>@vec</i> [<i>start</i> [<i>end</i>]]) -&gt; proper-list</code> [SRFI 4 plus <i>start</i> and <i>end</i>]</p>
 
-<p><code>(reverse-@vector->list <i>@vec</i> [<i>start</i> [<i>end</i>]]) -> proper-list</code> [SRFI 133]</p>
+<p><code>(reverse-@vector-&gt;list <i>@vec</i> [<i>start</i> [<i>end</i>]]) -&gt; proper-list</code> [SRFI 133]</p>
 
-<p><code>(list->@vector <i>proper-list</i>) -> @vector</code></p>
+<p><code>(list-&gt;@vector <i>proper-list</i>) -&gt; @vector</code></p>
 
-<p><code>(reverse-list->@vector <i>proper-list</i>) -> @vector</code> [SRFI 133]</p>
+<p><code>(reverse-list-&gt;@vector <i>proper-list</i>) -&gt; @vector</code> [SRFI 133]</p>
 
-<p><code>(@vector->vector <i>@vec</i> [<i>start</i> [<i>end</i>]]) -> vector</code></p>
+<p><code>(@vector-&gt;vector <i>@vec</i> [<i>start</i> [<i>end</i>]]) -&gt; vector</code></p>
 
-<p><code>(vector->@vector <i>vec</i>  [<i>start</i> [<i>end</i>]]) -> @vector</code></p>
+<p><code>(vector-&gt;@vector <i>vec</i>  [<i>start</i> [<i>end</i>]]) -&gt; @vector</code></p>
 
 
 <p>Returns a list, @vector, or heterogeneous vector with the same
@@ -686,7 +686,7 @@ comparator whose components provide ordering and hashing of @vectors.
 
 <H3>Output</H3>
 
-<p><code>(write-@vector <i>@vec</i> [ <i>port</i> ] ) -> unspecified</code></p>
+<p><code>(write-@vector <i>@vec</i> [ <i>port</i> ] ) -&gt; unspecified</code></p>
 
 <p>Prints to <i>port</i> (the current output port by default) a representation of
 <i>@vec</i> in the lexical syntax explained below.</p>
@@ -760,8 +760,8 @@ library that will be useful for systems that don't provide it.
 <p>The library <code>(srfi 160 base)</code> is in the repository of this SRFI.
 It supports the eight procedures of SRFI 4, namely <code>make-@vector</code>,
 <code>@vector</code>, <code>@vector?</code>, <code>@vector-length</code>,
-<code>@vector-ref</code>, <code>@vector-set!</code>, <code>@vector->list</code>,
-and <code>list->@vector</code>,
+<code>@vector-ref</code>, <code>@vector-set!</code>, <code>@vector-&gt;list</code>,
+and <code>list-&gt;@vector</code>,
 not only for the ten homogeneous vector types supported by SRFI 4,
 but also for the two homogeneous vector types beyond the scope of SRFI 4, namely
 <code>c64vectors</code> and <code>c128vectors</code>.
@@ -789,7 +789,7 @@ for everything else.</p>
 <li><code>srfi/160/base/complex.scm</code> - Complex number implementation on top of SRFI 4.</li>
 
 <li><code>srfi/160/base/valid.scm</code> - Validity (<code>@?</code>) predicates.</li>
-<li><code>srfi/160/base/at-vector2list.scm</code> - Reimplementation of SRFI 4's <code>@vector->list</code> procedures that accept <i>start</i> and <i>end</i> optional arguments.</li>
+<li><code>srfi/160/base/at-vector2list.scm</code> - Reimplementation of SRFI 4's <code>@vector-&gt;list</code> procedures that accept <i>start</i> and <i>end</i> optional arguments.</li>
 
 <li><code>srfi/160/base/r7rec.scm</code> - Record-type definitions for R7RS or SRFI 9.</li>
 
