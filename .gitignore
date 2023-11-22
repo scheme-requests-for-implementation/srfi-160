@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2018 Arthur A. Gleckler <srfi@speechcode.com>
+#
+# SPDX-License-Identifier: MIT
+
 # Chicken compiler artifacts
 srfi.160.base.import.scm
 srfi.160.s16.import.scm

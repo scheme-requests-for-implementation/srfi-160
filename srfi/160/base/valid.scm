@@ -1,3 +1,7 @@
+;;; SPDX-FileCopyrightText: 2018 John Cowan <cowan@ccil.org>
+;;;
+;;; SPDX-License-Identifier: MIT
+
 (define (u8? n) (and (exact-integer? n) (<= 0 n 255)))
 
 (define (s8? n) (and (exact-integer? n) (<= -128 n 127)))

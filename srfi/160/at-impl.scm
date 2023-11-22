@@ -1,3 +1,7 @@
+;;; SPDX-FileCopyrightText: 2018 John Cowan <cowan@ccil.org>
+;;;
+;;; SPDX-License-Identifier: MIT
+
 ;;; This code is the same for all SRFI 160 vector sizes.
 ;;; The @s appearing in the code are expanded to u8, s8, etc.
 

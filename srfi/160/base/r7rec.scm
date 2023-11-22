@@ -1,3 +1,7 @@
+;;; SPDX-FileCopyrightText: 2018 John Cowan <cowan@ccil.org>
+;;;
+;;; SPDX-License-Identifier: MIT
+
 ;; The representation of complex vectors
 
 (define-record-type <c64vector> (raw-make-c64vector bv) c64vector?
