@@ -1,3 +1,7 @@
+;;; SPDX-FileCopyrightText: 2018 John Cowan <cowan@ccil.org>
+;;;
+;;; SPDX-License-Identifier: MIT
+
 (define (times2 x) (* x 2))
 (define s5 (s16vector 1 2 3 4 5))
 (define s4 (s16vector 1 2 3 4))

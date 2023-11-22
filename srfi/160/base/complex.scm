@@ -1,3 +1,7 @@
+;;; SPDX-FileCopyrightText: 2018 John Cowan <cowan@ccil.org>
+;;;
+;;; SPDX-License-Identifier: MIT
+
 ;;;; Implementation of SRFI 160 base c64vectors and c128vectors
 
 ;;; Main constructor

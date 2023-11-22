@@ -1,3 +1,7 @@
+;;; SPDX-FileCopyrightText: 2018 John Cowan <cowan@ccil.org>
+;;;
+;;; SPDX-License-Identifier: MIT
+
 ;;;; Shared tests
 ;;; Hvector = homogeneous vector
 
