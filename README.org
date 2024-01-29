@@ -1,5 +1,5 @@
 
-# SPDX-FileCopyrightText: 2024 John Cowan and Shiro Kawai (contributed a major patch)
+# SPDX-FileCopyrightText: 2024 Arthur A. Gleckler
 # SPDX-License-Identifier: MIT
 * SRFI 160: Homogeneous numeric vector libraries
 
